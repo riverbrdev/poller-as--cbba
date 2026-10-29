@@ -2,6 +2,7 @@
   "name": "pollo-ranking",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,11 +10,16 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "node --env-file-if-exists=.env.local src/infrastructure/db/seed/index.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "1.2.0",
     "class-variance-authority": "0.7.1",
     "cn": "0.5.0",
+    "drizzle-orm": "0.45.4",
     "lucide-react": "1.62.0",
     "next": "16.4.3",
     "react": "19.3.0",
@@ -24,6 +30,7 @@
     "@types/node": "20.19.43",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "drizzle-kit": "0.31.11",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.3",
     "shadcn": "4.23.0",
