@@ -14,10 +14,16 @@ import { RATE_LIMIT_RULES, createIpRateLimiter } from "@/infrastructure/ratelimi
 const users = createDrizzleUserRepository(createDb());
 const hasher = bcryptPasswordHasher;
 
+// Correos con acceso mientras la app está en pruebas (ALLOWED_EMAILS, separados por coma). Vacío = sin restricción.
+const allowedEmails = (process.env.ALLOWED_EMAILS ?? "")
+  .split(",")
+  .map((email) => email.trim())
+  .filter(Boolean);
+
 export const useCases = {
-  registerWithPassword: createRegisterWithPassword({ users, hasher }),
-  authenticateWithPassword: createAuthenticateWithPassword({ users, hasher }),
-  signInWithGoogle: createSignInWithGoogle({ users }),
+  registerWithPassword: createRegisterWithPassword({ users, hasher, allowedEmails }),
+  authenticateWithPassword: createAuthenticateWithPassword({ users, hasher, allowedEmails }),
+  signInWithGoogle: createSignInWithGoogle({ users, allowedEmails }),
   chooseUsername: createChooseUsername({ users }),
   checkUsernameAvailability: createCheckUsernameAvailability({ users }),
   getUserById: createGetUserById({ users }),

@@ -1,4 +1,4 @@
-import { normalizeEmail } from "@/domain/user/email";
+import { isEmailAllowed, normalizeEmail } from "@/domain/user/email";
 import { validatePassword } from "@/domain/user/password";
 import { normalizeUsername, validateUsername } from "@/domain/user/username";
 import type { PasswordHasher } from "@/application/ports/password-hasher";
@@ -13,6 +13,7 @@ export type RegisterWithPasswordResult =
       error:
         | "invalid_username"
         | "invalid_password"
+        | "email_not_allowed"
         | "username_taken"
         | "email_registered_with_password"
         | "email_registered_with_google";
@@ -25,6 +26,7 @@ export type RegisterWithPasswordResult =
 export function createRegisterWithPassword(deps: {
   users: UserRepository;
   hasher: PasswordHasher;
+  allowedEmails?: readonly string[];
 }) {
   return async function registerWithPassword(
     input: RegisterWithPasswordInput,
@@ -38,6 +40,10 @@ export function createRegisterWithPassword(deps: {
 
     const username = normalizeUsername(input.username);
     const email = normalizeEmail(input.email);
+
+    if (!isEmailAllowed(email, deps.allowedEmails ?? [])) {
+      return { ok: false, error: "email_not_allowed" };
+    }
 
     if (await deps.users.findByUsername(username)) {
       return { ok: false, error: "username_taken" };

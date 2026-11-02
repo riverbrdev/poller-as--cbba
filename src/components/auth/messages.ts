@@ -10,6 +10,7 @@ const AUTH_MESSAGES: Record<string, string> = {
     "Ese correo ya está registrado con contraseña. Ingresa con tu correo y contraseña.",
   email_registered_with_google: "Ese correo ya está registrado con Google. Ingresa con Google.",
   google_id_taken: "Esa cuenta de Google ya está registrada. Intenta de nuevo.",
+  email_not_allowed: "Este correo todavía no tiene acceso. DeliCocha está en pruebas.",
   rate_limited: "Hiciste demasiados intentos. Espera unos minutos y vuelve a intentar.",
   user_not_found: "No encontramos tu cuenta. Vuelve a ingresar.",
 };
