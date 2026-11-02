@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 type GoogleSignInButtonProps = {
   action: () => Promise<void>;
   label: string;
@@ -20,14 +18,13 @@ function GoogleIcon() {
 export function GoogleSignInButton({ action, label }: GoogleSignInButtonProps) {
   return (
     <form action={action}>
-      <Button
+      <button
         type="submit"
-        variant="outline"
-        className="h-12 w-full gap-3 rounded-lg bg-white text-base font-semibold text-foreground shadow-sm hover:bg-neutral-50"
+        className="flex min-h-[50px] w-full items-center justify-center gap-3 rounded-xl border border-[#DADCE0] bg-white px-4 py-3 text-base font-semibold tracking-tight text-neutral-800 shadow-sm transition-all duration-150 hover:bg-neutral-50 hover:shadow focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none active:bg-neutral-100"
       >
         <GoogleIcon />
         {label}
-      </Button>
+      </button>
     </form>
   );
 }

@@ -1,13 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthAlert } from "./auth-card";
+import type { FormState } from "./form-state";
 import { authMessage } from "./messages";
 import { PasswordField } from "./password-field";
-import type { FormState } from "./form-state";
 import { UsernameField } from "./username-field";
 
 type RegisterFormProps = {
@@ -21,10 +21,12 @@ export function RegisterForm({ action, checkAvailability }: RegisterFormProps) {
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      {errorMessage ? <AuthAlert message={errorMessage} /> : null}
+
       <UsernameField checkAvailability={checkAvailability} />
 
       <div className="grid gap-1.5">
-        <Label htmlFor="email" className="text-sm font-semibold">
+        <Label htmlFor="email" className="text-xs font-semibold text-neutral-700">
           Correo electrónico
         </Label>
         <Input
@@ -32,25 +34,19 @@ export function RegisterForm({ action, checkAvailability }: RegisterFormProps) {
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="ejemplo@correo.com"
           required
-          className="h-12 text-base"
+          className="h-12 rounded-xl border-[1.5px] border-neutral-300 bg-white px-3.5 text-sm text-neutral-800 shadow-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand"
         />
       </div>
 
-      <PasswordField
-        id="password"
-        label="Contraseña"
-        autoComplete="new-password"
-        hint="Mínimo 8 caracteres."
-      />
+      <PasswordField id="password" label="Contraseña" autoComplete="new-password" showStrength />
 
-      {errorMessage ? (
-        <Alert variant="destructive" role="alert">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      ) : null}
-
-      <Button type="submit" disabled={pending} className="h-12 w-full text-base font-semibold">
+      <Button
+        type="submit"
+        disabled={pending}
+        className="mt-2 h-12 w-full rounded-xl bg-brand text-sm font-bold text-white shadow-md shadow-brand/25 hover:bg-brand-dark"
+      >
         {pending ? "Creando cuenta..." : "Crear cuenta"}
       </Button>
     </form>

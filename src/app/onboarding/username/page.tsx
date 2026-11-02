@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { UserRound } from "lucide-react";
 import { checkUsernameAction, chooseUsernameAction, signOutAction } from "@/app/_actions/auth";
 import { AuthCard } from "@/components/auth/auth-card";
 import { UsernameForm } from "@/components/auth/username-form";
-import { Button } from "@/components/ui/button";
 import { auth } from "@/composition/auth";
 
 const TITLE = "Elige tu nombre";
 const DESCRIPTION =
-  "Este nombre se mostrará públicamente en tus calificaciones. No usaremos tu nombre de Google.";
+  "Este nombre se mostrará públicamente en tus calificaciones y comentarios. No usaremos tu nombre de Google.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -26,6 +26,18 @@ export default function UsernameOnboardingPage() {
   );
 }
 
+// Iniciales del nombre de Google para el avatar (por ejemplo "Juan Pérez" → "JP").
+function initialsFrom(name: string | null | undefined, email: string | null | undefined): string {
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (words.length > 0) {
+    return words
+      .slice(0, 2)
+      .map((word) => word[0]?.toUpperCase() ?? "")
+      .join("");
+  }
+  return (email?.[0] ?? "?").toUpperCase();
+}
+
 async function UsernameOnboardingContent() {
   // La sesión vive en cookies: la página se renderiza en cada petición.
   await connection();
@@ -39,16 +51,40 @@ async function UsernameOnboardingContent() {
   }
 
   return (
-    <AuthCard title={TITLE} subtitle={DESCRIPTION}>
-      <p className="text-center text-sm text-muted-foreground">
-        Conectada como <span className="font-semibold text-foreground">{session.user.email}</span>
-      </p>
+    <AuthCard
+      icon={<UserRound className="size-7" aria-hidden="true" />}
+      title={TITLE}
+      subtitle={DESCRIPTION}
+      topSlot={
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[#FCE6DC] bg-[#FFF6F2] p-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFE5D9] text-sm font-bold text-brand ring-1 ring-brand/20">
+              {initialsFrom(session.user.name, session.user.email)}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold tracking-wider text-[#9A3412] uppercase">Conectado con Google</p>
+              <p className="truncate text-xs font-medium text-gray-700">{session.user.email}</p>
+            </div>
+          </div>
+          <form action={signOutAction} className="shrink-0">
+            <button
+              type="submit"
+              className="inline-flex min-h-11 items-center rounded-lg px-2.5 text-xs font-semibold text-neutral-500 transition-colors hover:bg-white/80 hover:text-brand"
+            >
+              Cerrar sesión
+            </button>
+          </form>
+        </div>
+      }
+    >
       <UsernameForm action={chooseUsernameAction} checkAvailability={checkUsernameAction} />
-      <form action={signOutAction} className="text-center">
-        <Button type="submit" variant="link" className="min-h-11 text-sm">
-          Cerrar sesión
-        </Button>
-      </form>
+
+      <div className="mt-6 border-t border-line pt-5 text-center">
+        <p className="text-xs leading-relaxed text-neutral-500">
+          Podrás empezar a calificar tus <span className="font-semibold text-gray-700">pollerías</span> favoritas de
+          Cochabamba de inmediato.
+        </p>
+      </div>
     </AuthCard>
   );
 }
