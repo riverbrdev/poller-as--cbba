@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
 import type { GoogleProfile } from "@/application/user/sign-in-with-google";
+import { clientIpFromHeaders } from "@/infrastructure/ratelimit/client-ip";
 import { rateLimiters, useCases } from "./container";
 
 // Campos extra que guardamos en la sesión y el token (ver jwt y session abajo).
@@ -34,10 +35,6 @@ class RateLimitedSignin extends CredentialsSignin {
   code = "rate_limited";
 }
 
-function clientIp(request: Request): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-}
-
 function parseGoogleProfile(profile: unknown): GoogleProfile | null {
   const parsed = googleProfileSchema.safeParse(profile);
   if (!parsed.success) {
@@ -67,7 +64,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           return null;
         }
 
-        const limit = await rateLimiters.login.limit(clientIp(request));
+        const limit = await rateLimiters.login.limit(clientIpFromHeaders(request.headers));
         if (!limit.success) {
           throw new RateLimitedSignin();
         }

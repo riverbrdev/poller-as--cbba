@@ -23,6 +23,9 @@ export const useCases = {
   getUserById: createGetUserById({ users }),
 };
 
+// Helper de petición: app/ lo toma de aquí porque no puede importar infrastructure/ directamente.
+export { clientIpFromHeaders } from "@/infrastructure/ratelimit/client-ip";
+
 export const rateLimiters = {
   login: createIpRateLimiter(RATE_LIMIT_RULES.login),
   register: createIpRateLimiter(RATE_LIMIT_RULES.register),
