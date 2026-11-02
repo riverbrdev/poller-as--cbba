@@ -10,14 +10,18 @@
   --font-sans: var(--font-jakarta);
   --font-heading: var(--font-jakarta);
 
-  /* Paleta de DeliCocha (diseño Stitch). Se usa con clases como bg-brand o text-ink. */
-  --color-brand: #d84315;
-  --color-brand-dark: #bf360c;
-  --color-brand-soft: #fff1eb;
-  --color-cream: #fff8f5;
-  --color-ink: #1f2937;
-  --color-ink-muted: #4b5563;
-  --color-line: #f0dfd5;
+  /* Paleta de ComiDeli. Los componentes usan clases semánticas, no hexadecimales. */
+  --color-brand: #e94d0c;
+  --color-brand-dark: #c53d08;
+  --color-brand-soft: #fff0e7;
+  --color-brand-ink: #bc420b;
+  --color-cream: #f8f5ef;
+  --color-surface-soft: #f7f4ef;
+  --color-ink: #1b1917;
+  --color-ink-muted: #695e55;
+  --color-line: #eee3d8;
+  --color-line-strong: #dfc9b7;
+  --color-photo-placeholder: #ead7c5;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
