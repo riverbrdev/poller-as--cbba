@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { checkUsernameAction, chooseUsernameAction, signOutAction } from "@/app/_actions/auth";
 import { AuthCard } from "@/components/auth/auth-card";
@@ -26,6 +27,8 @@ export default function UsernameOnboardingPage() {
 }
 
 async function UsernameOnboardingContent() {
+  // La sesión vive en cookies: la página se renderiza en cada petición.
+  await connection();
   // Segunda verificación en el servidor: el proxy solo redirige, no autoriza.
   const session = await auth();
   if (!session?.user.id) {

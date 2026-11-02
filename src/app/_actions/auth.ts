@@ -20,17 +20,30 @@ export async function loginWithPasswordAction(_state: FormState, formData: FormD
     return { error: "invalid_credentials" };
   }
 
-  // Con redirect: false, Auth.js devuelve la URL de respuesta: trae error y code si falló.
-  const response = await signIn("credentials", {
-    email: parsed.data.email,
-    password: parsed.data.password,
-    redirect: false,
-  });
-  const params = new URL(response, "http://localhost").searchParams;
-  if (params.get("error")) {
-    return { error: params.get("code") === "rate_limited" ? "rate_limited" : "invalid_credentials" };
+  try {
+    await signIn("credentials", {
+      email: parsed.data.email,
+      password: parsed.data.password,
+      redirect: false,
+    });
+  } catch (error) {
+    // Auth.js lanza CredentialsSignin aunque se pida redirect: false. El code distingue el motivo.
+    if (isCredentialsSignin(error)) {
+      return { error: error.code === "rate_limited" ? "rate_limited" : "invalid_credentials" };
+    }
+    throw error;
   }
   redirect("/");
+}
+
+// Auth.js serializa su error como objeto plano en la acción: se reconoce por `type`, no por instanceof.
+function isCredentialsSignin(error: unknown): error is { type: "CredentialsSignin"; code: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    (error as { type?: unknown }).type === "CredentialsSignin" &&
+    typeof (error as { code?: unknown }).code === "string"
+  );
 }
 
 export async function loginWithGoogleAction(): Promise<void> {
