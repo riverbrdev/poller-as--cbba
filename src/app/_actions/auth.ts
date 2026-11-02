@@ -47,7 +47,9 @@ function isCredentialsSignin(error: unknown): error is { type: "CredentialsSigni
 }
 
 export async function loginWithGoogleAction(): Promise<void> {
-  await signIn("google", { redirectTo: "/" });
+  // Una cuenta de Google nueva no tiene @usuario: la pantalla de onboarding lo pide,
+  // y manda a la home a quien ya lo tiene.
+  await signIn("google", { redirectTo: "/onboarding/username" });
 }
 
 export async function registerAction(_state: FormState, formData: FormData): Promise<FormState> {
