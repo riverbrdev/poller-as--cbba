@@ -27,7 +27,7 @@ test.describe("registro con correo y contraseña", () => {
 
     await page.goto("/register");
     await page.getByLabel("Nombre de usuario", { exact: true }).fill(username);
-    await expect(page.getByText("Disponible.")).toBeVisible();
+    await expect(page.getByText("está disponible")).toBeVisible();
     await page.getByLabel("Correo electrónico", { exact: true }).fill(e2eEmail(suffix));
     await page.getByLabel("Contraseña", { exact: true }).fill(E2E_PASSWORD);
     await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
@@ -126,7 +126,7 @@ test.describe("cuenta de Google sin username", () => {
 
     const username = e2eUsername();
     await page.getByLabel("Nombre de usuario", { exact: true }).fill(username);
-    await expect(page.getByText("Disponible.")).toBeVisible();
+    await expect(page.getByText("está disponible")).toBeVisible();
     await page.getByRole("button", { name: "Continuar", exact: true }).click();
 
     await expect(page).toHaveURL("/");

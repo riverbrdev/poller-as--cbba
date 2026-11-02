@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { validateUsername } from "@/domain/user/username";
@@ -33,21 +34,32 @@ export function UsernameField({ checkAvailability }: UsernameFieldProps) {
     return () => clearTimeout(timer);
   }, [trimmed, isValidFormat, checkAvailability]);
 
-  const statusText = (() => {
-    if (trimmed === "" || !isValidFormat) return FORMAT_HINT;
-    if (checked?.username !== trimmed) return "Revisando disponibilidad...";
-    if (checked.available === null) return FORMAT_HINT;
-    return checked.available ? "Disponible." : "Ese nombre de usuario ya está en uso.";
-  })();
-  const isAvailable = checked?.username === trimmed && checked.available === true;
+  const current = checked?.username === trimmed ? checked.available : undefined;
+  const isAvailable = current === true;
+  const isTaken = current === false;
+
+  const borderClass = isAvailable
+    ? "border-emerald-500 focus-within:ring-emerald-500/20"
+    : isTaken
+      ? "border-red-400 focus-within:ring-red-400/20"
+      : "border-neutral-300 focus-within:border-brand focus-within:ring-brand";
 
   return (
     <div className="grid gap-1.5">
-      <Label htmlFor="username" className="text-sm font-semibold">
-        Nombre de usuario
-      </Label>
-      <div className="flex h-12 items-center rounded-lg border border-input bg-white focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-        <span aria-hidden="true" className="pl-3 text-base text-muted-foreground">
+      <div className="flex items-center justify-between">
+        <Label htmlFor="username" className="text-xs font-semibold text-neutral-700">
+          Nombre de usuario
+        </Label>
+        {isAvailable ? (
+          <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
+            <Check className="size-3.5" aria-hidden="true" />
+            Disponible
+          </span>
+        ) : null}
+      </div>
+
+      <div className={`flex h-12 items-center overflow-hidden rounded-xl border-[1.5px] bg-white transition-colors focus-within:ring-2 ${borderClass}`}>
+        <span aria-hidden="true" className="pl-3.5 text-sm font-bold text-neutral-400">
           @
         </span>
         <Input
@@ -57,16 +69,25 @@ export function UsernameField({ checkAvailability }: UsernameFieldProps) {
           required
           value={value}
           onChange={(event) => setValue(event.target.value)}
+          placeholder="tu_usuario"
           aria-describedby="username-status"
-          className="h-full border-0 bg-transparent px-1 text-base shadow-none focus-visible:ring-0"
+          className="h-full border-0 bg-transparent px-1.5 text-sm font-medium text-neutral-800 shadow-none focus-visible:ring-0"
         />
       </div>
-      <p
-        id="username-status"
-        aria-live="polite"
-        className={isAvailable ? "text-xs text-emerald-700" : "text-xs text-muted-foreground"}
-      >
-        {statusText}
+
+      <p id="username-status" aria-live="polite" className="text-xs">
+        {isTaken ? (
+          <span className="text-red-700">Ese nombre de usuario ya está en uso.</span>
+        ) : isAvailable ? (
+          <span className="flex items-center gap-1.5 font-semibold text-emerald-700">
+            <Check className="size-3.5 shrink-0" aria-hidden="true" />
+            @{trimmed} está disponible
+          </span>
+        ) : (
+          <span className="text-neutral-500">
+            {trimmed !== "" && !isValidFormat ? FORMAT_HINT : trimmed !== "" ? "Revisando disponibilidad..." : FORMAT_HINT}
+          </span>
+        )}
       </p>
     </div>
   );
