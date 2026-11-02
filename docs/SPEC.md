@@ -1,6 +1,6 @@
 # SPEC — Ranking de Pollos de Cochabamba
 
-> Nombre provisional: **PolloRanking**. Cambiar cuando se decida el definitivo.
+> Nombre de marca en el diseño: **DeliCocha**. El nombre del proyecto en código/repo sigue siendo PolloRanking hasta decidir el dominio.
 
 ## 1. Qué es
 
@@ -15,12 +15,15 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 | Rol | Puede |
 |---|---|
 | Visitante | Ver ranking, ver perfil de cada pollería |
-| Usuario (logueado con Google) | Todo lo anterior + calificar, comentar, sugerir pollerías, reportar comentarios |
+| Usuario (logueado con Google o con correo y contraseña) | Todo lo anterior + calificar, comentar, sugerir pollerías, reportar comentarios |
 | Admin (solo el dueño del proyecto) | Todo lo anterior + aprobar/rechazar sugerencias, ocultar pollerías y comentarios, resolver reportes |
 
 ## 3. Modelo de datos
 
-**users**: id, google_id (único), name, email (único), avatar_url, role (`user` | `admin`), created_at
+**users**: id, username (único, nombre público), google_id (único, opcional), password_hash (opcional), name, email (único), avatar_url, role (`user` | `admin`), created_at
+- `username`: 3 a 20 caracteres, letras, números y guion bajo. Se compara sin distinguir mayúsculas (índice único sobre `lower(username)`). Es lo único que se muestra públicamente; nunca se muestra `name` ni `email`.
+- Constraint CHECK: al menos uno de `google_id` o `password_hash` debe tener valor. Postgres permite varios NULL en un índice único, por eso `google_id` puede ser opcional sin chocar entre cuentas de contraseña.
+- Cuentas de Google nuevas nacen sin `username` y deben elegirlo antes de poder calificar, comentar o sugerir.
 
 **restaurants**: id, name, slug (único), zone, address, maps_url, photo_url, status (`active` | `hidden`), created_at
 
@@ -34,7 +37,10 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 ## 4. Reglas de negocio
 
 1. Un usuario puede tener **una sola calificación por pollería**. Puede editarla, no duplicarla. Se garantiza con índice único en la base de datos, no solo en código.
-2. Para calificar hay que estar logueado.
+2. Para calificar hay que estar logueado y tener `username`.
+2a. **Dos formas de acceso**: Google, o correo y contraseña (registro propio). No hay verificación de correo ni recuperación de contraseña en v1: ambas requieren enviar correos y por ahora no hay dominio propio para hacerlo.
+2b. **No se unen cuentas automáticamente.** Si alguien entra con Google y su correo ya existe como cuenta de contraseña (o al revés), se rechaza con un mensaje que indica el método con el que se registró. Motivo: sin verificación de correo, unirlas permitiría que alguien se registre con el correo ajeno y conserve acceso después de que la víctima entre con Google.
+2c. Registro y login propios tienen rate limiting por IP (Upstash) para frenar cuentas falsas y fuerza bruta. Contraseña mínima de 8 caracteres, guardada solo como hash.
 3. Las sugerencias quedan en `pending` y **no aparecen públicamente** hasta que un admin las apruebe. Al aprobar se crea el `restaurant`.
 4. Antes de enviar una sugerencia, el sistema busca nombres parecidos y avisa si ya existe algo similar (evitar duplicados).
 5. Una pollería solo entra al ranking cuando tiene **al menos 10 calificaciones** (constante configurable). Antes aparece como "en votación".
@@ -46,6 +52,9 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 
 ## 5. Pantallas (mobile-first)
 
+- **Ingresar**: botón "Continuar con Google" + formulario de correo y contraseña + link a "Crear cuenta" y "Seguir viendo el ranking". Diseño en Stitch.
+- **Crear cuenta**: registro con Google o con `@usuario`, correo y contraseña. Diseño en Stitch.
+- **Elegir nombre de usuario**: onboarding tras el primer ingreso con Google. Diseño en Stitch.
 - **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir.
 - **Perfil de pollería**: foto, zona, mapa/link, promedio, nº de votos, comentarios recientes, botón "Calificar".
 - **Calificar**: estrellas grandes y táctiles + comentario opcional.
@@ -64,7 +73,7 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 
 ## 7. Stack
 
-Next.js (App Router) + TypeScript · Tailwind + shadcn/ui · PostgreSQL en Neon · Drizzle ORM · Auth.js con Google · Zod · Upstash Ratelimit · Vitest + Playwright · GitHub Actions · Deploy en Vercel.
+Next.js (App Router) + TypeScript · Tailwind + shadcn/ui · PostgreSQL en Neon · Drizzle ORM · Auth.js (Google + Credentials, sesiones JWT) · Zod · Upstash Ratelimit · Vitest + Playwright · GitHub Actions · Deploy en Vercel.
 
 ## 8. Plan de implementación
 
@@ -72,7 +81,7 @@ Next.js (App Router) + TypeScript · Tailwind + shadcn/ui · PostgreSQL en Neon 
 2. Neon + schema Drizzle + migración inicial + seed con 15–25 pollerías precargadas.
 3. Dominio puro: ranking bayesiano con tests unitarios.
 4. Ranking y perfil de pollería públicos (sin login).
-5. Auth con Google.
+5. Auth: Google, registro y login con correo y contraseña (librería de hash a definir), elección de `username`. Requiere migración nueva para `users`.
 6. Calificar (caso de uso + índice único + rate limiting).
 7. Sugerencias + panel de aprobación.
 8. Pulido: previews al compartir, SEO, estados vacíos, manejo de errores.
@@ -81,4 +90,4 @@ Next.js (App Router) + TypeScript · Tailwind + shadcn/ui · PostgreSQL en Neon 
 
 - ¿Panel de admin en rutas protegidas de Next.js desde la v1, o aprobar sugerencias directo en la base de datos al inicio?
 - ¿Fecha de cierre de votación (ej. fin de mes) o ranking continuo?
-- ¿Nombre definitivo del proyecto y dominio?
+- ¿Nombre definitivo del proyecto y dominio? (Con dominio propio se podrían agregar verificación de correo y recuperación de contraseña.)

@@ -22,15 +22,37 @@ export const reportStatus = pgEnum("report_status", ["open", "resolved"]);
 
 const createdAt = timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  googleId: text("google_id").notNull().unique(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  avatarUrl: text("avatar_url"),
-  role: userRole("role").notNull().default("user"),
-  createdAt,
-});
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // Nombre público (@usuario). Null hasta que la cuenta de Google lo elija en el onboarding.
+    username: varchar("username", { length: 20 }),
+    // Toda cuenta entra por Google, por contraseña, o por ambos. Varios NULL no chocan
+    // en un índice único, así que las cuentas de contraseña no se pisan entre sí.
+    googleId: text("google_id").unique(),
+    passwordHash: text("password_hash"),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    avatarUrl: text("avatar_url"),
+    role: userRole("role").notNull().default("user"),
+    createdAt,
+  },
+  (table) => [
+    // SPEC §3: el username es único sin distinguir mayúsculas.
+    uniqueIndex("users_username_lower_unique").on(sql`lower(${table.username})`),
+    // SPEC §3: toda cuenta entra por al menos un método.
+    check(
+      "users_auth_method_check",
+      sql`${table.googleId} is not null or ${table.passwordHash} is not null`,
+    ),
+    // Mismas reglas que src/domain/user/username.ts, respaldadas en la base.
+    check(
+      "users_username_format_check",
+      sql`${table.username} is null or ${table.username} ~ '^[a-zA-Z0-9_]{3,20}$'`,
+    ),
+  ],
+);
 
 export const restaurants = pgTable(
   "restaurants",
