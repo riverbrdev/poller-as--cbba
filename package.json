@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "node --env-file-if-exists=.env.local src/infrastructure/db/seed/index.ts"
+    "db:seed": "node --env-file-if-exists=.env.local src/infrastructure/db/seed/index.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
@@ -32,6 +33,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/bcryptjs": "3.0.0",
     "@types/node": "20.19.43",
