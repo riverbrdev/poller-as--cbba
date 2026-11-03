@@ -2,15 +2,15 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { CircleAlert, Utensils } from "lucide-react";
 
-/** Marca de DeliCocha: isotipo naranja y nombre con "Cocha" en color principal. */
+/** Marca de ComiDeli: isotipo naranja y nombre con "Deli" en color principal (diseño Stitch). */
 function Brand() {
   return (
     <Link href="/" className="inline-flex items-center gap-2 rounded-lg focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:outline-none">
       <span className="flex size-8 items-center justify-center rounded-xl bg-auth-brand text-white shadow-sm">
         <Utensils className="size-4" aria-hidden="true" />
       </span>
-      <span className="text-xl font-extrabold tracking-tight text-ink">
-        Deli<span className="text-auth-brand">Cocha</span>
+      <span className="text-xl font-extrabold tracking-tight text-auth-ink">
+        Comi<span className="text-auth-brand">Deli</span>
       </span>
     </Link>
   );
@@ -18,12 +18,12 @@ function Brand() {
 
 function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-line/80 bg-cream/90 px-4 backdrop-blur-md sm:px-8">
+    <header className="sticky top-0 z-40 w-full border-b border-auth-line/80 bg-auth-cream/90 px-4 backdrop-blur-md sm:px-8">
       <div className="mx-auto flex h-16 max-w-md items-center justify-between md:max-w-xl">
         <Brand />
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-ink-muted transition-colors hover:text-auth-brand"
+          className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-auth-ink-muted transition-colors hover:text-auth-brand"
         >
           Ver Ranking
         </Link>
@@ -34,8 +34,8 @@ function SiteHeader() {
 
 function SiteFooter() {
   return (
-    <footer className="w-full border-t border-line/80 bg-cream px-4 py-5 text-center">
-      <p className="text-xs text-ink-muted">© 2026 DeliCocha • El ranking comunitario de pollerías</p>
+    <footer className="w-full border-t border-auth-line/80 bg-auth-cream px-4 py-5 text-center">
+      <p className="text-xs text-auth-ink-muted">© 2026 ComiDeli • El ranking comunitario de pollerías</p>
     </footer>
   );
 }
@@ -52,18 +52,18 @@ type AuthCardProps = {
 /** Marco común de las pantallas de acceso (diseño Stitch): encabezado, tarjeta centrada y pie. */
 export function AuthCard({ icon, title, subtitle, topSlot, children }: AuthCardProps) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col bg-auth-cream text-auth-ink">
       <SiteHeader />
       <main className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12">
         <div className="w-full max-w-md">
-          <div className="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-[0_8px_30px_rgb(216,67,21,0.06)] sm:p-8">
+          <div className="flex flex-col rounded-3xl border border-auth-line bg-white p-6 shadow-[0_8px_30px_rgb(216,67,21,0.06)] sm:p-8">
             {topSlot}
             <div className="mb-6 text-center">
               <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl border border-orange-100 bg-auth-brand-soft text-auth-brand">
                 {icon}
               </div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[26px]">{title}</h1>
-              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{subtitle}</p>
+              <h1 className="text-2xl font-extrabold tracking-tight text-auth-ink sm:text-[26px]">{title}</h1>
+              <p className="mt-2 text-sm leading-relaxed text-auth-ink-muted">{subtitle}</p>
             </div>
             {children}
           </div>

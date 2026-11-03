@@ -79,7 +79,7 @@ async function UsernameOnboardingContent() {
     >
       <UsernameForm action={chooseUsernameAction} checkAvailability={checkUsernameAction} />
 
-      <div className="mt-6 border-t border-line pt-5 text-center">
+      <div className="mt-6 border-t border-auth-line pt-5 text-center">
         <p className="text-xs leading-relaxed text-neutral-500">
           Podrás empezar a calificar tus <span className="font-semibold text-gray-700">pollerías</span> favoritas de
           Cochabamba de inmediato.

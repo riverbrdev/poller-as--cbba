@@ -19,6 +19,10 @@
   --color-auth-brand: #d84315;
   --color-auth-brand-dark: #bf360c;
   --color-auth-brand-soft: #fff1eb;
+  --color-auth-cream: #fff8f5;
+  --color-auth-ink: #1f2937;
+  --color-auth-ink-muted: #4b5563;
+  --color-auth-line: #f0dfd5;
   --color-cream: #f8f5ef;
   --color-surface-soft: #f7f4ef;
   --color-ink: #1b1917;
@@ -71,7 +75,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* Color principal de DeliCocha (SPEC §5, diseño Stitch). Solo se define aquí. */
+  /* Color principal de ComiDeli (SPEC §5, diseño Stitch). Solo se define aquí. */
   --primary: #d84315;
   --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);

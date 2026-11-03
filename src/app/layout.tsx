@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-// Tipografía única de DeliCocha (diseño Stitch): Plus Jakarta Sans.
+// Tipografía única de ComiDeli (diseño Stitch): Plus Jakarta Sans.
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
@@ -12,15 +12,15 @@ const jakarta = Plus_Jakarta_Sans({
 const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gente.";
 
 export const metadata: Metadata = {
-  title: "DeliCocha",
+  title: "ComiDeli",
   description: DESCRIPTION,
   // Para que el enlace se vea bien al compartirlo por WhatsApp o Facebook (CLAUDE.md).
   openGraph: {
-    title: "DeliCocha",
+    title: "ComiDeli",
     description: DESCRIPTION,
     type: "website",
     locale: "es_BO",
-    siteName: "DeliCocha",
+    siteName: "ComiDeli",
   },
 };
 

@@ -49,7 +49,7 @@ export function LoginForm({ action, initialError, registerHref }: LoginFormProps
         {pending ? "Ingresando..." : "Ingresar"}
       </Button>
 
-      <p className="text-center text-sm text-ink-muted">
+      <p className="text-center text-sm text-auth-ink-muted">
         ¿No tienes cuenta?{" "}
         <Link
           href={registerHref}

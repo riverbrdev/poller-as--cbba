@@ -7,7 +7,7 @@ import { AuthCard, AuthDivider } from "@/components/auth/auth-card";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { LoginForm } from "@/components/auth/login-form";
 
-const TITLE = "Ingresa a DeliCocha";
+const TITLE = "Ingresa a ComiDeli";
 const DESCRIPTION = "Inicia sesión con Google para calificar pollerías y sugerir nuevas.";
 
 export const metadata: Metadata = {
