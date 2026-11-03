@@ -35,7 +35,7 @@ export function LoginForm({ action, initialError, registerHref }: LoginFormProps
           autoComplete="email"
           placeholder="ejemplo@correo.com"
           required
-          className="h-12 rounded-xl border-[1.5px] border-neutral-300 bg-white px-3.5 text-sm text-neutral-800 shadow-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand"
+          className="h-12 rounded-xl border-[1.5px] border-neutral-300 bg-white px-3.5 text-sm text-neutral-800 shadow-none focus-visible:border-auth-brand focus-visible:ring-2 focus-visible:ring-auth-brand"
         />
       </div>
 
@@ -44,7 +44,7 @@ export function LoginForm({ action, initialError, registerHref }: LoginFormProps
       <Button
         type="submit"
         disabled={pending}
-        className="mt-1 h-12 w-full rounded-xl bg-brand text-base font-bold text-white shadow-md hover:bg-brand-dark"
+        className="mt-1 h-12 w-full rounded-xl bg-auth-brand text-base font-bold text-white shadow-md hover:bg-auth-brand-dark"
       >
         {pending ? "Ingresando..." : "Ingresar"}
       </Button>
@@ -53,7 +53,7 @@ export function LoginForm({ action, initialError, registerHref }: LoginFormProps
         ¿No tienes cuenta?{" "}
         <Link
           href={registerHref}
-          className="inline-flex min-h-11 items-center font-bold text-brand underline-offset-2 hover:text-brand-dark hover:underline"
+          className="inline-flex min-h-11 items-center font-bold text-auth-brand underline-offset-2 hover:text-auth-brand-dark hover:underline"
         >
           Crear cuenta
         </Link>

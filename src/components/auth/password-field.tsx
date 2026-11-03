@@ -64,13 +64,13 @@ export function PasswordField({ id, label, autoComplete, showStrength = false }:
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder={showStrength ? "Crea una contraseña segura" : undefined}
-          className="h-12 rounded-xl border-[1.5px] border-neutral-300 bg-white pr-12 pl-3.5 text-sm text-neutral-800 shadow-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand"
+          className="h-12 rounded-xl border-[1.5px] border-neutral-300 bg-white pr-12 pl-3.5 text-sm text-neutral-800 shadow-none focus-visible:border-auth-brand focus-visible:ring-2 focus-visible:ring-auth-brand"
         />
         <button
           type="button"
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"}
-          className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-neutral-500 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+          className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-neutral-500 hover:text-neutral-700 focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:outline-none"
         >
           {visible ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
         </button>

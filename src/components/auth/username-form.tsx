@@ -26,7 +26,7 @@ export function UsernameForm({ action, checkAvailability }: UsernameFormProps) {
       <Button
         type="submit"
         disabled={pending}
-        className="group h-12 w-full gap-2 rounded-xl bg-brand text-base font-bold text-white shadow-md shadow-brand/25 hover:bg-brand-dark"
+        className="group h-12 w-full gap-2 rounded-xl bg-auth-brand text-base font-bold text-white shadow-md shadow-auth-brand/25 hover:bg-auth-brand-dark"
       >
         {pending ? "Guardando..." : "Continuar"}
         {pending ? null : <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />}

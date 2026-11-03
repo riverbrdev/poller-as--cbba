@@ -9,9 +9,19 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gente.";
+
 export const metadata: Metadata = {
   title: "DeliCocha",
-  description: "El ranking del mejor pollo de Cochabamba, votado por la gente.",
+  description: DESCRIPTION,
+  // Para que el enlace se vea bien al compartirlo por WhatsApp o Facebook (CLAUDE.md).
+  openGraph: {
+    title: "DeliCocha",
+    description: DESCRIPTION,
+    type: "website",
+    locale: "es_BO",
+    siteName: "DeliCocha",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

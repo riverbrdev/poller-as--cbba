@@ -3,15 +3,19 @@
 import { createAuthenticateWithPassword } from "@/application/user/authenticate-with-password";
 import { createCheckUsernameAvailability } from "@/application/user/check-username-availability";
 import { createChooseUsername } from "@/application/user/choose-username";
+import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createGetUserById } from "@/application/user/get-user-by-id";
 import { createRegisterWithPassword } from "@/application/user/register-with-password";
 import { createSignInWithGoogle } from "@/application/user/sign-in-with-google";
 import { bcryptPasswordHasher } from "@/infrastructure/auth/bcrypt-password-hasher";
 import { createDb } from "@/infrastructure/db/client";
+import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
 import { createDrizzleUserRepository } from "@/infrastructure/db/user-repository";
 import { RATE_LIMIT_RULES, createIpRateLimiter } from "@/infrastructure/ratelimit/upstash";
 
-const users = createDrizzleUserRepository(createDb());
+const db = createDb();
+const users = createDrizzleUserRepository(db);
+const restaurants = createDrizzleRestaurantRepository(db);
 const hasher = bcryptPasswordHasher;
 
 export const useCases = {
@@ -21,6 +25,7 @@ export const useCases = {
   chooseUsername: createChooseUsername({ users }),
   checkUsernameAvailability: createCheckUsernameAvailability({ users }),
   getUserById: createGetUserById({ users }),
+  listActiveRestaurants: createListActiveRestaurants({ restaurants }),
 };
 
 // Helper de petición: app/ lo toma de aquí porque no puede importar infrastructure/ directamente.
