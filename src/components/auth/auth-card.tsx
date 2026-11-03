@@ -5,12 +5,12 @@ import { CircleAlert, Utensils } from "lucide-react";
 /** Marca de DeliCocha: isotipo naranja y nombre con "Cocha" en color principal. */
 function Brand() {
   return (
-    <Link href="/" className="inline-flex items-center gap-2 rounded-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none">
-      <span className="flex size-8 items-center justify-center rounded-xl bg-brand text-white shadow-sm">
+    <Link href="/" className="inline-flex items-center gap-2 rounded-lg focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:outline-none">
+      <span className="flex size-8 items-center justify-center rounded-xl bg-auth-brand text-white shadow-sm">
         <Utensils className="size-4" aria-hidden="true" />
       </span>
       <span className="text-xl font-extrabold tracking-tight text-ink">
-        Deli<span className="text-brand">Cocha</span>
+        Deli<span className="text-auth-brand">Cocha</span>
       </span>
     </Link>
   );
@@ -23,7 +23,7 @@ function SiteHeader() {
         <Brand />
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-ink-muted transition-colors hover:text-brand"
+          className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-ink-muted transition-colors hover:text-auth-brand"
         >
           Ver Ranking
         </Link>
@@ -59,7 +59,7 @@ export function AuthCard({ icon, title, subtitle, topSlot, children }: AuthCardP
           <div className="flex flex-col rounded-3xl border border-line bg-white p-6 shadow-[0_8px_30px_rgb(216,67,21,0.06)] sm:p-8">
             {topSlot}
             <div className="mb-6 text-center">
-              <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl border border-orange-100 bg-brand-soft text-brand">
+              <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl border border-orange-100 bg-auth-brand-soft text-auth-brand">
                 {icon}
               </div>
               <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[26px]">{title}</h1>

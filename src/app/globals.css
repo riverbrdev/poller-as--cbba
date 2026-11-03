@@ -15,6 +15,10 @@
   --color-brand-dark: #c53d08;
   --color-brand-soft: #fff0e7;
   --color-brand-ink: #bc420b;
+  /* Pantallas de acceso (login, registro, onboarding): colores del diseño Stitch, separados de la home. */
+  --color-auth-brand: #d84315;
+  --color-auth-brand-dark: #bf360c;
+  --color-auth-brand-soft: #fff1eb;
   --color-cream: #f8f5ef;
   --color-surface-soft: #f7f4ef;
   --color-ink: #1b1917;

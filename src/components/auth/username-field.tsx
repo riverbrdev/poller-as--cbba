@@ -42,7 +42,7 @@ export function UsernameField({ checkAvailability }: UsernameFieldProps) {
     ? "border-emerald-500 focus-within:ring-emerald-500/20"
     : isTaken
       ? "border-red-400 focus-within:ring-red-400/20"
-      : "border-neutral-300 focus-within:border-brand focus-within:ring-brand";
+      : "border-neutral-300 focus-within:border-auth-brand focus-within:ring-auth-brand";
 
   return (
     <div className="grid gap-1.5">

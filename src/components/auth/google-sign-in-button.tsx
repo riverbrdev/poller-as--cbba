@@ -20,7 +20,7 @@ export function GoogleSignInButton({ action, label }: GoogleSignInButtonProps) {
     <form action={action}>
       <button
         type="submit"
-        className="flex min-h-[50px] w-full items-center justify-center gap-3 rounded-xl border border-[#DADCE0] bg-white px-4 py-3 text-base font-semibold tracking-tight text-neutral-800 shadow-sm transition-all duration-150 hover:bg-neutral-50 hover:shadow focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none active:bg-neutral-100"
+        className="flex min-h-[50px] w-full items-center justify-center gap-3 rounded-xl border border-[#DADCE0] bg-white px-4 py-3 text-base font-semibold tracking-tight text-neutral-800 shadow-sm transition-all duration-150 hover:bg-neutral-50 hover:shadow focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:ring-offset-2 focus-visible:outline-none active:bg-neutral-100"
       >
         <GoogleIcon />
         {label}

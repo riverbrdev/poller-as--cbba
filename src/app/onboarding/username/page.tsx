@@ -58,7 +58,7 @@ async function UsernameOnboardingContent() {
       topSlot={
         <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-[#FCE6DC] bg-[#FFF6F2] p-3">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFE5D9] text-sm font-bold text-brand ring-1 ring-brand/20">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#FFE5D9] text-sm font-bold text-auth-brand ring-1 ring-auth-brand/20">
               {initialsFrom(session.user.name, session.user.email)}
             </div>
             <div className="min-w-0">
@@ -69,7 +69,7 @@ async function UsernameOnboardingContent() {
           <form action={signOutAction} className="shrink-0">
             <button
               type="submit"
-              className="inline-flex min-h-11 items-center rounded-lg px-2.5 text-xs font-semibold text-neutral-500 transition-colors hover:bg-white/80 hover:text-brand"
+              className="inline-flex min-h-11 items-center rounded-lg px-2.5 text-xs font-semibold text-neutral-500 transition-colors hover:bg-white/80 hover:text-auth-brand"
             >
               Cerrar sesión
             </button>

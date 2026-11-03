@@ -45,7 +45,7 @@ async function LoginContent({ searchParams }: LoginPageProps) {
       <div className="mt-4 border-t border-neutral-100 pt-4 text-center">
         <Link
           href="/"
-          className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-neutral-600 transition-colors hover:bg-orange-50/60 hover:text-brand"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-neutral-600 transition-colors hover:bg-orange-50/60 hover:text-auth-brand"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Seguir viendo el ranking
