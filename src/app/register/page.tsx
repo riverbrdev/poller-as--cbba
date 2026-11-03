@@ -22,7 +22,7 @@ export default function RegisterPage() {
       <AuthDivider label="o" />
       <RegisterForm action={registerAction} checkAvailability={checkUsernameAction} />
 
-      <p className="mt-5 text-center text-sm text-ink-muted">
+      <p className="mt-5 text-center text-sm text-auth-ink-muted">
         ¿Ya tienes cuenta?{" "}
         <Link
           href="/login"

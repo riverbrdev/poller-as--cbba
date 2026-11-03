@@ -1,6 +1,6 @@
 # SPEC — Ranking de Pollos de Cochabamba
 
-> Nombre de marca en el diseño: **DeliCocha**. El nombre del proyecto en código/repo sigue siendo PolloRanking hasta decidir el dominio.
+> Nombre de marca: **ComiDeli** (en toda la app y en Stitch). El nombre del proyecto en código/repo sigue siendo PolloRanking hasta decidir el dominio.
 
 ## 1. Qué es
 
