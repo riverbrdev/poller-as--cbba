@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { UtensilsCrossed } from "lucide-react";
+import { Suspense } from "react";
+import { HeaderAccount } from "@/app/_components/header-account";
 import { getActiveRestaurants } from "@/app/_data/restaurants";
+import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 
@@ -9,18 +10,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-cream text-ink">
-      <header className="border-b border-line bg-white shadow-sm">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-black tracking-tight">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-white"><UtensilsCrossed size={18} aria-hidden="true" /></span>
-            ComiDeli <span className="rounded bg-brand-soft px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-ink">Cochabamba</span>
-          </Link>
-          <nav aria-label="Navegación principal" className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-wide sm:gap-6">
-            <a href="#locales" className="hover:text-brand">El roster</a>
-            <Link href="/login" className="rounded-xl bg-brand px-4 py-3 text-white hover:bg-brand-dark">Participar</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
 
       <main>
         <section className="mx-auto grid max-w-7xl gap-8 px-5 pb-10 pt-12 sm:px-8 lg:grid-cols-[1fr_17rem] lg:items-center lg:pb-14 lg:pt-16">

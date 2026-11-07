@@ -58,11 +58,11 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 - **Ingresar**: botón "Continuar con Google" + formulario de correo y contraseña + link a "Crear cuenta" y "Seguir viendo el ranking". Diseño en Stitch.
 - **Crear cuenta**: registro con Google o con `@usuario`, correo y contraseña. Diseño en Stitch.
 - **Elegir nombre de usuario**: onboarding tras el primer ingreso con Google. Diseño en Stitch.
-- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir. Cada tarjeta tiene los botones "Votar" (lleva a Calificar) y "Mapa" (abre la ubicación de la pollería).
+- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir. Cada tarjeta tiene los botones "Votar" (lleva a Calificar) y "Mapa" (abre la ubicación de la pollería). En el header, quien no ingresó ve "Participar"; con sesión se ve su avatar, que abre un menú con "Mi perfil" y "Cerrar sesión".
 - **Perfil de pollería**: foto, zona, mapa/link, promedio, nº de votos, comentarios recientes, botón "Calificar".
 - **Calificar** (`/calificar/[slug]`): 4 criterios (Sabor y crocancia, Cantidad y porción, Atención y rapidez, Local) con escala segmentada del 1 al 10, nota general en vivo, barra de progreso y comentario opcional. Si el usuario ya votó, ve sus notas en solo lectura. Diseño en Stitch.
 - **Sugerir pollería**: formulario corto con aviso de posibles duplicados.
-- **Mi perfil**: mis calificaciones y estado de mis sugerencias.
+- **Mi perfil** (`/mi-perfil`, requiere sesión): hoy muestra los datos de la cuenta (avatar o iniciales, nombre, `@usuario`, correo y forma de ingreso: Google o correo y contraseña) y el botón "Cerrar sesión". Pendiente: mis calificaciones y estado de mis sugerencias. Diseño en Stitch.
 - **Admin** (protegido): cola de sugerencias, reportes, ocultar pollerías/comentarios.
 - **Compartir**: preview (Open Graph) en cada perfil y en el ranking.
 
