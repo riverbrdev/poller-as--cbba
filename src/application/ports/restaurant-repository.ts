@@ -13,4 +13,6 @@ export type RestaurantRecord = {
 export interface RestaurantRepository {
   /** Solo pollerías con status `active`, en el orden en que se agregaron. */
   listActive(): Promise<RestaurantRecord[]>;
+  /** La pollería con ese slug, solo si está `active`. Si no existe o está oculta, `null`. */
+  findActiveBySlug(slug: string): Promise<RestaurantRecord | null>;
 }

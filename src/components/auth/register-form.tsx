@@ -13,14 +13,17 @@ import { UsernameField } from "./username-field";
 type RegisterFormProps = {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   checkAvailability: (username: string) => Promise<{ available: boolean | null }>;
+  /** Ruta interna a la que volver después de crear la cuenta. */
+  callbackUrl?: string;
 };
 
-export function RegisterForm({ action, checkAvailability }: RegisterFormProps) {
+export function RegisterForm({ action, checkAvailability, callbackUrl }: RegisterFormProps) {
   const [state, formAction, pending] = useActionState(action, { error: null });
   const errorMessage = authMessage(state.error);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      {callbackUrl ? <input type="hidden" name="callbackUrl" value={callbackUrl} /> : null}
       {errorMessage ? <AuthAlert message={errorMessage} /> : null}
 
       <UsernameField checkAvailability={checkAvailability} />

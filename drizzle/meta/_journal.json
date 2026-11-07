@@ -15,6 +15,20 @@
       "when": 1793593483389,
       "tag": "0001_users_auth_username",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794018972164,
+      "tag": "0002_ratings_criteria_scores",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794018978466,
+      "tag": "0003_ratings_drop_stars",
+      "breakpoints": true
     }
   ]
 }

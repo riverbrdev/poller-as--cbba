@@ -105,9 +105,9 @@ test.describe("ingreso con correo y contraseña", () => {
 });
 
 test.describe("acceso protegido", () => {
-  test("mandar a calificar sin sesión lleva a iniciar sesión", async ({ page }) => {
+  test("mandar a calificar sin sesión lleva a iniciar sesión, recordando a dónde volver", async ({ page }) => {
     await page.goto("/calificar/lolo-chicken");
-    await expect(page).toHaveURL(/\/login$/);
+    await expect(page).toHaveURL(/\/login\?callbackUrl=%2Fcalificar%2Flolo-chicken$/);
   });
 
   test("la pantalla de elegir username exige sesión", async ({ page }) => {
@@ -117,20 +117,32 @@ test.describe("acceso protegido", () => {
 });
 
 test.describe("cuenta de Google sin username", () => {
-  test("al entrar a una ruta protegida va a elegir username y luego entra", async ({ context, page }) => {
+  test("al entrar a una ruta protegida va a elegir username y luego vuelve a esa ruta", async ({ context, page }) => {
     const user = await createGoogleUserWithoutUsername();
     await signInAsGoogleUser(context, user);
 
     await page.goto("/calificar/lolo-chicken");
-    await expect(page).toHaveURL(/\/onboarding\/username$/);
+    await expect(page).toHaveURL(/\/onboarding\/username\?callbackUrl=%2Fcalificar%2Flolo-chicken$/);
 
     const username = e2eUsername();
     await page.getByLabel("Nombre de usuario", { exact: true }).fill(username);
     await expect(page.getByText("está disponible")).toBeVisible();
     await page.getByRole("button", { name: "Continuar", exact: true }).click();
 
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/calificar/lolo-chicken");
     expect((await currentSession(page))?.user?.username).toBe(username);
+  });
+
+  test("sin ruta pendiente, después de elegir username va al inicio", async ({ context, page }) => {
+    const user = await createGoogleUserWithoutUsername();
+    await signInAsGoogleUser(context, user);
+
+    await page.goto("/onboarding/username");
+    await page.getByLabel("Nombre de usuario", { exact: true }).fill(e2eUsername());
+    await expect(page.getByText("está disponible")).toBeVisible();
+    await page.getByRole("button", { name: "Continuar", exact: true }).click();
+
+    await expect(page).toHaveURL("/");
   });
 
   test("no puede elegir un username que ya tiene otra cuenta", async ({ context, page }) => {

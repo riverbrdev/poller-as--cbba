@@ -10,9 +10,16 @@ import {
   loginSchema,
   registerSchema,
 } from "@/app/_lib/auth-schemas";
+import { safeCallbackPath } from "@/domain/user/access";
 
 // Los errores se devuelven como códigos. El texto visible vive en components/auth/messages.ts.
 const firstIssue = (issues: { message: string }[], fallback: string) => issues[0]?.message ?? fallback;
+
+/** A dónde volver tras ingresar: el `callbackUrl` del formulario si es una ruta interna; si no, el inicio. */
+function destinationFrom(formData: FormData): string {
+  const value = formData.get("callbackUrl");
+  return safeCallbackPath(typeof value === "string" ? value : null);
+}
 
 export async function loginWithPasswordAction(_state: FormState, formData: FormData): Promise<FormState> {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
@@ -33,7 +40,7 @@ export async function loginWithPasswordAction(_state: FormState, formData: FormD
     }
     throw error;
   }
-  redirect("/");
+  redirect(destinationFrom(formData));
 }
 
 // Auth.js serializa su error como objeto plano en la acción: se reconoce por `type`, no por instanceof.
@@ -46,10 +53,11 @@ function isCredentialsSignin(error: unknown): error is { type: "CredentialsSigni
   );
 }
 
-export async function loginWithGoogleAction(): Promise<void> {
+export async function loginWithGoogleAction(formData: FormData): Promise<void> {
   // Una cuenta de Google nueva no tiene @usuario: la pantalla de onboarding lo pide,
-  // y manda a la home a quien ya lo tiene.
-  await signIn("google", { redirectTo: "/onboarding/username" });
+  // y manda al destino (o a la home) a quien ya lo tiene.
+  const destination = destinationFrom(formData);
+  await signIn("google", { redirectTo: `/onboarding/username?callbackUrl=${encodeURIComponent(destination)}` });
 }
 
 export async function registerAction(_state: FormState, formData: FormData): Promise<FormState> {
@@ -76,7 +84,7 @@ export async function registerAction(_state: FormState, formData: FormData): Pro
   await signIn("credentials", {
     email: parsed.data.email,
     password: parsed.data.password,
-    redirectTo: "/",
+    redirectTo: destinationFrom(formData),
   });
   return { error: null };
 }
@@ -99,7 +107,7 @@ export async function chooseUsernameAction(_state: FormState, formData: FormData
 
   // Refresca el token para que el proxy deje pasar sin volver a pedir username.
   await unstable_update({});
-  redirect("/");
+  redirect(destinationFrom(formData));
 }
 
 /** Para el aviso "disponible" mientras la persona escribe. `available` es null si el formato es inválido. */

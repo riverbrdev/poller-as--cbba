@@ -10,3 +10,10 @@ export async function getActiveRestaurants() {
   cacheLife("minutes");
   return useCases.listActiveRestaurants();
 }
+
+/** Pollería de la página de calificar. Es pública (no depende del usuario), así que también se cachea. */
+export async function getRestaurantBySlug(slug: string) {
+  "use cache";
+  cacheLife("minutes");
+  return useCases.getRestaurantBySlug(slug);
+}

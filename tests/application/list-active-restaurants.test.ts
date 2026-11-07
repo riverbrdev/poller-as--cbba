@@ -14,6 +14,7 @@ const restaurant = (name: string, zone: string): RestaurantRecord => ({
 
 const repositoryWith = (records: RestaurantRecord[]): RestaurantRepository => ({
   listActive: async () => records,
+  findActiveBySlug: async (slug) => records.find((record) => record.slug === slug) ?? null,
 });
 
 describe("listActiveRestaurants", () => {

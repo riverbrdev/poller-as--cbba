@@ -81,17 +81,25 @@ export const ratings = pgTable(
     restaurantId: uuid("restaurant_id")
       .notNull()
       .references(() => restaurants.id, { onDelete: "cascade" }),
-    stars: smallint("stars").notNull(),
+    // SPEC §3: cuatro criterios fijos, cada uno del 1 al 10 (ver src/domain/rating/criteria.ts).
+    flavorScore: smallint("flavor_score").notNull(),
+    portionScore: smallint("portion_score").notNull(),
+    serviceScore: smallint("service_score").notNull(),
+    placeScore: smallint("place_score").notNull(),
     comment: varchar("comment", { length: 280 }),
     status: ratingStatus("status").notNull().default("visible"),
     createdAt,
+    // Sin uso en v1: los votos no se editan (SPEC regla 1).
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
     // SPEC regla 1: una sola calificación por usuario y pollería, garantizado por la base.
     uniqueIndex("ratings_user_restaurant_unique").on(table.userId, table.restaurantId),
     index("ratings_restaurant_idx").on(table.restaurantId),
-    check("ratings_stars_range", sql`${table.stars} between 1 and 5`),
+    check("ratings_flavor_score_range", sql`${table.flavorScore} between 1 and 10`),
+    check("ratings_portion_score_range", sql`${table.portionScore} between 1 and 10`),
+    check("ratings_service_score_range", sql`${table.serviceScore} between 1 and 10`),
+    check("ratings_place_score_range", sql`${table.placeScore} between 1 and 10`),
   ],
 );
 
