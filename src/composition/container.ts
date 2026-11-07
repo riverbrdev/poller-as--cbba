@@ -7,6 +7,7 @@ import { createGetMyRating } from "@/application/rating/get-my-rating";
 import { createRateRestaurant } from "@/application/rating/rate-restaurant";
 import { createGetRestaurantBySlug } from "@/application/restaurant/get-restaurant-by-slug";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
+import { createGetMyProfile } from "@/application/user/get-my-profile";
 import { createGetUserById } from "@/application/user/get-user-by-id";
 import { createRegisterWithPassword } from "@/application/user/register-with-password";
 import { createSignInWithGoogle } from "@/application/user/sign-in-with-google";
@@ -30,6 +31,7 @@ export const useCases = {
   chooseUsername: createChooseUsername({ users }),
   checkUsernameAvailability: createCheckUsernameAvailability({ users }),
   getUserById: createGetUserById({ users }),
+  getMyProfile: createGetMyProfile({ users }),
   listActiveRestaurants: createListActiveRestaurants({ restaurants }),
   getRestaurantBySlug: createGetRestaurantBySlug({ restaurants }),
   rateRestaurant: createRateRestaurant({ users, restaurants, ratings }),
