@@ -6,6 +6,7 @@ import { UserRound } from "lucide-react";
 import { checkUsernameAction, chooseUsernameAction, signOutAction } from "@/app/_actions/auth";
 import { AuthCard } from "@/components/auth/auth-card";
 import { UsernameForm } from "@/components/auth/username-form";
+import { initialsFrom } from "@/components/account/initials";
 import { auth } from "@/composition/auth";
 import { safeCallbackPath } from "@/domain/user/access";
 
@@ -30,18 +31,6 @@ export default function UsernameOnboardingPage({ searchParams }: UsernameOnboard
       <UsernameOnboardingContent searchParams={searchParams} />
     </Suspense>
   );
-}
-
-// Iniciales del nombre de Google para el avatar (por ejemplo "Juan Pérez" → "JP").
-function initialsFrom(name: string | null | undefined, email: string | null | undefined): string {
-  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  if (words.length > 0) {
-    return words
-      .slice(0, 2)
-      .map((word) => word[0]?.toUpperCase() ?? "")
-      .join("");
-  }
-  return (email?.[0] ?? "?").toUpperCase();
 }
 
 async function UsernameOnboardingContent({ searchParams }: UsernameOnboardingPageProps) {
