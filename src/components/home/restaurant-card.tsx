@@ -1,9 +1,11 @@
 import Image from "next/image";
-import { ArrowRight, MapPin, Star, UtensilsCrossed } from "lucide-react";
+import Link from "next/link";
+import { MapPin, Star, UtensilsCrossed, Vote } from "lucide-react";
 
 /** Lo que la tarjeta necesita de una pollería. `photoUrl` y `mapsUrl` son opcionales en la BD. */
 export type RestaurantCardData = {
   name: string;
+  slug: string;
   zone: string;
   address: string;
   photoUrl: string | null;
@@ -54,19 +56,32 @@ export function RestaurantCard({ restaurant, priority = false }: RestaurantCardP
             <Star size={14} className="text-brand" aria-hidden="true" />
             Sin calificaciones aún
           </p>
-          <p className="mt-1 text-xs leading-5 text-ink-muted">Pronto podrás calificar sabor, precio, cantidad y atención.</p>
+          <p className="mt-1 text-xs leading-5 text-ink-muted">Califica sabor, porción, atención y local.</p>
         </div>
 
-        {restaurant.mapsUrl ? (
-          <a
-            href={restaurant.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-auto inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
+        {/* Votar (principal) y Mapa (secundario) en una sola fila, al alcance del pulgar. */}
+        <div className="mt-auto flex gap-2">
+          <Link
+            href={`/calificar/${restaurant.slug}`}
+            aria-label={`Votar por ${restaurant.name}`}
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
           >
-            Ver en Maps <ArrowRight size={15} aria-hidden="true" />
-          </a>
-        ) : null}
+            <Vote size={16} aria-hidden="true" />
+            Votar
+          </Link>
+          {restaurant.mapsUrl ? (
+            <a
+              href={restaurant.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Ver ubicación de ${restaurant.name} en el mapa`}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-line-strong bg-white px-4 text-sm font-bold text-ink transition-colors hover:border-brand hover:text-brand-ink active:scale-[0.98]"
+            >
+              <MapPin size={16} aria-hidden="true" />
+              Mapa
+            </a>
+          ) : null}
+        </div>
       </div>
     </article>
   );

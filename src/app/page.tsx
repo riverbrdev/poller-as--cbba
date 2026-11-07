@@ -27,7 +27,7 @@ export default async function Home() {
           <div>
             <p className="mb-4 inline-flex rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-widest text-brand-ink">Ranking broaster Cochabamba 2026</p>
             <h1 className="max-w-3xl text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">El ranking definitivo del <span className="text-brand  decoration-wavy decoration-[3px] underline-offset-8">pollo broaster</span> en Cochabamba</h1>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-ink-muted sm:text-base">Conoce las pollerías de la ciudad. Pronto podrás calificar sabor, precio, cantidad y atención para construir un ranking hecho por la comunidad.</p>
+            <p className="mt-6 max-w-2xl text-sm leading-7 text-ink-muted sm:text-base">Conoce las pollerías de la ciudad. Califica sabor, porción, atención y local para construir un ranking hecho por la comunidad.</p>
           </div>
           <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_8px_25px_rgba(58,35,20,0.06)]">
             <div className="mb-4 flex items-center justify-between gap-2"><span className="text-[11px] font-extrabold uppercase tracking-wide">Roster inicial</span><span className="text-xs font-bold text-brand">Cochabamba</span></div>
