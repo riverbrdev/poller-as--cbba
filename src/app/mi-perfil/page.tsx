@@ -8,7 +8,7 @@ import { signOutAction } from "@/app/_actions/auth";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { ACCOUNT_TEXT } from "@/components/account/messages";
 import { ProfileCard } from "@/components/account/profile-card";
-import { PROFILE_HREF } from "@/components/account/user-menu";
+import { PROFILE_HREF } from "@/components/account/routes";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 import { auth } from "@/composition/auth";
 import { useCases } from "@/composition/container";

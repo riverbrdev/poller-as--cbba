@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ACCOUNT_TEXT } from "./messages";
+import { PROFILE_HREF } from "./routes";
 import { UserAvatar } from "./user-avatar";
 
 export type MenuUser = {
@@ -24,8 +25,6 @@ type UserMenuProps = {
   /** Server action que cierra la sesión. Llega por props: components/ no importa de app/. */
   signOut: () => Promise<void>;
 };
-
-export const PROFILE_HREF = "/mi-perfil";
 
 const ITEM_CLASS = "min-h-11 gap-3 rounded-xl px-3 text-sm font-semibold";
 const ICON_BOX_CLASS = "flex size-8 items-center justify-center rounded-lg";
