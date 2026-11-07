@@ -43,7 +43,7 @@ export function RestaurantCatalog({ restaurants, zones }: RestaurantCatalogProps
   };
 
   return (
-    <section id="locales" aria-labelledby="locales-title" className="mx-auto max-w-7xl scroll-mt-4 px-5 pb-16 pt-12 sm:px-8">
+    <section id="locales" aria-labelledby="locales-title" className="mx-auto max-w-7xl scroll-mt-24 px-5 pb-16 pt-12 sm:px-8">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-widest text-brand">Catálogo completo</p>
