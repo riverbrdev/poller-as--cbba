@@ -1,6 +1,8 @@
 type GoogleSignInButtonProps = {
-  action: () => Promise<void>;
+  action: (formData: FormData) => Promise<void>;
   label: string;
+  /** Ruta interna a la que volver después de ingresar (por ejemplo, el formulario de calificar). */
+  callbackUrl?: string;
 };
 
 // Isotipo oficial de Google (colores de la marca, no del tema).
@@ -15,9 +17,10 @@ function GoogleIcon() {
   );
 }
 
-export function GoogleSignInButton({ action, label }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ action, label, callbackUrl }: GoogleSignInButtonProps) {
   return (
     <form action={action}>
+      {callbackUrl ? <input type="hidden" name="callbackUrl" value={callbackUrl} /> : null}
       <button
         type="submit"
         className="flex min-h-[50px] w-full items-center justify-center gap-3 rounded-xl border border-[#DADCE0] bg-white px-4 py-3 text-base font-semibold tracking-tight text-neutral-800 shadow-sm transition-all duration-150 hover:bg-neutral-50 hover:shadow focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:ring-offset-2 focus-visible:outline-none active:bg-neutral-100"

@@ -7,6 +7,7 @@ import { checkUsernameAction, chooseUsernameAction, signOutAction } from "@/app/
 import { AuthCard } from "@/components/auth/auth-card";
 import { UsernameForm } from "@/components/auth/username-form";
 import { auth } from "@/composition/auth";
+import { safeCallbackPath } from "@/domain/user/access";
 
 const TITLE = "Elige tu nombre";
 const DESCRIPTION =
@@ -18,10 +19,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function UsernameOnboardingPage() {
+type UsernameOnboardingPageProps = {
+  // A dónde volver al terminar (por ejemplo, el formulario de calificar que la persona abrió).
+  searchParams: Promise<{ callbackUrl?: string }>;
+};
+
+export default function UsernameOnboardingPage({ searchParams }: UsernameOnboardingPageProps) {
   return (
     <Suspense>
-      <UsernameOnboardingContent />
+      <UsernameOnboardingContent searchParams={searchParams} />
     </Suspense>
   );
 }
@@ -38,7 +44,7 @@ function initialsFrom(name: string | null | undefined, email: string | null | un
   return (email?.[0] ?? "?").toUpperCase();
 }
 
-async function UsernameOnboardingContent() {
+async function UsernameOnboardingContent({ searchParams }: UsernameOnboardingPageProps) {
   // La sesión vive en cookies: la página se renderiza en cada petición.
   await connection();
   // Segunda verificación en el servidor: el proxy solo redirige, no autoriza.
@@ -46,8 +52,10 @@ async function UsernameOnboardingContent() {
   if (!session?.user.id) {
     redirect("/login");
   }
+  const { callbackUrl: rawCallbackUrl } = await searchParams;
+  const callbackUrl = rawCallbackUrl ? safeCallbackPath(rawCallbackUrl) : undefined;
   if (session.user.username) {
-    redirect("/");
+    redirect(callbackUrl ?? "/");
   }
 
   return (
@@ -77,7 +85,7 @@ async function UsernameOnboardingContent() {
         </div>
       }
     >
-      <UsernameForm action={chooseUsernameAction} checkAvailability={checkUsernameAction} />
+      <UsernameForm action={chooseUsernameAction} checkAvailability={checkUsernameAction} callbackUrl={callbackUrl} />
 
       <div className="mt-6 border-t border-auth-line pt-5 text-center">
         <p className="text-xs leading-relaxed text-neutral-500">

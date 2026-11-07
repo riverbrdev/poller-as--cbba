@@ -6,6 +6,7 @@ import { loginWithGoogleAction, loginWithPasswordAction } from "@/app/_actions/a
 import { AuthCard, AuthDivider } from "@/components/auth/auth-card";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { LoginForm } from "@/components/auth/login-form";
+import { safeCallbackPath } from "@/domain/user/access";
 
 const TITLE = "Ingresa a ComiDeli";
 const DESCRIPTION = "Inicia sesión con Google para calificar pollerías y sugerir nuevas.";
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 type LoginPageProps = {
   // Auth.js y los callbacks de Google devuelven aquí el motivo del error.
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
 };
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
@@ -30,7 +31,11 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 }
 
 async function LoginContent({ searchParams }: LoginPageProps) {
-  const { error } = await searchParams;
+  const { error, callbackUrl: rawCallbackUrl } = await searchParams;
+  // Solo rutas internas (evita redirecciones abiertas). Sin destino, se mantiene el flujo de siempre.
+  const callbackUrl = rawCallbackUrl ? safeCallbackPath(rawCallbackUrl) : undefined;
+  const wantsToRate = callbackUrl?.startsWith("/calificar/") ?? false;
+  const registerHref = callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/register";
 
   return (
     <AuthCard
@@ -38,9 +43,19 @@ async function LoginContent({ searchParams }: LoginPageProps) {
       title={TITLE}
       subtitle={DESCRIPTION}
     >
-      <GoogleSignInButton action={loginWithGoogleAction} label="Continuar con Google" />
+      {wantsToRate ? (
+        <p role="status" className="mb-4 rounded-xl border border-auth-line bg-auth-brand-soft px-3.5 py-3 text-center text-sm font-semibold text-auth-brand-dark">
+          Necesitas una cuenta para votar.
+        </p>
+      ) : null}
+      <GoogleSignInButton action={loginWithGoogleAction} label="Continuar con Google" callbackUrl={callbackUrl} />
       <AuthDivider label="o ingresa con tu correo" />
-      <LoginForm action={loginWithPasswordAction} initialError={error ?? null} registerHref="/register" />
+      <LoginForm
+        action={loginWithPasswordAction}
+        initialError={error ?? null}
+        registerHref={registerHref}
+        callbackUrl={callbackUrl}
+      />
 
       <div className="mt-4 border-t border-neutral-100 pt-4 text-center">
         <Link

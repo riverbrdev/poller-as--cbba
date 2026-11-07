@@ -14,14 +14,17 @@ type LoginFormProps = {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   initialError: string | null;
   registerHref: string;
+  /** Ruta interna a la que volver después de ingresar. */
+  callbackUrl?: string;
 };
 
-export function LoginForm({ action, initialError, registerHref }: LoginFormProps) {
+export function LoginForm({ action, initialError, registerHref, callbackUrl }: LoginFormProps) {
   const [state, formAction, pending] = useActionState(action, { error: initialError });
   const errorMessage = authMessage(state.error);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      {callbackUrl ? <input type="hidden" name="callbackUrl" value={callbackUrl} /> : null}
       {errorMessage ? <AuthAlert message={errorMessage} /> : null}
 
       <div className="grid gap-1.5">

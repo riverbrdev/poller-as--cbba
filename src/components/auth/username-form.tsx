@@ -11,14 +11,17 @@ import { UsernameField } from "./username-field";
 type UsernameFormProps = {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
   checkAvailability: (username: string) => Promise<{ available: boolean | null }>;
+  /** Ruta interna a la que volver después de elegir el nombre. */
+  callbackUrl?: string;
 };
 
-export function UsernameForm({ action, checkAvailability }: UsernameFormProps) {
+export function UsernameForm({ action, checkAvailability, callbackUrl }: UsernameFormProps) {
   const [state, formAction, pending] = useActionState(action, { error: null });
   const errorMessage = authMessage(state.error);
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
+      {callbackUrl ? <input type="hidden" name="callbackUrl" value={callbackUrl} /> : null}
       {errorMessage ? <AuthAlert message={errorMessage} /> : null}
 
       <UsernameField checkAvailability={checkAvailability} />
