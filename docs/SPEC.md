@@ -58,7 +58,7 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 - **Ingresar**: botón "Continuar con Google" + formulario de correo y contraseña + link a "Crear cuenta" y "Seguir viendo el ranking". Diseño en Stitch.
 - **Crear cuenta**: registro con Google o con `@usuario`, correo y contraseña. Diseño en Stitch.
 - **Elegir nombre de usuario**: onboarding tras el primer ingreso con Google. Diseño en Stitch.
-- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir. Cada tarjeta tiene los botones "Votar" (lleva a Calificar) y "Mapa" (abre la ubicación de la pollería). En el header, quien no ingresó ve "Participar"; con sesión se ve su avatar, que abre un menú con "Mi perfil" y "Cerrar sesión".
+- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir. Cada tarjeta tiene los botones "Votar" (lleva a Calificar) y "Mapa" (abre la ubicación de la pollería). El header queda fijo arriba al hacer scroll y entra en una sola fila a 360px (en celular se oculta el link "El roster"; el logo lleva al inicio). Quien no ingresó ve "Participar"; con sesión se ve su avatar, que abre un menú con "Mi perfil" y "Cerrar sesión". Una barra de navegación inferior se evaluará cuando haya más secciones (por ejemplo, "Sugerir").
 - **Perfil de pollería**: foto, zona, mapa/link, promedio, nº de votos, comentarios recientes, botón "Calificar".
 - **Calificar** (`/calificar/[slug]`): 4 criterios (Sabor y crocancia, Cantidad y porción, Atención y rapidez, Local) con escala segmentada del 1 al 10, nota general en vivo, barra de progreso y comentario opcional. Si el usuario ya votó, ve sus notas en solo lectura. Diseño en Stitch.
 - **Sugerir pollería**: formulario corto con aviso de posibles duplicados.
