@@ -8,7 +8,7 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 
 **Objetivo principal:** que sea fácil de compartir (links con preview en WhatsApp/Facebook/Instagram) y que se use desde el celular.
 
-**No es objetivo (v1):** monetización, reseñas largas, categorías separadas (presa, ají, precio), app nativa, multi-ciudad.
+**No es objetivo (v1):** monetización, reseñas largas, criterios configurables (los 4 criterios de calificación son fijos: sabor y crocancia, cantidad y porción, atención y rapidez, local), app nativa, multi-ciudad.
 
 ## 2. Usuarios y roles
 
@@ -27,8 +27,10 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 
 **restaurants**: id, name, slug (único), zone, address, maps_url, photo_url, status (`active` | `hidden`), created_at
 
-**ratings**: id, user_id, restaurant_id, stars (1–5), comment (opcional, máx. 280 caracteres), status (`visible` | `hidden`), created_at, updated_at
+**ratings**: id, user_id, restaurant_id, flavor_score, portion_score, service_score, place_score (1–10 cada una, obligatorias), comment (opcional, máx. 280 caracteres), status (`visible` | `hidden`), created_at, updated_at
 - Índice único en `(user_id, restaurant_id)`.
+- CHECK `between 1 and 10` en cada `*_score`.
+- `updated_at` queda sin uso en v1: los votos no se editan (regla 1).
 
 **suggestions**: id, user_id, name, zone, address, maps_url (opcional), status (`pending` | `approved` | `rejected`), reviewed_by, reviewed_at, created_at
 
@@ -36,7 +38,7 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 
 ## 4. Reglas de negocio
 
-1. Un usuario puede tener **una sola calificación por pollería**. Puede editarla, no duplicarla. Se garantiza con índice único en la base de datos, no solo en código.
+1. Un usuario puede tener **una sola calificación por pollería** y **no puede editarla en v1**: un segundo envío se rechaza ("Ya calificaste esta pollería"). Se garantiza con índice único en la base de datos, no solo en código.
 2. Para calificar hay que estar logueado y tener `username`.
 2a. **Dos formas de acceso**: Google, o correo y contraseña (registro propio). No hay verificación de correo ni recuperación de contraseña en v1: ambas requieren enviar correos y por ahora no hay dominio propio para hacerlo.
 2b. **No se unen cuentas automáticamente.** Si alguien entra con Google y su correo ya existe como cuenta de contraseña (o al revés), se rechaza con un mensaje que indica el método con el que se registró. Motivo: sin verificación de correo, unirlas permitiría que alguien se registre con el correo ajeno y conserve acceso después de que la víctima entre con Google.
@@ -47,17 +49,18 @@ Web app de entretenimiento donde la gente de Cochabamba califica pollerías y se
 6. El ranking usa **promedio bayesiano**, no promedio simple:
    `score = (v / (v + m)) * R + (m / (v + m)) * C`
    - `v` = votos de la pollería, `R` = su promedio, `m` = mínimo de votos (10), `C` = promedio global de todas las pollerías.
+   - La nota de cada voto es el promedio simple de sus 4 criterios, en escala 1–10. `R` es el promedio de esas notas.
 7. Rate limiting: máximo de 10 calificaciones por usuario por hora y 3 sugerencias por usuario por día (valores iniciales, ajustables).
-8. Los comentarios ocultos por moderación no cuentan en la vista pública, pero la calificación en estrellas se mantiene salvo que el admin oculte la calificación completa.
+8. Los comentarios ocultos por moderación no cuentan en la vista pública, pero la calificación se mantiene salvo que el admin oculte la calificación completa.
 
 ## 5. Pantallas (mobile-first)
 
 - **Ingresar**: botón "Continuar con Google" + formulario de correo y contraseña + link a "Crear cuenta" y "Seguir viendo el ranking". Diseño en Stitch.
 - **Crear cuenta**: registro con Google o con `@usuario`, correo y contraseña. Diseño en Stitch.
 - **Elegir nombre de usuario**: onboarding tras el primer ingreso con Google. Diseño en Stitch.
-- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir.
+- **Home / Ranking**: lista ordenada por score, filtro por zona, botón de compartir. Cada tarjeta tiene los botones "Votar" (lleva a Calificar) y "Mapa" (abre la ubicación de la pollería).
 - **Perfil de pollería**: foto, zona, mapa/link, promedio, nº de votos, comentarios recientes, botón "Calificar".
-- **Calificar**: estrellas grandes y táctiles + comentario opcional.
+- **Calificar** (`/calificar/[slug]`): 4 criterios (Sabor y crocancia, Cantidad y porción, Atención y rapidez, Local) con escala segmentada del 1 al 10, nota general en vivo, barra de progreso y comentario opcional. Si el usuario ya votó, ve sus notas en solo lectura. Diseño en Stitch.
 - **Sugerir pollería**: formulario corto con aviso de posibles duplicados.
 - **Mi perfil**: mis calificaciones y estado de mis sugerencias.
 - **Admin** (protegido): cola de sugerencias, reportes, ocultar pollerías/comentarios.
