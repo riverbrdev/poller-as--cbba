@@ -32,7 +32,8 @@ test.describe("registro con correo y contraseña", () => {
     await page.getByLabel("Contraseña", { exact: true }).fill(E2E_PASSWORD);
     await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
 
-    await expect(page).toHaveURL("/");
+    // Es la primera prueba de la suite: en `pnpm dev` la home se compila en frío y puede pasar de 5 s.
+    await expect(page).toHaveURL("/", { timeout: 15_000 });
     expect((await currentSession(page))?.user?.username).toBe(username);
   });
 
