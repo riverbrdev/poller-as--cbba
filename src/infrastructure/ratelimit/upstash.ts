@@ -7,6 +7,8 @@ export type RateLimitRule = { name: string; limit: number; window: Duration };
 export const RATE_LIMIT_RULES = {
   login: { name: "login", limit: 10, window: "10 m" },
   register: { name: "register", limit: 5, window: "1 h" },
+  // SPEC §4 regla 7: 10 calificaciones por usuario por hora (clave user:<id>).
+  rating: { name: "rating", limit: 10, window: "1 h" },
 } as const satisfies Record<string, RateLimitRule>;
 
 /** Límite por IP con ventana deslizante. Lee UPSTASH_REDIS_REST_URL y _TOKEN del entorno. */

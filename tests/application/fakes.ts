@@ -1,4 +1,6 @@
 import type { PasswordHasher } from "@/application/ports/password-hasher";
+import type { NewRating, RatingRecord, RatingRepository } from "@/application/ports/rating-repository";
+import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
 import type {
   CreateUserResult,
   NewUser,
@@ -61,3 +63,35 @@ export const fakeHasher: PasswordHasher = {
   hash: async (password) => `hashed:${password}`,
   verify: async (password, hash) => hash === `hashed:${password}`,
 };
+
+/** Repositorio de votos en memoria. Respeta el índice único (user_id, restaurant_id) de la base. */
+export function createFakeRatingRepository(initial: RatingRecord[] = []): RatingRepository & {
+  all(): RatingRecord[];
+} {
+  const ratings: RatingRecord[] = initial.map((rating) => ({ ...rating }));
+  let nextId = 1;
+
+  const find = (userId: string, restaurantId: string) =>
+    ratings.find((rating) => rating.userId === userId && rating.restaurantId === restaurantId) ?? null;
+
+  return {
+    all: () => [...ratings],
+    findByUserAndRestaurant: async (userId, restaurantId) => find(userId, restaurantId),
+    async createIfAbsent(newRating: NewRating) {
+      if (find(newRating.userId, newRating.restaurantId)) {
+        return null;
+      }
+      const rating: RatingRecord = { ...newRating, id: `rating-${nextId++}`, createdAt: new Date() };
+      ratings.push(rating);
+      return rating;
+    },
+  };
+}
+
+/** Repositorio de pollerías en memoria: `records` son las activas. */
+export function createFakeRestaurantRepository(records: RestaurantRecord[]): RestaurantRepository {
+  return {
+    listActive: async () => records,
+    findActiveBySlug: async (slug) => records.find((record) => record.slug === slug) ?? null,
+  };
+}
