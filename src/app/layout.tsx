@@ -26,7 +26,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${jakarta.variable} h-full antialiased`}>
+    // data-scroll-behavior: Next desactiva el scroll suave al cambiar de página (Next 16), así solo se deslizan los anclas.
+    <html lang="es" data-scroll-behavior="smooth" className={`${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
     </html>
   );
