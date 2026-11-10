@@ -52,7 +52,7 @@ export function MethodologySection() {
           </div>
           <a
             href="#locales"
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 text-base font-bold text-brand-ink transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-soft active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 text-base font-bold text-brand-ink transition-[background-color,translate,scale] hover:-translate-y-px hover:bg-brand-soft active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           >
             {METHODOLOGY_TEXT.suggestAction}
             <ArrowUp size={18} aria-hidden="true" />
