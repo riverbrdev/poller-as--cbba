@@ -1,39 +1,62 @@
-import { Banknote, Clock3, Drumstick, Heart, UtensilsCrossed } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import { RATING_CRITERIA } from "@/domain/rating/criteria";
+import { CriterionIcon } from "@/components/rating/criterion-icon";
+import { METHODOLOGY_TEXT } from "./messages";
 
-const criteria = [
-  { title: "Precio justo", description: "Compara lo que pagas con la experiencia y el plato que recibes.", icon: Banknote },
-  { title: "Sabor", description: "Valora el sabor del pollo, su preparación y sus acompañamientos.", icon: Drumstick },
-  { title: "Cantidad", description: "Evalúa el tamaño de la porción y si alcanza para quedar satisfecho.", icon: UtensilsCrossed },
-  { title: "Atención", description: "Ten en cuenta el trato, el servicio y el tiempo de espera.", icon: Clock3 },
-] as const;
-
+/** Cómo se califica: los criterios salen de domain/, así la home siempre muestra los mismos que el formulario. */
 export function MethodologySection() {
   return (
-    <section id="metodologia" className="border-t border-line bg-white py-16 sm:py-20">
+    <section id="metodologia" aria-labelledby="metodologia-title" className="scroll-mt-20 border-t border-line bg-white py-16 sm:scroll-mt-24 sm:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="text-xs font-extrabold uppercase tracking-widest text-brand">Metodología cochabambina</p>
-        <h2 className="mt-2 max-w-2xl text-3xl font-black leading-tight tracking-tight sm:text-4xl">¿Cómo evaluaremos el broaster de Cochabamba?</h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-muted">Cada persona podrá valorar una pollería del 1 al 10 en cuatro criterios. La nota final de su voto será el promedio de esas cuatro notas.</p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {criteria.map(({ title, description, icon: Icon }, index) => (
-            <article key={title} className="rounded-2xl border border-line bg-cream p-6">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-soft text-brand"><Icon size={22} aria-hidden="true" /></span>
-              <h3 className="mt-5 text-base font-black">{index + 1}. {title}</h3>
-              <p className="mt-3 text-sm leading-6 text-ink-muted">{description}</p>
-              <p className="mt-5 border-t border-line pt-4 text-xs font-bold text-brand-ink">Calificación de 1 a 10</p>
-            </article>
+        <p className="text-xs font-extrabold uppercase tracking-widest text-brand-ink">{METHODOLOGY_TEXT.eyebrow}</p>
+        <h2 id="metodologia-title" className="mt-2 max-w-2xl text-3xl font-extrabold leading-tight tracking-tight text-balance sm:text-4xl">
+          {METHODOLOGY_TEXT.title}
+        </h2>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-ink-muted">{METHODOLOGY_TEXT.lead}</p>
+
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {RATING_CRITERIA.map((criterion) => (
+            <li key={criterion.key} className="flex flex-col rounded-2xl border border-line bg-cream p-5 sm:p-6">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                <CriterionIcon criterion={criterion.key} size={22} />
+              </span>
+              <h3 className="mt-4 text-lg font-extrabold">{criterion.title}</h3>
+              <p className="mb-5 mt-2 text-base leading-6 text-ink-muted">{criterion.question}</p>
+              <p className="mt-auto flex flex-col gap-1 border-t border-line pt-4 text-sm font-semibold">
+                <span className="text-ink-muted">{METHODOLOGY_TEXT.scaleLow(criterion.lowLabel)}</span>
+                <span className="text-brand-ink">{METHODOLOGY_TEXT.scaleHigh(criterion.highLabel)}</span>
+              </p>
+            </li>
           ))}
-        </div>
-        <div className="mt-8 flex flex-col gap-5 rounded-2xl bg-gradient-to-r from-brand to-brand-dark p-7 text-white shadow-lg sm:p-9 lg:flex-row lg:items-center lg:justify-between">
+        </ul>
+
+        <h3 className="mt-14 text-xl font-extrabold sm:text-2xl">{METHODOLOGY_TEXT.stepsTitle}</h3>
+        <ol className="mt-5 grid gap-4 md:grid-cols-3">
+          {METHODOLOGY_TEXT.steps.map((step, index) => (
+            <li key={step.title} className="flex items-start gap-4 rounded-2xl border border-line p-5">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-dark text-base font-extrabold text-white" aria-hidden="true">
+                {index + 1}
+              </span>
+              <div>
+                <p className="text-base font-extrabold">{step.title}</p>
+                <p className="mt-1 text-base leading-6 text-ink-muted">{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-14 flex flex-col gap-5 rounded-2xl bg-brand-ink p-6 text-white sm:p-9 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="inline-flex rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide">Comunidad broaster cochabambina</p>
-            <h3 className="mt-3 max-w-xl text-2xl font-black leading-tight sm:text-3xl">¿Falta tu broastería favorita?</h3>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-white/90">Pronto podrás sugerir nuevos locales para que se sumen al roster después de una revisión.</p>
+            <h3 className="max-w-xl text-2xl font-extrabold leading-tight sm:text-3xl">{METHODOLOGY_TEXT.suggestTitle}</h3>
+            <p className="mt-3 max-w-xl text-base leading-7 text-white/90">{METHODOLOGY_TEXT.suggestLead}</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <span className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white/15 px-4 text-sm font-bold"><Heart size={16} aria-hidden="true" /> Postulaciones próximamente</span>
-            <a href="#metodologia" className="inline-flex min-h-11 items-center rounded-xl bg-ink/25 px-4 text-sm font-bold hover:bg-ink/40">Cómo funciona</a>
-          </div>
+          <a
+            href="#locales"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 text-base font-bold text-brand-ink transition-[background-color,transform] hover:-translate-y-px hover:bg-brand-soft active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+          >
+            {METHODOLOGY_TEXT.suggestAction}
+            <ArrowUp size={18} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>

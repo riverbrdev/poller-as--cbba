@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Star, UtensilsCrossed, Vote } from "lucide-react";
+import { MapPin, UtensilsCrossed, Vote } from "lucide-react";
+import { cn } from "@/components/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { CARD_TEXT } from "./messages";
 
 /** Lo que la tarjeta necesita de una pollería. `photoUrl` y `mapsUrl` son opcionales en la BD. */
 export type RestaurantCardData = {
@@ -14,74 +17,66 @@ export type RestaurantCardData = {
 
 type RestaurantCardProps = {
   restaurant: RestaurantCardData;
-  /** Solo para las primeras tarjetas visibles: carga la foto con prioridad. */
-  priority?: boolean;
 };
 
-export function RestaurantCard({ restaurant, priority = false }: RestaurantCardProps) {
+/**
+ * Tarjeta horizontal: las fotos son logos cuadrados, así que van enteros en un cuadro (sin recortar)
+ * y el texto al lado. Votar y Mapa quedan abajo, a lo ancho, al alcance del pulgar.
+ */
+export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-[0_5px_18px_rgba(58,35,20,0.06)] transition-shadow duration-300 hover:shadow-[0_10px_26px_rgba(58,35,20,0.12)]">
-      <div className="relative aspect-[16/10] overflow-hidden bg-photo-placeholder">
-        {restaurant.photoUrl ? (
-          <Image
-            src={restaurant.photoUrl}
-            alt={`Plato de ${restaurant.name}`}
-            fill
-            priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-brand/50" role="img" aria-label={`${restaurant.name} sin foto`}>
-            <UtensilsCrossed size={40} aria-hidden="true" />
-          </div>
-        )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" aria-hidden="true" />
-        <span className="absolute right-3 top-3 inline-flex max-w-[70%] items-center gap-1 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-          <MapPin size={12} className="shrink-0 text-brand-soft" aria-hidden="true" />
-          <span className="truncate">{restaurant.zone}</span>
-        </span>
+    <article className="group flex h-full flex-col rounded-2xl border border-line bg-white p-3 shadow-card transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-4">
+      <div className="flex flex-1 gap-4">
+        <div className="relative size-24 shrink-0 overflow-hidden rounded-xl border border-line bg-photo-placeholder sm:size-28">
+          {restaurant.photoUrl ? (
+            <Image
+              src={restaurant.photoUrl}
+              alt={CARD_TEXT.photoAlt(restaurant.name)}
+              fill
+              sizes="(min-width: 640px) 7rem, 6rem"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-brand/60" role="img" aria-label={CARD_TEXT.noPhoto(restaurant.name)}>
+              <UtensilsCrossed size={32} aria-hidden="true" />
+            </div>
+          )}
+        </div>
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <p className="inline-flex max-w-full items-center gap-1 self-start rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-ink">
+            <MapPin size={12} className="shrink-0" aria-hidden="true" />
+            <span className="truncate">{restaurant.zone}</span>
+          </p>
+          <h3 className="mt-2 line-clamp-2 text-lg font-extrabold leading-snug transition-colors group-hover:text-brand-ink">
+            {restaurant.name}
+          </h3>
+          <p className="mt-1 line-clamp-2 text-sm leading-5 text-ink-muted">{restaurant.address}</p>
+          {/* La nota y los votos van aquí cuando exista el ranking (SPEC §4). No se inventan datos. */}
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-lg font-black leading-snug transition-colors group-hover:text-brand-ink">{restaurant.name}</h3>
-        <p className="flex items-start gap-1.5 text-xs leading-5 text-ink-muted">
-          <MapPin size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-          {restaurant.address}
-        </p>
-
-        {/* Aún no hay votos: no se inventan datos (SPEC §4, ranking con mínimo de calificaciones). */}
-        <div className="rounded-xl border border-line bg-surface-soft p-3">
-          <p className="flex items-center gap-1.5 text-xs font-extrabold text-ink">
-            <Star size={14} className="text-brand" aria-hidden="true" />
-            Sin calificaciones aún
-          </p>
-          <p className="mt-1 text-xs leading-5 text-ink-muted">Califica sabor, porción, atención y local.</p>
-        </div>
-
-        {/* Votar (principal) y Mapa (secundario) en una sola fila, al alcance del pulgar. */}
-        <div className="mt-auto flex gap-2">
-          <Link
-            href={`/calificar/${restaurant.slug}`}
-            aria-label={`Votar por ${restaurant.name}`}
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
+      <div className="mt-4 flex gap-2">
+        <Link
+          href={`/calificar/${restaurant.slug}`}
+          aria-label={CARD_TEXT.voteLabel(restaurant.name)}
+          className={cn(buttonVariants({ variant: "brand-soft", size: "touch" }), "flex-1")}
+        >
+          <Vote aria-hidden="true" />
+          {CARD_TEXT.vote}
+        </Link>
+        {restaurant.mapsUrl ? (
+          <a
+            href={restaurant.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={CARD_TEXT.mapLabel(restaurant.name)}
+            className={cn(buttonVariants({ variant: "brand-outline", size: "touch" }))}
           >
-            <Vote size={16} aria-hidden="true" />
-            Votar
-          </Link>
-          {restaurant.mapsUrl ? (
-            <a
-              href={restaurant.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Ver ubicación de ${restaurant.name} en el mapa`}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-line-strong bg-white px-4 text-sm font-bold text-ink transition-colors hover:border-brand hover:text-brand-ink active:scale-[0.98]"
-            >
-              <MapPin size={16} aria-hidden="true" />
-              Mapa
-            </a>
-          ) : null}
-        </div>
+            <MapPin aria-hidden="true" />
+            {CARD_TEXT.map}
+          </a>
+        ) : null}
       </div>
     </article>
   );
