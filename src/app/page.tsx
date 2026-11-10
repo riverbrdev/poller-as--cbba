@@ -1,41 +1,61 @@
 import { Suspense } from "react";
+import { ArrowDown, MapPin, UtensilsCrossed } from "lucide-react";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { getActiveRestaurants } from "@/app/_data/restaurants";
-import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
+import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 
 export default async function Home() {
   const { restaurants, zones } = await getActiveRestaurants();
 
   return (
-    <div className="min-h-screen bg-cream text-ink">
-      <SiteHeader account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
+    <div className="comideli-home">
+      <a href="#contenido" className="comideli-skip">Ir al contenido</a>
+      <SiteHeader home account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
 
-      <main>
-        <section className="mx-auto grid max-w-7xl gap-8 px-5 pb-10 pt-12 sm:px-8 lg:grid-cols-[1fr_17rem] lg:items-center lg:pb-14 lg:pt-16">
-          <div>
-            <p className="mb-4 inline-flex rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-widest text-brand-ink">Ranking broaster Cochabamba 2026</p>
-            <h1 className="max-w-3xl text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">El ranking definitivo del <span className="text-brand  decoration-wavy decoration-[3px] underline-offset-8">pollo broaster</span> en Cochabamba</h1>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-ink-muted sm:text-base">Conoce las pollerías de la ciudad. Califica sabor, porción, atención y local para construir un ranking hecho por la comunidad.</p>
-          </div>
-          <div className="rounded-2xl border border-line bg-white p-5 shadow-[0_8px_25px_rgba(58,35,20,0.06)]">
-            <div className="mb-4 flex items-center justify-between gap-2"><span className="text-[11px] font-extrabold uppercase tracking-wide">Roster inicial</span><span className="text-xs font-bold text-brand">Cochabamba</span></div>
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <Stat value={String(restaurants.length)} label="Locales" /><Stat value={String(zones.length)} label="Zonas" /><Stat value="100%" label="Local" />
+      <main id="contenido" tabIndex={-1}>
+        <section className="comideli-hero" data-enter aria-labelledby="home-title">
+          <div className="comideli-wrap">
+            <div className="comideli-hero-grid">
+              <div className="comideli-hero-copy">
+                <p className="comideli-kicker"><MapPin size={15} aria-hidden="true" /> Cochabamba, Bolivia</p>
+                <h1 id="home-title">El <span>pollo broaster</span> de Cochabamba</h1>
+                <p className="comideli-hero-lead">
+                  Encuentra pollerías por zona y califica las que ya probaste. Con tu voto, la comunidad arma el ranking.
+                </p>
+                <a className="comideli-button" href="#locales">
+                  Explorar pollerías <ArrowDown size={18} aria-hidden="true" />
+                </a>
+                <dl className="comideli-stats">
+                  <div><dt>Pollerías</dt><dd>{restaurants.length}</dd></div>
+                  <div><dt>Zonas</dt><dd>{zones.length}</dd></div>
+                </dl>
+              </div>
+              <div className="comideli-hero-media" data-enter-media aria-hidden="true">
+                <div className="comideli-hero-poster">
+                  <div className="comideli-poster-header">
+                    <span>ComiDeli</span>
+                    <UtensilsCrossed size={24} />
+                  </div>
+                  <p className="comideli-poster-title">Sabor de<br />Cocha.</p>
+                  <p className="comideli-poster-footer">Guía local · Cochabamba</p>
+                </div>
+              </div>
             </div>
-            <p className="mt-4 text-center text-[11px] text-ink-muted">El ranking se definirá con votos reales.</p>
           </div>
         </section>
 
-        {/* El podio Top 3 vuelve cuando haya calificaciones suficientes para el ranking bayesiano (SPEC §4). */}
+        {/* El podio vuelve cuando haya suficientes calificaciones para el ranking (SPEC §4). */}
         <RestaurantCatalog restaurants={restaurants} zones={zones} />
         <MethodologySection />
       </main>
+
+      <footer className="comideli-footer">
+        <div className="comideli-wrap">
+          <p><strong className="text-ink">ComiDeli</strong> <span className="ml-1">· Cochabamba, Bolivia</span></p>
+        </div>
+      </footer>
     </div>
   );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return <div className="rounded-xl bg-cream px-2 py-3"><strong className="block text-xl font-black text-brand">{value}</strong><span className="text-[11px] text-ink-muted">{label}</span></div>;
 }

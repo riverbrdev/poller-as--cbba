@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Star, UtensilsCrossed, Vote } from "lucide-react";
+import { ArrowUpRight, MapPin, UtensilsCrossed } from "lucide-react";
 
-/** Lo que la tarjeta necesita de una pollería. `photoUrl` y `mapsUrl` son opcionales en la BD. */
 export type RestaurantCardData = {
   name: string;
   slug: string;
@@ -12,75 +11,50 @@ export type RestaurantCardData = {
   mapsUrl: string | null;
 };
 
-type RestaurantCardProps = {
-  restaurant: RestaurantCardData;
-  /** Solo para las primeras tarjetas visibles: carga la foto con prioridad. */
-  priority?: boolean;
-};
-
-export function RestaurantCard({ restaurant, priority = false }: RestaurantCardProps) {
+export function RestaurantCard({ restaurant }: { restaurant: RestaurantCardData }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-[0_5px_18px_rgba(58,35,20,0.06)] transition-shadow duration-300 hover:shadow-[0_10px_26px_rgba(58,35,20,0.12)]">
-      <div className="relative aspect-[16/10] overflow-hidden bg-photo-placeholder">
-        {restaurant.photoUrl ? (
-          <Image
-            src={restaurant.photoUrl}
-            alt={`Plato de ${restaurant.name}`}
-            fill
-            priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-brand/50" role="img" aria-label={`${restaurant.name} sin foto`}>
-            <UtensilsCrossed size={40} aria-hidden="true" />
+    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-white transition-[border-color,transform] hover:border-line-strong motion-safe:hover:-translate-y-0.5">
+      <div className="flex flex-1 flex-col p-3.5">
+        <div className="flex items-start gap-3">
+          <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-lg bg-surface-soft">
+            {restaurant.photoUrl ? (
+              <Image
+                src={restaurant.photoUrl}
+                alt=""
+                fill
+                sizes="64px"
+                className="object-contain motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]"
+                data-source="supplier"
+                data-subject={restaurant.name}
+              />
+            ) : (
+              <UtensilsCrossed size={22} className="text-brand-ink" aria-hidden="true" />
+            )}
           </div>
-        )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" aria-hidden="true" />
-        <span className="absolute right-3 top-3 inline-flex max-w-[70%] items-center gap-1 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-          <MapPin size={12} className="shrink-0 text-brand-soft" aria-hidden="true" />
-          <span className="truncate">{restaurant.zone}</span>
-        </span>
-      </div>
-
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-lg font-black leading-snug transition-colors group-hover:text-brand-ink">{restaurant.name}</h3>
-        <p className="flex items-start gap-1.5 text-xs leading-5 text-ink-muted">
-          <MapPin size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-          {restaurant.address}
-        </p>
-
-        {/* Aún no hay votos: no se inventan datos (SPEC §4, ranking con mínimo de calificaciones). */}
-        <div className="rounded-xl border border-line bg-surface-soft p-3">
-          <p className="flex items-center gap-1.5 text-xs font-extrabold text-ink">
-            <Star size={14} className="text-brand" aria-hidden="true" />
-            Sin calificaciones aún
-          </p>
-          <p className="mt-1 text-xs leading-5 text-ink-muted">Califica sabor, porción, atención y local.</p>
+          <div className="min-w-0">
+            <p className="text-xs font-extrabold tracking-wide text-brand-ink uppercase">{restaurant.zone}</p>
+            <h3 className="mt-0.5 text-base leading-tight font-extrabold wrap-break-word">{restaurant.name}</h3>
+            <p className="mt-1 flex items-start gap-1 text-xs leading-5 text-ink-muted">
+              <MapPin size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+              {restaurant.address}
+            </p>
+          </div>
         </div>
-
-        {/* Votar (principal) y Mapa (secundario) en una sola fila, al alcance del pulgar. */}
-        <div className="mt-auto flex gap-2">
-          <Link
-            href={`/calificar/${restaurant.slug}`}
-            aria-label={`Votar por ${restaurant.name}`}
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
-          >
-            <Vote size={16} aria-hidden="true" />
-            Votar
+        <div className="mt-auto flex flex-wrap gap-2 pt-3">
+          <Link href={`/calificar/${restaurant.slug}`} aria-label={`Votar por ${restaurant.name}`} className="comideli-button flex-1">
+            Votar <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
-          {restaurant.mapsUrl ? (
+          {restaurant.mapsUrl && (
             <a
               href={restaurant.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Ver ubicación de ${restaurant.name} en el mapa`}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-line-strong bg-white px-4 text-sm font-bold text-ink transition-colors hover:border-brand hover:text-brand-ink active:scale-[0.98]"
+              className="comideli-secondary-button"
             >
-              <MapPin size={16} aria-hidden="true" />
               Mapa
             </a>
-          ) : null}
+          )}
         </div>
       </div>
     </article>
