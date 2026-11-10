@@ -2,8 +2,9 @@
 
 export const HERO_TEXT = {
   eyebrow: "Cochabamba · Ranking 2026",
-  titleStart: "¿Dónde se come el mejor pollo broaster",
-  titleHighlight: "en la llajta?",
+  titleStart: "¿Dónde se come el mejor pollo broaster en la",
+  titleHighlight: "llajta",
+  titleEnd: "?",
   lead: "Califica sabor, porción, atención y local. Cada voto suma para armar un ranking hecho por quienes comen ahí.",
   primaryAction: "Elegir una pollería",
   secondaryAction: "Cómo se califica",
@@ -11,6 +12,8 @@ export const HERO_TEXT = {
   zones: (count: number) => (count === 1 ? "zona" : "zonas"),
   criteria: "criterios",
   rateLogo: (name: string) => `Calificar ${name}`,
+  favoriteTitle: "¿Tu favorita?",
+  favoriteAction: "Califícala",
 } as const;
 
 export const CATALOG_TEXT = {
