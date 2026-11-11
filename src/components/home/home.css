@@ -51,14 +51,18 @@
 
 .comideli-hero h1 {
   margin-block: 0.9rem 1.25rem;
-  font-size: clamp(2.55rem, 5.7vw, 5rem);
-  line-height: 1.03;
+  font-size: clamp(2.3rem, 10.5vw, 4rem);
+  line-height: 1.12;
   font-weight: 800;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
-.comideli-hero h1 span { color: var(--color-brand-ink); }
+.comideli-title-accent { color: var(--color-brand-ink); }
+
+@media (min-width: 64rem) {
+  .comideli-title-place { display: block; }
+}
 
 .comideli-hero-lead {
   max-width: 39ch;
@@ -225,7 +229,11 @@
 
 @media (min-width: 48rem) {
   .comideli-hero { min-height: calc(100svh - 4.5rem); }
-  .comideli-hero-grid { grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr); }
+  .comideli-hero-grid {
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+  .comideli-hero h1 { font-size: clamp(2.5rem, 5.3vw, 4.8rem); }
   .comideli-hero-poster { aspect-ratio: 1.12; }
 }
 

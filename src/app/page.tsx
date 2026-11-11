@@ -1,10 +1,17 @@
 import { Suspense } from "react";
+import { Bricolage_Grotesque } from "next/font/google";
 import { ArrowDown, MapPin, UtensilsCrossed } from "lucide-react";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { getActiveRestaurants } from "@/app/_data/restaurants";
 import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: "800",
+  display: "swap",
+});
 
 export default async function Home() {
   const { restaurants, zones } = await getActiveRestaurants();
@@ -20,7 +27,7 @@ export default async function Home() {
             <div className="comideli-hero-grid">
               <div className="comideli-hero-copy">
                 <p className="comideli-kicker"><MapPin size={15} aria-hidden="true" /> Cochabamba, Bolivia</p>
-                <h1 id="home-title">El <span>pollo broaster</span> de Cochabamba</h1>
+                <h1 id="home-title" className={bricolage.className}>El <span className="comideli-title-accent">pollo broaster</span> <span className="comideli-title-place">de Cochabamba</span></h1>
                 <p className="comideli-hero-lead">
                   Encuentra pollerías por zona y califica las que ya probaste. Con tu voto, la comunidad arma el ranking.
                 </p>
