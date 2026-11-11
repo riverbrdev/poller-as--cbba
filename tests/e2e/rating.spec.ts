@@ -8,7 +8,6 @@ import {
   E2E_PASSWORD,
   createGoogleUserWithoutUsername,
   createPasswordUser,
-  deleteE2eUsers,
   e2eEmail,
   e2eUsername,
   randomSuffix,
@@ -16,7 +15,7 @@ import {
   useOwnClientIp,
 } from "./helpers";
 
-// Los votos de prueba se borran solos: ratings.user_id tiene ON DELETE CASCADE y deleteE2eUsers borra las cuentas e2e-.
+// Los usuarios e2e- y sus votos se quedan en la base durante la fase de pruebas (no se borran al terminar).
 const db = createDb();
 const listActive = createListActiveRestaurants({ restaurants: createDrizzleRestaurantRepository(db) });
 
@@ -47,10 +46,6 @@ async function ratingsOf(userId: string) {
 
 test.beforeEach(async ({ context }) => {
   await useOwnClientIp(context);
-});
-
-test.afterAll(async () => {
-  await deleteE2eUsers();
 });
 
 test.describe("botones de la tarjeta", () => {
