@@ -1,3 +1,5 @@
+import { createGetVersus, createVoteVersus } from "@/application/versus/versus";
+import { createDrizzleVersusRepository } from "@/infrastructure/db/versus-repository";
 // Raíz de composición: une los casos de uso de application/ con sus implementaciones de infrastructure/.
 // app/ y components/ nunca importan de aquí los detalles de infraestructura, solo los casos de uso.
 import { createAuthenticateWithPassword } from "@/application/user/authenticate-with-password";
@@ -31,8 +33,11 @@ const ratings = createDrizzleRatingRepository(db);
 const reviews = createDrizzleReviewRepository(db);
 const helpfulVotes = createDrizzleHelpfulVoteRepository(db);
 const hasher = bcryptPasswordHasher;
+const versusVotes = createDrizzleVersusRepository(db);
 
 export const useCases = {
+  getVersus: createGetVersus({ votes: versusVotes, restaurants, users }),
+  voteVersus: createVoteVersus({ votes: versusVotes, restaurants, users }),
   registerWithPassword: createRegisterWithPassword({ users, hasher }),
   authenticateWithPassword: createAuthenticateWithPassword({ users, hasher }),
   signInWithGoogle: createSignInWithGoogle({ users }),
@@ -54,6 +59,7 @@ export const useCases = {
 export { clientIpFromHeaders } from "@/infrastructure/ratelimit/client-ip";
 
 export const rateLimiters = {
+  versus: createIpRateLimiter({ name: "versus", limit: 10, window: "1 h" }),
   login: createIpRateLimiter(RATE_LIMIT_RULES.login),
   register: createIpRateLimiter(RATE_LIMIT_RULES.register),
   // Se usa con la clave `user:<id>`, no con la IP.

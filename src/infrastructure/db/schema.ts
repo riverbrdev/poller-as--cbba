@@ -163,3 +163,15 @@ export const ratingHelpfulVotes = pgTable(
   // Una marca "Útil" por persona y reseña, garantizado por la base (SPEC regla 9).
   (table) => [primaryKey({ columns: [table.ratingId, table.userId] })],
 );
+
+/** Votos del duelo, independientes de las calificaciones. */
+export const versusVotes = pgTable("versus_votes", {
+  duelId: text("duel_id").notNull(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  choice: text("choice").$type<"lolo-chicken" | "ricono">().notNull().references(() => restaurants.slug),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.duelId, table.userId] }),
+  check("versus_duel_check", sql`${table.duelId} = 'lolo-vs-ricono'`),
+  check("versus_choice_check", sql`${table.choice} in ('lolo-chicken', 'ricono')`),
+]);
