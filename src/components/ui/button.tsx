@@ -17,6 +17,14 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        // ComiDeli: brand-dark para que el texto blanco pase 4.5:1. Solo para la acción principal de cada pantalla.
+        brand:
+          "bg-brand-dark font-bold text-white shadow-soft hover:-translate-y-px hover:bg-brand-ink active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-ink",
+        // Acción repetida (Votar en cada tarjeta): suave en reposo, se llena al pasar el cursor.
+        "brand-soft":
+          "bg-brand-soft font-bold text-brand-ink hover:bg-brand-dark hover:text-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-ink",
+        "brand-outline":
+          "border-line-strong bg-white font-bold text-ink hover:-translate-y-px hover:border-brand-ink hover:text-brand-ink active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-ink",
       },
       size: {
         default:
@@ -30,6 +38,9 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        // Zonas táctiles de CLAUDE.md: 44px y 48px de alto como mínimo.
+        touch: "min-h-11 gap-2 rounded-xl px-4 text-sm [&_svg:not([class*='size-'])]:size-4",
+        "touch-lg": "min-h-12 gap-2 rounded-xl px-6 text-base [&_svg:not([class*='size-'])]:size-[18px]",
       },
     },
     defaultVariants: {
