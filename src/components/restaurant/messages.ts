@@ -63,3 +63,11 @@ const HELPFUL_ERRORS: Record<string, string> = {
 export function helpfulErrorMessage(code: string): string {
   return HELPFUL_ERRORS[code] ?? "No pudimos guardar tu marca. Inténtalo de nuevo.";
 }
+
+export const SHARE_TEXT = {
+  rate: "Calificar esta pollería",
+  share: "Compartir",
+  title: (name: string) => `${name} en ComiDeli`,
+  copied: "Enlace copiado",
+  failed: "No se pudo copiar el enlace",
+} as const;

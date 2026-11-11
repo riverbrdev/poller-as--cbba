@@ -19,6 +19,7 @@ import { useCases } from "@/composition/container";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { MIN_VOTES_FOR_RANKING } from "@/domain/rating/ranking";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
+import { DetailActions } from "@/components/restaurant/detail-actions";
 import { DetailSkeleton } from "@/components/restaurant/detail-skeleton";
 import { HelpfulButton } from "@/components/restaurant/helpful-button";
 import { DETAIL_TEXT } from "@/components/restaurant/messages";
@@ -131,6 +132,7 @@ async function RestaurantDetail({ params, searchParams }: RestaurantPageProps) {
             voteCountText={DETAIL_TEXT.votes(detail.voteCount)}
             criteria={criteria}
           />
+          <DetailActions slug={restaurant.slug} name={restaurant.name} />
         </div>
 
         <ViewerStateProvider value={viewerState}>

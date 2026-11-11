@@ -220,3 +220,39 @@ test.describe("marcar reseñas como útiles (US3)", () => {
     await expect(helpful).toHaveAttribute("href", `/login?callbackUrl=${encodeURIComponent(`/polleria/${restaurant.slug}`)}`);
   });
 });
+
+test.describe("calificar y compartir desde el perfil (US4)", () => {
+  test("Calificar esta pollería lleva al formulario de esa pollería", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    await page.goto(`/polleria/${restaurant.slug}`);
+    await expect(page.getByRole("link", { name: "Calificar esta pollería" }).first()).toHaveAttribute(
+      "href",
+      `/calificar/${restaurant.slug}`,
+    );
+  });
+
+  test("la vista previa al compartir tiene nombre, zona e imagen absoluta", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    await page.goto(`/polleria/${restaurant.slug}`);
+
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", new RegExp(restaurant.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute("content", new RegExp(restaurant.zone));
+    if (restaurant.photoUrl) {
+      await expect(page.locator('meta[property="og:image"]').first()).toHaveAttribute("content", /^https?:\/\/.+\.webp$/);
+    }
+  });
+
+  test("sin menú de compartir del sistema, copia el enlace y avisa", async ({ page, context }) => {
+    const restaurant = await firstRestaurant();
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    // Chromium de escritorio no tiene navigator.share: se usa el portapapeles.
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "share", { value: undefined, configurable: true });
+    });
+    await page.goto(`/polleria/${restaurant.slug}`);
+
+    await page.getByRole("button", { name: "Compartir" }).click();
+    await expect(page.getByText("Enlace copiado")).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(`/polleria/${restaurant.slug}`);
+  });
+});
