@@ -2,7 +2,15 @@ import { expect, test, type Browser, type Page } from "@playwright/test";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
-import { createPasswordUser, e2eEmail, e2eUsername, randomSuffix, signInAsGoogleUser, useOwnClientIp } from "./helpers";
+import {
+  createPasswordUser,
+  e2eEmail,
+  e2eUsername,
+  randomSuffix,
+  signInAsGoogleUser,
+  // No es un hook de React: se renombra para que la regla de hooks no lo confunda dentro de funciones comunes.
+  useOwnClientIp as assignOwnClientIp,
+} from "./helpers";
 
 // Lo esperado sale de la misma base que muestra la web, sin números fijos.
 // Los usuarios e2e- y sus votos se quedan en la base durante la fase de pruebas (no se borran al terminar).
@@ -17,7 +25,7 @@ async function firstRestaurant() {
 }
 
 test.beforeEach(async ({ context }) => {
-  await useOwnClientIp(context);
+  await assignOwnClientIp(context);
 });
 
 test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
@@ -140,7 +148,7 @@ test.describe("reseñas y conexión con el voto (US2)", () => {
 /** Una persona con su propia sesión y su propia IP (para que el límite de Upstash no las cuente juntas). */
 async function personIn(browser: Browser) {
   const context = await browser.newContext({ viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true });
-  await useOwnClientIp(context);
+  await assignOwnClientIp(context);
   const page = await context.newPage();
   const user = await signedInUser(page);
   return { context, page, user };
