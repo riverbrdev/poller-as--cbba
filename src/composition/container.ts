@@ -4,6 +4,8 @@ import { createAuthenticateWithPassword } from "@/application/user/authenticate-
 import { createCheckUsernameAvailability } from "@/application/user/check-username-availability";
 import { createChooseUsername } from "@/application/user/choose-username";
 import { createGetMyRating } from "@/application/rating/get-my-rating";
+import { createGetViewerReviewState } from "@/application/rating/get-viewer-review-state";
+import { createListRestaurantReviews } from "@/application/rating/list-restaurant-reviews";
 import { createRateRestaurant } from "@/application/rating/rate-restaurant";
 import { createGetRestaurantBySlug } from "@/application/restaurant/get-restaurant-by-slug";
 import { createGetRestaurantDetail } from "@/application/restaurant/get-restaurant-detail";
@@ -16,6 +18,7 @@ import { bcryptPasswordHasher } from "@/infrastructure/auth/bcrypt-password-hash
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleRatingRepository } from "@/infrastructure/db/rating-repository";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
+import { createDrizzleReviewRepository } from "@/infrastructure/db/review-repository";
 import { createDrizzleUserRepository } from "@/infrastructure/db/user-repository";
 import { RATE_LIMIT_RULES, createIpRateLimiter } from "@/infrastructure/ratelimit/upstash";
 
@@ -23,6 +26,7 @@ const db = createDb();
 const users = createDrizzleUserRepository(db);
 const restaurants = createDrizzleRestaurantRepository(db);
 const ratings = createDrizzleRatingRepository(db);
+const reviews = createDrizzleReviewRepository(db);
 const hasher = bcryptPasswordHasher;
 
 export const useCases = {
@@ -38,6 +42,8 @@ export const useCases = {
   getRestaurantDetail: createGetRestaurantDetail({ restaurants, ratings }),
   rateRestaurant: createRateRestaurant({ users, restaurants, ratings }),
   getMyRating: createGetMyRating({ ratings }),
+  listRestaurantReviews: createListRestaurantReviews({ reviews }),
+  getViewerReviewState: createGetViewerReviewState({ users, ratings }),
 };
 
 // Helper de petición: app/ lo toma de aquí porque no puede importar infrastructure/ directamente.

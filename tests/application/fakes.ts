@@ -6,6 +6,7 @@ import type {
   RestaurantRatingStats,
 } from "@/application/ports/rating-repository";
 import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
+import type { ReviewFilter, ReviewRepository, ReviewRow } from "@/application/ports/review-repository";
 import type {
   CreateUserResult,
   NewUser,
@@ -121,5 +122,63 @@ export function createFakeRestaurantRepository(records: RestaurantRecord[]): Res
   return {
     listActive: async () => records,
     findActiveBySlug: async (slug) => records.find((record) => record.slug === slug) ?? null,
+  };
+}
+
+/** Reseña del fake: como la fila de la base, con el autor y los estados de moderación. */
+export type FakeReview = Omit<ReviewRow, "comment"> & {
+  authorId: string;
+  /** Comentario tal como se guardó (antes de aplicar la moderación). */
+  comment: string | null;
+  /** status del voto; false = 'hidden'. */
+  visible?: boolean;
+  /** comment_status; false = 'hidden'. */
+  commentVisible?: boolean;
+  /** status de la pollería; false = 'hidden'. */
+  restaurantActive?: boolean;
+};
+
+/** Repositorio de reseñas en memoria: mismos filtros y orden que la tabla de data-model.md. */
+export function createFakeReviewRepository(reviews: FakeReview[]): ReviewRepository {
+  const isPublic = (review: FakeReview) => review.visible !== false && review.restaurantActive !== false;
+  const hasVisibleComment = (review: FakeReview) => review.comment !== null && review.commentVisible !== false;
+  const byRecent = (a: FakeReview, b: FakeReview) =>
+    b.createdAt.getTime() - a.createdAt.getTime() || b.id.localeCompare(a.id);
+
+  const matches = (filter: ReviewFilter) => (review: FakeReview) => {
+    if (filter === "with-comment") return hasVisibleComment(review);
+    if (filter === "featured") return hasVisibleComment(review) && review.helpfulCount >= 1;
+    return true;
+  };
+
+  const toRow = (review: FakeReview): ReviewRow => ({
+    id: review.id,
+    restaurantId: review.restaurantId,
+    authorUsername: review.authorUsername,
+    authorAvatarUrl: review.authorAvatarUrl,
+    scores: review.scores,
+    comment: review.commentVisible === false ? null : review.comment,
+    helpfulCount: review.helpfulCount,
+    createdAt: review.createdAt,
+  });
+
+  const ofRestaurant = (restaurantId: string) =>
+    reviews.filter((review) => review.restaurantId === restaurantId && isPublic(review));
+
+  return {
+    async list({ restaurantId, filter, limit }) {
+      const sorted = ofRestaurant(restaurantId)
+        .filter(matches(filter))
+        .sort(filter === "featured" ? (a, b) => b.helpfulCount - a.helpfulCount || byRecent(a, b) : byRecent);
+      return sorted.slice(0, limit).map(toRow);
+    },
+    async counts(restaurantId) {
+      const visible = ofRestaurant(restaurantId);
+      return {
+        all: visible.length,
+        withComment: visible.filter(matches("with-comment")).length,
+        featured: visible.filter(matches("featured")).length,
+      };
+    },
   };
 }
