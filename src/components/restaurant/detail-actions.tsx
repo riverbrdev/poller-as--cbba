@@ -43,13 +43,19 @@ export function DetailActions({ slug, name }: DetailActionsProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
-        <Link href={`/calificar/${slug}`} className={cn(buttonVariants({ variant: "brand", size: "touch-lg" }), "flex-1")}>
+        <Link href={`/calificar/${slug}`} className={cn(buttonVariants({ variant: "brand", size: "touch-lg" }), "min-w-0 flex-1 px-4")}>
           <SquarePen aria-hidden="true" />
           {SHARE_TEXT.rate}
         </Link>
-        <button type="button" onClick={share} className={cn(buttonVariants({ variant: "brand-outline", size: "touch-lg" }), "px-4")}>
+        {/* En pantallas angostas solo el ícono, para que "Calificar" quepa entero; el nombre sigue para lectores de pantalla. */}
+        <button
+          type="button"
+          onClick={share}
+          aria-label={SHARE_TEXT.share}
+          className={cn(buttonVariants({ variant: "brand-outline", size: "touch-lg" }), "w-12 shrink-0 px-0 min-[420px]:w-auto min-[420px]:px-4")}
+        >
           <Share2 aria-hidden="true" />
-          {SHARE_TEXT.share}
+          <span className="hidden min-[420px]:inline">{SHARE_TEXT.share}</span>
         </button>
       </div>
       <p role="status" className="min-h-5 text-center text-sm font-semibold text-brand-ink">

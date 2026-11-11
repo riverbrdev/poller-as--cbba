@@ -74,6 +74,21 @@ test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
     await expect(page).toHaveURL("/");
   });
 
+  test("botones y enlaces del perfil miden al menos 44px de alto, con una sola h1", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    await page.goto(`/polleria/${restaurant.slug}`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+
+    const main = page.locator("main").filter({ visible: true });
+    const targets = main.locator("a, button").filter({ visible: true });
+    const count = await targets.count();
+    expect(count).toBeGreaterThan(0);
+    for (let index = 0; index < count; index += 1) {
+      const box = await targets.nth(index).boundingBox();
+      expect(box?.height ?? 0, await targets.nth(index).innerText()).toBeGreaterThanOrEqual(44);
+    }
+  });
+
   test("a 360px no hay desplazamiento horizontal", async ({ page }) => {
     const restaurant = await firstRestaurant();
     await page.goto(`/polleria/${restaurant.slug}`);
