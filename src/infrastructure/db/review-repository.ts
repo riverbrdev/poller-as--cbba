@@ -1,5 +1,5 @@
 import { and, desc, eq, sql, type SQL } from "drizzle-orm";
-import type { ReviewFilter, ReviewRepository, ReviewRow } from "@/application/ports/review-repository";
+import type { PersonalReviewReader, ReviewFilter, ReviewRepository, ReviewRow } from "@/application/ports/review-repository";
 import type { Db } from "./client";
 import { ratingHelpfulVotes, ratings, restaurants, users } from "./schema";
 
@@ -30,8 +30,28 @@ function orderFor(filter: ReviewFilter): SQL[] {
   return filter === "featured" ? [sql`${helpfulCount} desc`, ...recent] : recent;
 }
 
-export function createDrizzleReviewRepository(db: Db): ReviewRepository {
+export function createDrizzleReviewRepository(db: Db): ReviewRepository & PersonalReviewReader {
   return {
+    async listByAuthor(userId) {
+      return db
+        .select({
+          id: ratings.id,
+          restaurantName: restaurants.name,
+          scores: {
+            flavor: ratings.flavorScore,
+            portion: ratings.portionScore,
+            service: ratings.serviceScore,
+            place: ratings.placeScore,
+          },
+          comment: ratings.comment,
+          createdAt: ratings.createdAt,
+        })
+        .from(ratings)
+        .innerJoin(restaurants, eq(restaurants.id, ratings.restaurantId))
+        .where(eq(ratings.userId, userId))
+        .orderBy(desc(ratings.createdAt), desc(ratings.id));
+    },
+
     async list({ restaurantId, filter, limit }) {
       const rows = await db
         .select({

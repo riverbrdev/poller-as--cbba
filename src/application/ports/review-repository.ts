@@ -21,6 +21,19 @@ export type ReviewRow = {
 
 export type ReviewCounts = { all: number; withComment: number; featured: number };
 
+/** Historial privado del autor, incluidas las reseñas ocultas en la vista pública. */
+export type PersonalReviewRow = {
+  id: string;
+  restaurantName: string;
+  scores: RatingScores;
+  comment: string | null;
+  createdAt: Date;
+};
+
+export interface PersonalReviewReader {
+  listByAuthor(userId: string): Promise<PersonalReviewRow[]>;
+}
+
 /** Lo que necesita el caso de uso "Útil" de una reseña. `authorId` nunca sale al cliente. */
 export type PublicReviewRef = {
   id: string;

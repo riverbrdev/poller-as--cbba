@@ -39,7 +39,7 @@ export const useCases = {
   chooseUsername: createChooseUsername({ users }),
   checkUsernameAvailability: createCheckUsernameAvailability({ users }),
   getUserById: createGetUserById({ users }),
-  getMyProfile: createGetMyProfile({ users }),
+  getMyProfile: createGetMyProfile({ users, reviews }),
   listActiveRestaurants: createListActiveRestaurants({ restaurants }),
   getRestaurantBySlug: createGetRestaurantBySlug({ restaurants }),
   getRestaurantDetail: createGetRestaurantDetail({ restaurants, ratings }),
