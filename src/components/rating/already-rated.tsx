@@ -1,11 +1,12 @@
-import Link from "next/link";
 import { CircleCheck } from "lucide-react";
 import { overallScore, scoreLabel, type RatingScores } from "@/domain/rating/criteria";
 import { RatedScores } from "./rated-scores";
-import { CATALOG_HREF, RatingLayout, type RatingHeroSlots } from "./rating-layout";
+import { AfterVoteLinks } from "./after-vote-links";
+import { RatingLayout, type RatingHeroSlots } from "./rating-layout";
 import { ScoreRing } from "./score-ring";
 
 type AlreadyRatedProps = {
+  slug: string;
   restaurantName: string;
   hero: RatingHeroSlots;
   scores: RatingScores;
@@ -13,7 +14,7 @@ type AlreadyRatedProps = {
 };
 
 /** Quien ya votó ve sus notas en solo lectura: los votos son definitivos (SPEC regla 1). */
-export function AlreadyRated({ restaurantName, hero, scores, comment }: AlreadyRatedProps) {
+export function AlreadyRated({ slug, restaurantName, hero, scores, comment }: AlreadyRatedProps) {
   const overall = overallScore(scores) ?? 0;
 
   return (
@@ -37,12 +38,7 @@ export function AlreadyRated({ restaurantName, hero, scores, comment }: AlreadyR
       ) : null}
 
       <p className="mt-6 text-center text-xs text-ink-muted">Los votos son definitivos y no se pueden cambiar.</p>
-      <Link
-        href={CATALOG_HREF}
-        className="mt-4 inline-flex min-h-13 w-full items-center justify-center rounded-xl bg-brand px-5 text-base font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
-      >
-        Volver al catálogo
-      </Link>
+      <AfterVoteLinks slug={slug} />
     </RatingLayout>
   );
 }

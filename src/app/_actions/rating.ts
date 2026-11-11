@@ -43,7 +43,8 @@ export async function submitRatingAction(_state: RatingFormState, formData: Form
     return { status: "error", error: result.error };
   }
 
-  // Un voto cambia C y la nota de todas las pollerías: updateTag para que quien votó lo vea al instante.
+  // Un voto cambia C y la nota de todas las pollerías: updateTag para que quien votó vea su reseña al instante.
+  // La página se vuelve a renderizar con el voto ya guardado; RatingForm conserva la pantalla de "¡Gracias!".
   updateTag(RATINGS_CACHE_TAG);
   return { status: "saved", overall: overallScore(result.rating.scores) ?? 0 };
 }

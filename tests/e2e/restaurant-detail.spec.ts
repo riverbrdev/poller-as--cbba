@@ -1,8 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
-import { useOwnClientIp } from "./helpers";
+import { createPasswordUser, e2eEmail, e2eUsername, randomSuffix, signInAsGoogleUser, useOwnClientIp } from "./helpers";
 
 // Lo esperado sale de la misma base que muestra la web, sin números fijos.
 // Los usuarios e2e- y sus votos se quedan en la base durante la fase de pruebas (no se borran al terminar).
@@ -73,5 +73,66 @@ test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
 
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(scrollWidth).toBeLessThanOrEqual(360);
+  });
+});
+
+const CRITERIA = ["Sabor y crocancia", "Cantidad y porción", "Atención y rapidez", "Local"] as const;
+
+async function signedInUser(page: Page) {
+  const suffix = randomSuffix();
+  const user = await createPasswordUser({ username: e2eUsername(suffix), email: e2eEmail(suffix) });
+  await signInAsGoogleUser(page.context(), user);
+  return user;
+}
+
+/** Vota con las 4 notas y un comentario, igual que una persona desde el formulario. */
+async function vote(page: Page, slug: string, comment: string) {
+  await page.goto(`/calificar/${slug}`);
+  for (const criterion of CRITERIA) {
+    await page.locator("label", { has: page.getByRole("radio", { name: `${criterion}, 9`, exact: true }) }).click();
+  }
+  await page.getByLabel("Comentario").fill(comment);
+  await page.getByRole("button", { name: "Enviar mi voto" }).click();
+  // En desarrollo, la primera acción compila la ruta: se da más margen que el de 5 s por defecto.
+  await expect(page.getByText("¡Gracias! Tu voto quedó guardado")).toBeVisible({ timeout: 15_000 });
+}
+
+/** La lista de reseñas visible (la home anterior puede seguir oculta en el DOM). */
+const reviewList = (page: Page) => page.getByRole("region", { name: "Reseñas de la comunidad" }).filter({ visible: true });
+
+test.describe("reseñas y conexión con el voto (US2)", () => {
+  test("después de votar, Ver tu reseña la muestra primera y marcada como tuya", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    const user = await signedInUser(page);
+    const comment = `Prueba e2e ${randomSuffix()}: crocante y bien servido`;
+
+    await vote(page, restaurant.slug, comment);
+    await page.getByRole("link", { name: "Ver tu reseña" }).click();
+
+    await expect(page).toHaveURL(`/polleria/${restaurant.slug}#mi-resena`);
+    const first = reviewList(page).getByRole("article").first();
+    await expect(first).toContainText(`@${user.username}`);
+    await expect(first).toContainText(comment);
+    await expect(first.getByText("Tu reseña")).toBeVisible();
+    // Nunca se muestran el nombre ni el correo del autor.
+    await expect(reviewList(page)).not.toContainText(user.email);
+  });
+
+  test("Con comentarios sigue mostrando la reseña con comentario", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    await signedInUser(page);
+    const comment = `Filtro e2e ${randomSuffix()}`;
+    await vote(page, restaurant.slug, comment);
+
+    await page.goto(`/polleria/${restaurant.slug}?resenas=con-comentario`);
+    await expect(reviewList(page).getByRole("link", { name: /Con comentarios/ })).toHaveAttribute("aria-current", "page");
+    await expect(reviewList(page).getByRole("article").first()).toContainText(comment);
+  });
+
+  test("sin sesión se ven las reseñas pero ninguna dice Tu reseña", async ({ page }) => {
+    const restaurant = await firstRestaurant();
+    await page.goto(`/polleria/${restaurant.slug}`);
+    await expect(reviewList(page).getByRole("article").first()).toBeVisible();
+    await expect(page.getByText("Tu reseña")).toHaveCount(0);
   });
 });

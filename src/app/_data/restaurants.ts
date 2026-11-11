@@ -1,4 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
+import type { ReviewFilter } from "@/application/ports/review-repository";
+import type { ReviewList } from "@/application/rating/list-restaurant-reviews";
 import type { RatingCriterionKey } from "@/domain/rating/criteria";
 import { scoreDisplay, type RankingStatus, type ScoreDisplay } from "@/domain/rating/ranking";
 import { useCases } from "@/composition/container";
@@ -25,6 +27,8 @@ export const RATINGS_CACHE_TAG = "ratings";
 
 /** Lo que recibe la página de detalle. Serializable: sin bigint ni fracciones (contracts/restaurant-detail-page.md). */
 export type RestaurantDetailDto = {
+  /** Id de la pollería: lo necesitan las reseñas y su etiqueta de caché. */
+  id: string;
   restaurant: {
     slug: string;
     name: string;
@@ -55,6 +59,7 @@ export async function getRestaurantDetail(slug: string): Promise<RestaurantDetai
   }
   const { restaurant, score } = detail;
   return {
+    id: restaurant.id,
     restaurant: {
       slug: restaurant.slug,
       name: restaurant.name,
@@ -69,4 +74,19 @@ export async function getRestaurantDetail(slug: string): Promise<RestaurantDetai
     display: score.score ? scoreDisplay(score.score) : null,
     criteriaAverages: score.criteriaAverages,
   };
+}
+
+/** Etiqueta de las reseñas de una pollería: las marcas "Útil" la invalidan sin tocar las notas. */
+export const reviewsCacheTag = (restaurantId: string) => `reviews:${restaurantId}`;
+
+/** Reseñas públicas de una pollería. Un voto (tag "ratings") o una marca "Útil" (tag de la pollería) las refrescan. */
+export async function listRestaurantReviews(args: {
+  restaurantId: string;
+  filter: ReviewFilter;
+  limit: number;
+}): Promise<ReviewList> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(RATINGS_CACHE_TAG, reviewsCacheTag(args.restaurantId));
+  return useCases.listRestaurantReviews(args);
 }
