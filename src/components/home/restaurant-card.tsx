@@ -24,9 +24,16 @@ type RestaurantCardProps = {
  * y a su lado zona, nombre, dirección y las acciones. Mapa es solo ícono para que Votar quepa ancho.
  */
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const detailHref = `/polleria/${restaurant.slug}`;
   return (
     <article className="group flex h-full gap-3 rounded-2xl border border-line bg-white p-3 shadow-card transition-[translate,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:gap-4 sm:p-4">
-      <div className="relative aspect-square w-24 shrink-0 self-start min-[360px]:w-32 overflow-hidden rounded-xl border border-line bg-photo-placeholder sm:w-40 xl:w-44">
+      {/* La foto también lleva al detalle; fuera del orden de tabulación porque el nombre ya es el enlace accesible. */}
+      <Link
+        href={detailHref}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative aspect-square w-24 shrink-0 self-start min-[360px]:w-32 overflow-hidden rounded-xl border border-line bg-photo-placeholder sm:w-40 xl:w-44"
+      >
         {restaurant.photoUrl ? (
           <Image
             src={restaurant.photoUrl}
@@ -40,7 +47,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <UtensilsCrossed size={36} aria-hidden="true" />
           </div>
         )}
-      </div>
+      </Link>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <p className="inline-flex max-w-full items-center gap-1 self-start rounded-full bg-brand-soft px-2.5 py-1 text-xs font-bold text-brand-ink">
@@ -48,10 +55,15 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <span className="truncate">{restaurant.zone}</span>
         </p>
         <h3 className="mt-2 line-clamp-2 text-base font-extrabold leading-snug transition-colors group-hover:text-brand-ink sm:text-lg">
-          {restaurant.name}
+          <Link
+            href={detailHref}
+            className="rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          >
+            {restaurant.name}
+          </Link>
         </h3>
         <p className="mt-1 line-clamp-2 text-sm leading-5 text-ink-muted">{restaurant.address}</p>
-        {/* La nota y los votos van aquí cuando exista el ranking (SPEC §4). No se inventan datos. */}
+        {/* La nota y los votos se ven en el detalle de la pollería; el catálogo no inventa datos. */}
 
         <div className="mt-auto flex gap-2 pt-3">
           <Link
