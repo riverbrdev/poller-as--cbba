@@ -93,7 +93,10 @@ export async function currentSession(page: Page): Promise<{ user?: { id?: string
   return body && Object.keys(body).length > 0 ? body : null;
 }
 
-/** Borra todas las cuentas de prueba (correo con prefijo e2e-). Se llama al final de cada archivo. */
+/**
+ * Limpieza manual antes del lanzamiento: borra los usuarios e2e- y, por cascade, sus votos y marcas.
+ * Durante la fase de pruebas no se llama: los datos de prueba se mantienen.
+ */
 export async function deleteE2eUsers(): Promise<void> {
   await db.delete(users).where(like(users.email, `${E2E_PREFIX}%${E2E_EMAIL_DOMAIN}`));
 }

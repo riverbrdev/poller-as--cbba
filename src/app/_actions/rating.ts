@@ -1,10 +1,12 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/composition/auth";
 import { rateLimiters, useCases } from "@/composition/container";
 import { overallScore } from "@/domain/rating/criteria";
 import { ratingSchema } from "@/app/_lib/rating-schemas";
+import { RATINGS_CACHE_TAG } from "@/app/_data/restaurants";
 import type { RatingFormState } from "@/components/rating/form-state";
 
 const loginToRate = (slug: string) =>
@@ -41,6 +43,8 @@ export async function submitRatingAction(_state: RatingFormState, formData: Form
     return { status: "error", error: result.error };
   }
 
-  // La home no muestra votos (FR-025): no hay nada que revalidar.
+  // Un voto cambia C y la nota de todas las pollerías: updateTag para que quien votó vea su reseña al instante.
+  // La página se vuelve a renderizar con el voto ya guardado; RatingForm conserva la pantalla de "¡Gracias!".
+  updateTag(RATINGS_CACHE_TAG);
   return { status: "saved", overall: overallScore(result.rating.scores) ?? 0 };
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import Link from "next/link";
 import { CircleAlert, CircleCheck } from "lucide-react";
 import {
   COMMENT_MAX_LENGTH,
@@ -14,8 +13,10 @@ import {
 import type { RatingFormState } from "./form-state";
 import { ratingMessage } from "./messages";
 import { ProgressBar } from "./progress-bar";
+import { AfterVoteLinks } from "./after-vote-links";
+import { AlreadyRated } from "./already-rated";
 import { RatedScores } from "./rated-scores";
-import { CATALOG_HREF, RatingLayout, type RatingHeroSlots } from "./rating-layout";
+import { RatingLayout, type RatingHeroSlots } from "./rating-layout";
 import type { RatingRestaurant } from "./rating-hero";
 import { ScoreRing } from "./score-ring";
 import { ScoreScale } from "./score-scale";
@@ -25,6 +26,12 @@ type RatingFormProps = {
   /** La foto llega ya renderizada desde la página (shell estático); el formulario solo la ubica. */
   hero: RatingHeroSlots;
   action: (state: RatingFormState, formData: FormData) => Promise<RatingFormState>;
+  /**
+   * El voto que ya tenía esta persona (o null). Lo resuelve el mismo componente, no la página:
+   * así, cuando la página se vuelve a renderizar justo después de votar (updateTag), React conserva
+   * este formulario y su estado "guardado", y no se pierde la pantalla de "¡Gracias!".
+   */
+  alreadyRated: { scores: RatingScores; comment: string | null } | null;
 };
 
 const TOTAL = RATING_CRITERIA.length;
@@ -54,7 +61,7 @@ function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boole
   );
 }
 
-export function RatingForm({ restaurant, hero, action }: RatingFormProps) {
+export function RatingForm({ restaurant, hero, action, alreadyRated }: RatingFormProps) {
   const [state, formAction, pending] = useActionState(action, { status: "idle" });
   const [scores, setScores] = useState<Partial<RatingScores>>({});
   const [comment, setComment] = useState("");
@@ -81,13 +88,20 @@ export function RatingForm({ restaurant, hero, action }: RatingFormProps) {
         <div className="mt-6">
           <RatedScores scores={scores} />
         </div>
-        <Link
-          href={CATALOG_HREF}
-          className="mt-8 inline-flex min-h-13 w-full items-center justify-center rounded-xl bg-brand px-5 text-base font-bold text-white transition-colors hover:bg-brand-dark active:scale-[0.98]"
-        >
-          Volver al catálogo
-        </Link>
+        <AfterVoteLinks slug={restaurant.slug} />
       </RatingLayout>
+    );
+  }
+
+  if (alreadyRated) {
+    return (
+      <AlreadyRated
+        slug={restaurant.slug}
+        restaurantName={restaurant.name}
+        hero={hero}
+        scores={alreadyRated.scores}
+        comment={alreadyRated.comment}
+      />
     );
   }
 

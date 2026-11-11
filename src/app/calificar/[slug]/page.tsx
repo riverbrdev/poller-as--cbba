@@ -4,7 +4,6 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { submitRatingAction } from "@/app/_actions/rating";
 import { getActiveRestaurants, getRestaurantBySlug } from "@/app/_data/restaurants";
-import { AlreadyRated } from "@/components/rating/already-rated";
 import { RatingForm } from "@/components/rating/rating-form";
 import { RatingFormSkeleton } from "@/components/rating/rating-form-skeleton";
 import { RatingHero, type RatingRestaurant } from "@/components/rating/rating-hero";
@@ -103,10 +102,9 @@ async function RatingGate({
   }
 
   // Los votos no se editan: quien ya votó ve sus notas en vez del formulario (FR-019a).
+  // Siempre se renderiza RatingForm: él decide, así conserva su estado "guardado" al re-renderizar tras votar.
   const mine = await useCases.getMyRating(session.user.id, restaurantId);
-  if (mine) {
-    return <AlreadyRated restaurantName={restaurant.name} hero={hero} scores={mine.scores} comment={mine.comment} />;
-  }
+  const alreadyRated = mine ? { scores: mine.scores, comment: mine.comment } : null;
 
-  return <RatingForm restaurant={restaurant} hero={hero} action={submitRatingAction} />;
+  return <RatingForm restaurant={restaurant} hero={hero} action={submitRatingAction} alreadyRated={alreadyRated} />;
 }

@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 import {
   createPasswordUser,
   currentSession,
-  deleteE2eUsers,
   e2eEmail,
   e2eUsername,
   randomSuffix,
@@ -12,10 +11,6 @@ import {
 
 test.beforeEach(async ({ context }) => {
   await useOwnClientIp(context);
-});
-
-test.afterAll(async () => {
-  await deleteE2eUsers();
 });
 
 test("sin sesión, el header muestra Participar y /mi-perfil pide ingresar", async ({ page }) => {

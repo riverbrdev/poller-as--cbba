@@ -1,6 +1,13 @@
 import type { PasswordHasher } from "@/application/ports/password-hasher";
-import type { NewRating, RatingRecord, RatingRepository } from "@/application/ports/rating-repository";
+import type {
+  NewRating,
+  RatingRecord,
+  RatingRepository,
+  RestaurantRatingStats,
+} from "@/application/ports/rating-repository";
 import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
+import type { HelpfulVoteRepository } from "@/application/ports/helpful-vote-repository";
+import type { ReviewFilter, ReviewRepository, ReviewRow } from "@/application/ports/review-repository";
 import type {
   CreateUserResult,
   NewUser,
@@ -64,8 +71,14 @@ export const fakeHasher: PasswordHasher = {
   verify: async (password, hash) => hash === `hashed:${password}`,
 };
 
-/** Repositorio de votos en memoria. Respeta el índice único (user_id, restaurant_id) de la base. */
-export function createFakeRatingRepository(initial: RatingRecord[] = []): RatingRepository & {
+/**
+ * Repositorio de votos en memoria. Respeta el índice único (user_id, restaurant_id) de la base.
+ * `hidden`: ids de votos ocultos (status 'hidden'), que no cuentan en las estadísticas.
+ */
+export function createFakeRatingRepository(
+  initial: RatingRecord[] = [],
+  hidden: Set<string> = new Set(),
+): RatingRepository & {
   all(): RatingRecord[];
 } {
   const ratings: RatingRecord[] = initial.map((rating) => ({ ...rating }));
@@ -85,6 +98,23 @@ export function createFakeRatingRepository(initial: RatingRecord[] = []): Rating
       ratings.push(rating);
       return rating;
     },
+    async statsForActiveRestaurants() {
+      const byRestaurant = new Map<string, RestaurantRatingStats>();
+      for (const rating of ratings.filter((item) => !hidden.has(item.id))) {
+        const stats = byRestaurant.get(rating.restaurantId) ?? {
+          restaurantId: rating.restaurantId,
+          voteCount: 0,
+          criteriaTotals: { flavor: 0, portion: 0, service: 0, place: 0 },
+        };
+        stats.voteCount += 1;
+        stats.criteriaTotals.flavor += rating.scores.flavor;
+        stats.criteriaTotals.portion += rating.scores.portion;
+        stats.criteriaTotals.service += rating.scores.service;
+        stats.criteriaTotals.place += rating.scores.place;
+        byRestaurant.set(rating.restaurantId, stats);
+      }
+      return [...byRestaurant.values()];
+    },
   };
 }
 
@@ -93,5 +123,90 @@ export function createFakeRestaurantRepository(records: RestaurantRecord[]): Res
   return {
     listActive: async () => records,
     findActiveBySlug: async (slug) => records.find((record) => record.slug === slug) ?? null,
+  };
+}
+
+/** Reseña del fake: como la fila de la base, con el autor y los estados de moderación. */
+export type FakeReview = Omit<ReviewRow, "comment"> & {
+  authorId: string;
+  /** Comentario tal como se guardó (antes de aplicar la moderación). */
+  comment: string | null;
+  /** status del voto; false = 'hidden'. */
+  visible?: boolean;
+  /** comment_status; false = 'hidden'. */
+  commentVisible?: boolean;
+  /** status de la pollería; false = 'hidden'. */
+  restaurantActive?: boolean;
+};
+
+/** Repositorio de reseñas en memoria: mismos filtros y orden que la tabla de data-model.md. */
+export function createFakeReviewRepository(reviews: FakeReview[]): ReviewRepository {
+  const isPublic = (review: FakeReview) => review.visible !== false && review.restaurantActive !== false;
+  const hasVisibleComment = (review: FakeReview) => review.comment !== null && review.commentVisible !== false;
+  const byRecent = (a: FakeReview, b: FakeReview) =>
+    b.createdAt.getTime() - a.createdAt.getTime() || b.id.localeCompare(a.id);
+
+  const matches = (filter: ReviewFilter) => (review: FakeReview) => {
+    if (filter === "with-comment") return hasVisibleComment(review);
+    if (filter === "featured") return hasVisibleComment(review) && review.helpfulCount >= 1;
+    return true;
+  };
+
+  const toRow = (review: FakeReview): ReviewRow => ({
+    id: review.id,
+    restaurantId: review.restaurantId,
+    authorUsername: review.authorUsername,
+    authorAvatarUrl: review.authorAvatarUrl,
+    scores: review.scores,
+    comment: review.commentVisible === false ? null : review.comment,
+    helpfulCount: review.helpfulCount,
+    createdAt: review.createdAt,
+  });
+
+  const ofRestaurant = (restaurantId: string) =>
+    reviews.filter((review) => review.restaurantId === restaurantId && isPublic(review));
+
+  return {
+    async list({ restaurantId, filter, limit }) {
+      const sorted = ofRestaurant(restaurantId)
+        .filter(matches(filter))
+        .sort(filter === "featured" ? (a, b) => b.helpfulCount - a.helpfulCount || byRecent(a, b) : byRecent);
+      return sorted.slice(0, limit).map(toRow);
+    },
+    async findPublicById(ratingId) {
+      const review = reviews.find((item) => item.id === ratingId);
+      if (!review || !isPublic(review)) return null;
+      return {
+        id: review.id,
+        restaurantId: review.restaurantId,
+        authorId: review.authorId,
+        hasVisibleComment: hasVisibleComment(review),
+      };
+    },
+    async counts(restaurantId) {
+      const visible = ofRestaurant(restaurantId);
+      return {
+        all: visible.length,
+        withComment: visible.filter(matches("with-comment")).length,
+        featured: visible.filter(matches("featured")).length,
+      };
+    },
+  };
+}
+
+/** Marcas "Útil" en memoria. Respeta la PK (rating_id, user_id) de la base: una marca por persona y reseña. */
+export function createFakeHelpfulVoteRepository(): HelpfulVoteRepository & { size(): number } {
+  const marks = new Set<string>();
+  const key = (ratingId: string, userId: string) => `${ratingId}:${userId}`;
+  return {
+    size: () => marks.size,
+    add: async (ratingId, userId) => {
+      marks.add(key(ratingId, userId));
+    },
+    remove: async (ratingId, userId) => {
+      marks.delete(key(ratingId, userId));
+    },
+    count: async (ratingId) => [...marks].filter((mark) => mark.startsWith(`${ratingId}:`)).length,
+    markedBy: async (userId, ratingIds) => ratingIds.filter((ratingId) => marks.has(key(ratingId, userId))),
   };
 }

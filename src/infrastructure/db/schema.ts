@@ -4,6 +4,7 @@ import {
   index,
   pgEnum,
   pgTable,
+  primaryKey,
   smallint,
   text,
   timestamp,
@@ -88,6 +89,8 @@ export const ratings = pgTable(
     placeScore: smallint("place_score").notNull(),
     comment: varchar("comment", { length: 280 }),
     status: ratingStatus("status").notNull().default("visible"),
+    // SPEC §4 regla 8: oculta solo el comentario; la nota sigue contando.
+    commentStatus: ratingStatus("comment_status").notNull().default("visible"),
     createdAt,
     // Sin uso en v1: los votos no se editan (SPEC regla 1).
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -96,6 +99,13 @@ export const ratings = pgTable(
     // SPEC regla 1: una sola calificación por usuario y pollería, garantizado por la base.
     uniqueIndex("ratings_user_restaurant_unique").on(table.userId, table.restaurantId),
     index("ratings_restaurant_idx").on(table.restaurantId),
+    // Lista de reseñas de una pollería, de la más reciente a la más antigua, sin ordenar en memoria.
+    index("ratings_restaurant_feed_idx").on(
+      table.restaurantId,
+      table.status,
+      table.createdAt.desc(),
+      table.id.desc(),
+    ),
     check("ratings_flavor_score_range", sql`${table.flavorScore} between 1 and 10`),
     check("ratings_portion_score_range", sql`${table.portionScore} between 1 and 10`),
     check("ratings_service_score_range", sql`${table.serviceScore} between 1 and 10`),
@@ -137,4 +147,19 @@ export const reports = pgTable(
     createdAt,
   },
   (table) => [index("reports_status_idx").on(table.status)],
+);
+
+export const ratingHelpfulVotes = pgTable(
+  "rating_helpful_votes",
+  {
+    ratingId: uuid("rating_id")
+      .notNull()
+      .references(() => ratings.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt,
+  },
+  // Una marca "Útil" por persona y reseña, garantizado por la base (SPEC regla 9).
+  (table) => [primaryKey({ columns: [table.ratingId, table.userId] })],
 );

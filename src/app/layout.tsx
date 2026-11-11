@@ -11,7 +11,12 @@ const jakarta = Plus_Jakarta_Sans({
 
 const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gente.";
 
+// Base de las URLs de Open Graph: las fotos se guardan como rutas relativas (/pollerias/<slug>.webp)
+// y WhatsApp/Facebook necesitan la URL completa para mostrar la imagen.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "ComiDeli",
   description: DESCRIPTION,
   // Para que el enlace se vea bien al compartirlo por WhatsApp o Facebook (CLAUDE.md).

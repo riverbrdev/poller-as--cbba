@@ -1,4 +1,7 @@
 import type { RatingScores } from "@/domain/rating/criteria";
+import type { RestaurantRatingStats } from "@/domain/rating/ranking";
+
+export type { RestaurantRatingStats };
 
 /** Voto tal como lo devuelve el repositorio (SPEC §3). */
 export type RatingRecord = {
@@ -25,4 +28,9 @@ export interface RatingRepository {
    * Devuelve null si el usuario ya había votado: los votos no se editan (SPEC regla 1).
    */
   createIfAbsent(rating: NewRating): Promise<RatingRecord | null>;
+  /**
+   * Estadísticas para el ranking bayesiano: solo votos con status 'visible' de pollerías 'active'.
+   * Devuelve sumas enteras por criterio, sin promedios ni redondeos (los calcula domain/rating/ranking.ts).
+   */
+  statsForActiveRestaurants(): Promise<RestaurantRatingStats[]>;
 }
