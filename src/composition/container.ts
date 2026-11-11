@@ -6,6 +6,7 @@ import { createChooseUsername } from "@/application/user/choose-username";
 import { createGetMyRating } from "@/application/rating/get-my-rating";
 import { createRateRestaurant } from "@/application/rating/rate-restaurant";
 import { createGetRestaurantBySlug } from "@/application/restaurant/get-restaurant-by-slug";
+import { createGetRestaurantDetail } from "@/application/restaurant/get-restaurant-detail";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createGetMyProfile } from "@/application/user/get-my-profile";
 import { createGetUserById } from "@/application/user/get-user-by-id";
@@ -34,6 +35,7 @@ export const useCases = {
   getMyProfile: createGetMyProfile({ users }),
   listActiveRestaurants: createListActiveRestaurants({ restaurants }),
   getRestaurantBySlug: createGetRestaurantBySlug({ restaurants }),
+  getRestaurantDetail: createGetRestaurantDetail({ restaurants, ratings }),
   rateRestaurant: createRateRestaurant({ users, restaurants, ratings }),
   getMyRating: createGetMyRating({ ratings }),
 };
