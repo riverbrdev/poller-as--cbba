@@ -6,6 +6,7 @@ import type {
   RestaurantRatingStats,
 } from "@/application/ports/rating-repository";
 import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
+import type { HelpfulVoteRepository } from "@/application/ports/helpful-vote-repository";
 import type { ReviewFilter, ReviewRepository, ReviewRow } from "@/application/ports/review-repository";
 import type {
   CreateUserResult,
@@ -172,6 +173,16 @@ export function createFakeReviewRepository(reviews: FakeReview[]): ReviewReposit
         .sort(filter === "featured" ? (a, b) => b.helpfulCount - a.helpfulCount || byRecent(a, b) : byRecent);
       return sorted.slice(0, limit).map(toRow);
     },
+    async findPublicById(ratingId) {
+      const review = reviews.find((item) => item.id === ratingId);
+      if (!review || !isPublic(review)) return null;
+      return {
+        id: review.id,
+        restaurantId: review.restaurantId,
+        authorId: review.authorId,
+        hasVisibleComment: hasVisibleComment(review),
+      };
+    },
     async counts(restaurantId) {
       const visible = ofRestaurant(restaurantId);
       return {
@@ -180,5 +191,22 @@ export function createFakeReviewRepository(reviews: FakeReview[]): ReviewReposit
         featured: visible.filter(matches("featured")).length,
       };
     },
+  };
+}
+
+/** Marcas "Útil" en memoria. Respeta la PK (rating_id, user_id) de la base: una marca por persona y reseña. */
+export function createFakeHelpfulVoteRepository(): HelpfulVoteRepository & { size(): number } {
+  const marks = new Set<string>();
+  const key = (ratingId: string, userId: string) => `${ratingId}:${userId}`;
+  return {
+    size: () => marks.size,
+    add: async (ratingId, userId) => {
+      marks.add(key(ratingId, userId));
+    },
+    remove: async (ratingId, userId) => {
+      marks.delete(key(ratingId, userId));
+    },
+    count: async (ratingId) => [...marks].filter((mark) => mark.startsWith(`${ratingId}:`)).length,
+    markedBy: async (userId, ratingIds) => ratingIds.filter((ratingId) => marks.has(key(ratingId, userId))),
   };
 }

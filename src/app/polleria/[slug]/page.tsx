@@ -11,6 +11,7 @@ import {
   listRestaurantReviews,
   type RestaurantDetailDto,
 } from "@/app/_data/restaurants";
+import { setHelpfulAction } from "@/app/_actions/helpful";
 import { reviewsQuerySchema } from "@/app/_lib/review-schemas";
 import { REVIEWS_PAGE_SIZE } from "@/application/rating/list-restaurant-reviews";
 import { auth } from "@/composition/auth";
@@ -19,6 +20,7 @@ import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { MIN_VOTES_FOR_RANKING } from "@/domain/rating/ranking";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 import { DetailSkeleton } from "@/components/restaurant/detail-skeleton";
+import { HelpfulButton } from "@/components/restaurant/helpful-button";
 import { DETAIL_TEXT } from "@/components/restaurant/messages";
 import { RestaurantDetailHero } from "@/components/restaurant/restaurant-detail-hero";
 import { ReviewsSection } from "@/components/restaurant/reviews-section";
@@ -95,7 +97,7 @@ async function RestaurantDetail({ params, searchParams }: RestaurantPageProps) {
   const restaurantId = detail.id;
   const reviews = await listRestaurantReviews({ restaurantId, filter: query.resenas, limit: query.ver });
   // Sin await: la lista se dibuja ya desde la caché y solo "Tu reseña" / "Útil" esperan a la sesión.
-  const viewerState = loadViewerState(restaurantId);
+  const viewerState = loadViewerState(restaurantId, reviews.reviews.map((review) => review.id));
   const criteria: SummaryCriterion[] = RATING_CRITERIA.map((criterion) => ({
     key: criterion.key,
     title: criterion.title,
@@ -140,6 +142,9 @@ async function RestaurantDetail({ params, searchParams }: RestaurantPageProps) {
             reviews={reviews.reviews}
             counts={reviews.counts}
             hasMore={reviews.hasMore}
+            helpfulSlot={(review) => (
+              <HelpfulButton ratingId={review.id} slug={restaurant.slug} initialCount={review.helpfulCount} action={setHelpfulAction} />
+            )}
           />
         </ViewerStateProvider>
       </div>
@@ -148,12 +153,12 @@ async function RestaurantDetail({ params, searchParams }: RestaurantPageProps) {
 }
 
 /** Estado de quien mira: es por persona y no se cachea. La autorización real la vuelve a verificar cada acción. */
-async function loadViewerState(restaurantId: string): Promise<ViewerState> {
+async function loadViewerState(restaurantId: string, ratingIds: string[]): Promise<ViewerState> {
   await connection();
   const session = await auth();
   if (!session?.user.id) {
     return ANONYMOUS_VIEWER;
   }
-  const state = await useCases.getViewerReviewState({ userId: session.user.id, restaurantId });
-  return { ...state, helpfulRatingIds: [], signedIn: true };
+  const state = await useCases.getViewerReviewState({ userId: session.user.id, restaurantId, ratingIds });
+  return { ...state, signedIn: true };
 }

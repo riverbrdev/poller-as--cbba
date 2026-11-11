@@ -74,6 +74,21 @@ export function createDrizzleReviewRepository(db: Db): ReviewRepository {
       );
     },
 
+    async findPublicById(ratingId) {
+      const [row] = await db
+        .select({
+          id: ratings.id,
+          restaurantId: ratings.restaurantId,
+          authorId: ratings.userId,
+          hasVisibleComment: sql<boolean>`${hasVisibleComment}`,
+        })
+        .from(ratings)
+        .innerJoin(restaurants, eq(restaurants.id, ratings.restaurantId))
+        .where(and(eq(ratings.id, ratingId), eq(ratings.status, "visible"), eq(restaurants.status, "active")))
+        .limit(1);
+      return row ? { ...row, hasVisibleComment: Boolean(row.hasVisibleComment) } : null;
+    },
+
     async counts(restaurantId) {
       const [row] = await db
         .select({

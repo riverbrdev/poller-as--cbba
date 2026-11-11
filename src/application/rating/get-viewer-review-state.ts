@@ -1,3 +1,4 @@
+import type { HelpfulVoteRepository } from "@/application/ports/helpful-vote-repository";
 import type { RatingRepository } from "@/application/ports/rating-repository";
 import type { UserRepository } from "@/application/ports/user-repository";
 
@@ -10,17 +11,30 @@ export type ViewerReviewState = {
   myRatingId: string | null;
   /** Puede marcar "Útil": la cuenta existe en la base y tiene @usuario. */
   canMarkHelpful: boolean;
+  /** De las reseñas que se muestran, cuáles marcó como útiles. */
+  helpfulRatingIds: string[];
 };
 
-export function createGetViewerReviewState(deps: { users: UserRepository; ratings: RatingRepository }) {
-  return async function getViewerReviewState(args: { userId: string; restaurantId: string }): Promise<ViewerReviewState> {
-    const [user, mine] = await Promise.all([
+export function createGetViewerReviewState(deps: {
+  users: UserRepository;
+  ratings: RatingRepository;
+  helpfulVotes: HelpfulVoteRepository;
+}) {
+  return async function getViewerReviewState(args: {
+    userId: string;
+    restaurantId: string;
+    /** Reseñas que se muestran en la página: solo de esas interesa saber si las marcó. */
+    ratingIds: string[];
+  }): Promise<ViewerReviewState> {
+    const [user, mine, helpfulRatingIds] = await Promise.all([
       deps.users.findById(args.userId),
       deps.ratings.findByUserAndRestaurant(args.userId, args.restaurantId),
+      deps.helpfulVotes.markedBy(args.userId, args.ratingIds),
     ]);
     return {
       myRatingId: mine?.id ?? null,
       canMarkHelpful: Boolean(user?.username),
+      helpfulRatingIds,
     };
   };
 }

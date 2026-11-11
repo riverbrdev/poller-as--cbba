@@ -21,6 +21,14 @@ export type ReviewRow = {
 
 export type ReviewCounts = { all: number; withComment: number; featured: number };
 
+/** Lo que necesita el caso de uso "Útil" de una reseña. `authorId` nunca sale al cliente. */
+export type PublicReviewRef = {
+  id: string;
+  restaurantId: string;
+  authorId: string;
+  hasVisibleComment: boolean;
+};
+
 /**
  * Puerto: lo implementa infrastructure/.
  * Solo votos con status 'visible' de pollerías 'active'. Orden estable, siempre terminando en `id DESC`:
@@ -31,4 +39,6 @@ export type ReviewCounts = { all: number; withComment: number; featured: number 
 export interface ReviewRepository {
   list(args: { restaurantId: string; filter: ReviewFilter; limit: number }): Promise<ReviewRow[]>;
   counts(restaurantId: string): Promise<ReviewCounts>;
+  /** La reseña si es pública (voto 'visible' de pollería 'active'); si no, null. */
+  findPublicById(ratingId: string): Promise<PublicReviewRef | null>;
 }

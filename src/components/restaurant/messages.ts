@@ -46,3 +46,20 @@ export const REVIEW_TEXT = {
   emptyFilter: "No hay reseñas con este filtro todavía.",
   seeMine: "Ver tu reseña",
 } as const;
+
+export const HELPFUL_TEXT = {
+  label: (count: number) => `Útil (${count})`,
+  ownReview: "No puedes marcar tu propia reseña",
+} as const;
+
+const HELPFUL_ERRORS: Record<string, string> = {
+  rate_limited: "Marcaste muchas reseñas seguidas. Espera un rato e inténtalo de nuevo.",
+  own_review: "No puedes marcar tu propia reseña.",
+  username_required: "Elige tu @usuario para poder marcar reseñas.",
+  review_not_found: "Esta reseña ya no está disponible.",
+};
+
+/** Texto visible para cada código de error de "Útil". */
+export function helpfulErrorMessage(code: string): string {
+  return HELPFUL_ERRORS[code] ?? "No pudimos guardar tu marca. Inténtalo de nuevo.";
+}

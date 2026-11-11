@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
@@ -134,5 +134,81 @@ test.describe("reseñas y conexión con el voto (US2)", () => {
     await page.goto(`/polleria/${restaurant.slug}`);
     await expect(reviewList(page).getByRole("article").first()).toBeVisible();
     await expect(page.getByText("Tu reseña")).toHaveCount(0);
+  });
+});
+
+/** Una persona con su propia sesión y su propia IP (para que el límite de Upstash no las cuente juntas). */
+async function personIn(browser: Browser) {
+  const context = await browser.newContext({ viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true });
+  await useOwnClientIp(context);
+  const page = await context.newPage();
+  const user = await signedInUser(page);
+  return { context, page, user };
+}
+
+async function secondRestaurant() {
+  const { restaurants } = await listActive();
+  const restaurant = restaurants[1] ?? restaurants[0];
+  if (!restaurant) throw new Error("La base no tiene pollerías");
+  return restaurant;
+}
+
+/** El botón Útil de la reseña más reciente (la que acaba de escribir la persona A). */
+const newestHelpful = (page: Page) => reviewList(page).getByRole("article").first().getByRole("button", { name: /^Útil/ });
+
+/** Toca Útil y espera a que el servidor confirme (el contador optimista aparece antes que la respuesta). */
+async function clickHelpful(page: Page) {
+  await newestHelpful(page).click();
+  await expect(newestHelpful(page)).toHaveAttribute("aria-busy", "false");
+}
+
+test.describe("marcar reseñas como útiles (US3)", () => {
+  test("otra persona marca Útil: cuenta una vez, se puede quitar y aparece en destacadas", async ({ browser }) => {
+    const restaurant = await secondRestaurant();
+    const author = await personIn(browser);
+    const comment = `Útil e2e ${randomSuffix()}`;
+    await vote(author.page, restaurant.slug, comment);
+
+    const reader = await personIn(browser);
+    const detail = `/polleria/${restaurant.slug}`;
+    await reader.page.goto(detail);
+    await expect(reviewList(reader.page).getByRole("article").first()).toContainText(comment);
+
+    // Una segunda pestaña abierta ANTES de marcar: todavía cree que no está marcada.
+    const staleTab = await reader.context.newPage();
+    await staleTab.goto(detail);
+
+    await clickHelpful(reader.page);
+    await expect(newestHelpful(reader.page)).toHaveText("Útil (1)");
+    await expect(newestHelpful(reader.page)).toHaveAttribute("aria-pressed", "true");
+
+    await reader.page.reload();
+    await expect(newestHelpful(reader.page)).toHaveText("Útil (1)");
+
+    // Desde la pestaña vieja manda "marcar" otra vez: la base no la cuenta dos veces.
+    await clickHelpful(staleTab);
+    await expect(newestHelpful(staleTab)).toHaveText("Útil (1)");
+
+    await reader.page.goto(`${detail}?resenas=destacadas`);
+    await expect(reviewList(reader.page).getByRole("article").first()).toContainText(comment);
+
+    await reader.page.goto(detail);
+    await clickHelpful(reader.page);
+    await expect(newestHelpful(reader.page)).toHaveText("Útil (0)");
+    await expect(newestHelpful(reader.page)).toHaveAttribute("aria-pressed", "false");
+
+    // Quien escribió la reseña no puede marcarla.
+    await author.page.goto(detail);
+    await expect(newestHelpful(author.page)).toBeDisabled();
+
+    await author.context.close();
+    await reader.context.close();
+  });
+
+  test("sin sesión, Útil lleva a ingresar y vuelve al perfil", async ({ page }) => {
+    const restaurant = await secondRestaurant();
+    await page.goto(`/polleria/${restaurant.slug}?resenas=con-comentario`);
+    const helpful = reviewList(page).getByRole("article").first().getByRole("link", { name: /^Útil/ });
+    await expect(helpful).toHaveAttribute("href", `/login?callbackUrl=${encodeURIComponent(`/polleria/${restaurant.slug}`)}`);
   });
 });

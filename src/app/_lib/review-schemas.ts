@@ -37,3 +37,10 @@ export const reviewsQuerySchema = z.object({
 });
 
 export type ReviewsQuery = z.infer<typeof reviewsQuerySchema>;
+
+/** Marcar o desmarcar "Útil". `helpful` es el estado deseado ("true" / "false"), no un toggle. */
+export const helpfulSchema = z.object({
+  ratingId: z.uuid({ message: "invalid_input" }),
+  helpful: z.enum(["true", "false"], { message: "invalid_input" }).transform((value) => value === "true"),
+  slug: z.string().trim().min(1, { message: "invalid_input" }),
+});

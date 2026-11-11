@@ -6,6 +6,7 @@ import { createChooseUsername } from "@/application/user/choose-username";
 import { createGetMyRating } from "@/application/rating/get-my-rating";
 import { createGetViewerReviewState } from "@/application/rating/get-viewer-review-state";
 import { createListRestaurantReviews } from "@/application/rating/list-restaurant-reviews";
+import { createSetReviewHelpful } from "@/application/rating/set-review-helpful";
 import { createRateRestaurant } from "@/application/rating/rate-restaurant";
 import { createGetRestaurantBySlug } from "@/application/restaurant/get-restaurant-by-slug";
 import { createGetRestaurantDetail } from "@/application/restaurant/get-restaurant-detail";
@@ -16,6 +17,7 @@ import { createRegisterWithPassword } from "@/application/user/register-with-pas
 import { createSignInWithGoogle } from "@/application/user/sign-in-with-google";
 import { bcryptPasswordHasher } from "@/infrastructure/auth/bcrypt-password-hasher";
 import { createDb } from "@/infrastructure/db/client";
+import { createDrizzleHelpfulVoteRepository } from "@/infrastructure/db/helpful-vote-repository";
 import { createDrizzleRatingRepository } from "@/infrastructure/db/rating-repository";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
 import { createDrizzleReviewRepository } from "@/infrastructure/db/review-repository";
@@ -27,6 +29,7 @@ const users = createDrizzleUserRepository(db);
 const restaurants = createDrizzleRestaurantRepository(db);
 const ratings = createDrizzleRatingRepository(db);
 const reviews = createDrizzleReviewRepository(db);
+const helpfulVotes = createDrizzleHelpfulVoteRepository(db);
 const hasher = bcryptPasswordHasher;
 
 export const useCases = {
@@ -43,7 +46,8 @@ export const useCases = {
   rateRestaurant: createRateRestaurant({ users, restaurants, ratings }),
   getMyRating: createGetMyRating({ ratings }),
   listRestaurantReviews: createListRestaurantReviews({ reviews }),
-  getViewerReviewState: createGetViewerReviewState({ users, ratings }),
+  getViewerReviewState: createGetViewerReviewState({ users, ratings, helpfulVotes }),
+  setReviewHelpful: createSetReviewHelpful({ users, reviews, helpfulVotes }),
 };
 
 // Helper de petición: app/ lo toma de aquí porque no puede importar infrastructure/ directamente.
@@ -54,4 +58,6 @@ export const rateLimiters = {
   register: createIpRateLimiter(RATE_LIMIT_RULES.register),
   // Se usa con la clave `user:<id>`, no con la IP.
   rating: createIpRateLimiter(RATE_LIMIT_RULES.rating),
+  // Se usa con la clave `user:<id>`.
+  helpful: createIpRateLimiter(RATE_LIMIT_RULES.helpful),
 };
