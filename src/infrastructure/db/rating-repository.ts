@@ -1,7 +1,7 @@
-import { and, eq } from "drizzle-orm";
-import type { RatingRecord, RatingRepository } from "@/application/ports/rating-repository";
+import { and, eq, sql } from "drizzle-orm";
+import type { RatingRecord, RatingRepository, RestaurantRatingStats } from "@/application/ports/rating-repository";
 import type { Db } from "./client";
-import { ratings } from "./schema";
+import { ratings, restaurants } from "./schema";
 
 const ratingFields = {
   id: ratings.id,
@@ -43,6 +43,15 @@ function toRecord(row: RatingRow): RatingRecord {
   };
 }
 
+/** Los conteos y sumas llegan como enteros de Postgres; se verifica que sean enteros seguros antes de usarlos. */
+function toSafeInteger(value: unknown, label: string): number {
+  const number = Number(value);
+  if (!Number.isSafeInteger(number)) {
+    throw new Error(`Valor no entero en las estadísticas (${label}): ${String(value)}`);
+  }
+  return number;
+}
+
 export function createDrizzleRatingRepository(db: Db): RatingRepository {
   return {
     async findByUserAndRestaurant(userId, restaurantId) {
@@ -70,6 +79,35 @@ export function createDrizzleRatingRepository(db: Db): RatingRepository {
         .onConflictDoNothing({ target: [ratings.userId, ratings.restaurantId] })
         .returning(ratingFields);
       return row ? toRecord(row) : null;
+    },
+
+    async statsForActiveRestaurants(): Promise<RestaurantRatingStats[]> {
+      // Una sola consulta: v, C y R salen de la misma foto de los datos.
+      // No se filtra por comment_status: un comentario oculto no saca la nota del cálculo (SPEC regla 8).
+      const rows = await db
+        .select({
+          restaurantId: ratings.restaurantId,
+          voteCount: sql<number>`count(*)::int`,
+          flavor: sql<number>`sum(${ratings.flavorScore})::int`,
+          portion: sql<number>`sum(${ratings.portionScore})::int`,
+          service: sql<number>`sum(${ratings.serviceScore})::int`,
+          place: sql<number>`sum(${ratings.placeScore})::int`,
+        })
+        .from(ratings)
+        .innerJoin(restaurants, eq(restaurants.id, ratings.restaurantId))
+        .where(and(eq(ratings.status, "visible"), eq(restaurants.status, "active")))
+        .groupBy(ratings.restaurantId);
+
+      return rows.map((row) => ({
+        restaurantId: row.restaurantId,
+        voteCount: toSafeInteger(row.voteCount, "count"),
+        criteriaTotals: {
+          flavor: toSafeInteger(row.flavor, "flavor"),
+          portion: toSafeInteger(row.portion, "portion"),
+          service: toSafeInteger(row.service, "service"),
+          place: toSafeInteger(row.place, "place"),
+        },
+      }));
     },
   };
 }

@@ -1,5 +1,10 @@
 import type { PasswordHasher } from "@/application/ports/password-hasher";
-import type { NewRating, RatingRecord, RatingRepository } from "@/application/ports/rating-repository";
+import type {
+  NewRating,
+  RatingRecord,
+  RatingRepository,
+  RestaurantRatingStats,
+} from "@/application/ports/rating-repository";
 import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
 import type {
   CreateUserResult,
@@ -64,8 +69,14 @@ export const fakeHasher: PasswordHasher = {
   verify: async (password, hash) => hash === `hashed:${password}`,
 };
 
-/** Repositorio de votos en memoria. Respeta el índice único (user_id, restaurant_id) de la base. */
-export function createFakeRatingRepository(initial: RatingRecord[] = []): RatingRepository & {
+/**
+ * Repositorio de votos en memoria. Respeta el índice único (user_id, restaurant_id) de la base.
+ * `hidden`: ids de votos ocultos (status 'hidden'), que no cuentan en las estadísticas.
+ */
+export function createFakeRatingRepository(
+  initial: RatingRecord[] = [],
+  hidden: Set<string> = new Set(),
+): RatingRepository & {
   all(): RatingRecord[];
 } {
   const ratings: RatingRecord[] = initial.map((rating) => ({ ...rating }));
@@ -84,6 +95,23 @@ export function createFakeRatingRepository(initial: RatingRecord[] = []): Rating
       const rating: RatingRecord = { ...newRating, id: `rating-${nextId++}`, createdAt: new Date() };
       ratings.push(rating);
       return rating;
+    },
+    async statsForActiveRestaurants() {
+      const byRestaurant = new Map<string, RestaurantRatingStats>();
+      for (const rating of ratings.filter((item) => !hidden.has(item.id))) {
+        const stats = byRestaurant.get(rating.restaurantId) ?? {
+          restaurantId: rating.restaurantId,
+          voteCount: 0,
+          criteriaTotals: { flavor: 0, portion: 0, service: 0, place: 0 },
+        };
+        stats.voteCount += 1;
+        stats.criteriaTotals.flavor += rating.scores.flavor;
+        stats.criteriaTotals.portion += rating.scores.portion;
+        stats.criteriaTotals.service += rating.scores.service;
+        stats.criteriaTotals.place += rating.scores.place;
+        byRestaurant.set(rating.restaurantId, stats);
+      }
+      return [...byRestaurant.values()];
     },
   };
 }
