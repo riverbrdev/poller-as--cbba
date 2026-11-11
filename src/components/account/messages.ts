@@ -8,7 +8,8 @@ export const ACCOUNT_TEXT = {
   backToRanking: "Volver al ranking",
   emailLabel: "Correo",
   signInMethodLabel: "Forma de ingreso",
-  comingSoon: "Pronto podrás ver aquí tus calificaciones.",
+  myReviews: "Mis reseñas",
+  noReviews: "Todavía no has calificado ninguna pollería.",
 } as const;
 
 export const SIGN_IN_METHOD_TEXT = {

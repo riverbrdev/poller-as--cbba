@@ -25,14 +25,19 @@ export default function MyProfilePage() {
     <div className="flex min-h-screen flex-col bg-cream text-ink">
       <SiteHeader account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 md:py-10">
-        <Link
-          href="/"
-          className="mb-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-brand-ink"
-        >
-          <ChevronLeft size={16} aria-hidden="true" />
-          {ACCOUNT_TEXT.backToRanking}
-        </Link>
-        <h1 className="mb-6 text-3xl font-black tracking-tight">{ACCOUNT_TEXT.myProfile}</h1>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="mb-1 text-xs text-ink-muted">ComiDeli / Mi perfil</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-black tracking-tight">{ACCOUNT_TEXT.myProfile}</h1>
+              <span className="rounded-full border border-brand/15 bg-brand-soft px-2.5 py-1 text-[10px] font-semibold text-brand-ink">Panel personal</span>
+            </div>
+          </div>
+          <Link href="/" className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-brand/20 bg-white px-4 text-xs font-semibold text-brand-ink transition-colors hover:bg-brand-soft">
+            <ChevronLeft size={16} aria-hidden="true" />
+            {ACCOUNT_TEXT.backToRanking}
+          </Link>
+        </div>
         <Suspense fallback={<ProfileSkeleton />}>
           <MyProfile />
         </Suspense>
