@@ -1,6 +1,6 @@
 import type { RatingRepository } from "@/application/ports/rating-repository";
 import type { RestaurantRecord, RestaurantRepository } from "@/application/ports/restaurant-repository";
-import { rankRestaurants, type RestaurantScore } from "@/domain/rating/ranking";
+import { rankRestaurants, unratedScore, type RestaurantScore } from "@/domain/rating/ranking";
 
 export type RestaurantDetail = { restaurant: RestaurantRecord; score: RestaurantScore };
 
@@ -22,12 +22,8 @@ export function createGetRestaurantDetail(deps: { restaurants: RestaurantReposit
     }
 
     const ranking = rankRestaurants(await deps.ratings.statsForActiveRestaurants());
-    const score = ranking.find((item) => item.restaurantId === restaurant.id) ?? unrated(restaurant.id);
+    const score = ranking.find((item) => item.restaurantId === restaurant.id) ?? unratedScore(restaurant.id);
     return { restaurant, score };
   };
 }
 
-/** Una pollería sin votos no aparece en las estadísticas: no tiene nota ni posición. */
-function unrated(restaurantId: string): RestaurantScore {
-  return { restaurantId, voteCount: 0, score: null, criteriaAverages: null, status: "unrated", position: null };
-}

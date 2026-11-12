@@ -24,7 +24,7 @@ export const CATALOG_TEXT = {
   searchLabel: "Buscar pollería, zona o dirección",
   searchPlaceholder: "Buscar pollería, zona o dirección…",
   sortLabel: "Ordenar pollerías",
-  sortInitial: "Orden inicial",
+  sortTop: "Top del ranking",
   sortName: "Nombre A–Z",
   zonesLabel: "Filtrar por zona",
   allZones: "Todas",
@@ -44,6 +44,20 @@ export const CARD_TEXT = {
   voteLabel: (name: string) => `Votar por ${name}`,
   map: "Mapa",
   mapLabel: (name: string) => `Ver ubicación de ${name} en el mapa`,
+} as const;
+
+export const SCORE_TEXT = {
+  votes: (count: number) => (count === 1 ? "1 voto" : `${count} votos`),
+  voting: (votes: number, minimum: number) => `En votación · ${votes} de ${minimum} votos`,
+  noVotes: "Sin votos",
+  beFirst: "Vota primero",
+  position: (position: number) => `#${position}`,
+  /** Frase completa para lectores de pantalla: la fila visual se oculta. */
+  ranked: (score: string, label: string, votes: number, position: number) =>
+    `Puesto ${position} del ranking. Nota ${score} de 10, ${label}, ${votes} votos.`,
+  votingLabel: (score: string, label: string, votes: number, minimum: number) =>
+    `En votación. Nota ${score} de 10, ${label}, ${votes} de ${minimum} votos.`,
+  unratedLabel: "Sin votos todavía.",
 } as const;
 
 export const METHODOLOGY_TEXT = {

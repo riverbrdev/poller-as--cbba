@@ -4,6 +4,7 @@ import { MapPin, UtensilsCrossed, Vote } from "lucide-react";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { CARD_TEXT } from "./messages";
+import { RankingPositionBadge, RestaurantScore, type CardRating } from "./restaurant-score";
 
 /** Lo que la tarjeta necesita de una pollería. `photoUrl` y `mapsUrl` son opcionales en la BD. */
 export type RestaurantCardData = {
@@ -13,6 +14,7 @@ export type RestaurantCardData = {
   address: string;
   photoUrl: string | null;
   mapsUrl: string | null;
+  rating: CardRating;
 };
 
 type RestaurantCardProps = {
@@ -21,7 +23,7 @@ type RestaurantCardProps = {
 
 /**
  * Tarjeta horizontal: el logo (cuadrado, la marca que la gente reconoce) va grande a la izquierda
- * y a su lado zona, nombre, dirección y las acciones. Mapa es solo ícono para que Votar quepa ancho.
+ * y a su lado zona, nombre, dirección, la nota con sus votos y las acciones. Mapa es solo ícono para que Votar quepa ancho.
  */
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const detailHref = `/polleria/${restaurant.slug}`;
@@ -47,6 +49,9 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <UtensilsCrossed size={36} aria-hidden="true" />
           </div>
         )}
+        {restaurant.rating.status === "ranked" && restaurant.rating.position !== null ? (
+          <RankingPositionBadge position={restaurant.rating.position} />
+        ) : null}
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -63,7 +68,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </Link>
         </h3>
         <p className="mt-1 line-clamp-2 text-sm leading-5 text-ink-muted">{restaurant.address}</p>
-        {/* La nota y los votos se ven en el detalle de la pollería; el catálogo no inventa datos. */}
+        <RestaurantScore rating={restaurant.rating} />
 
         <div className="mt-auto flex gap-2 pt-3">
           <Link

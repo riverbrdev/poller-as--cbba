@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import type { ReviewFilter } from "@/application/ports/review-repository";
 import type { ReviewList } from "@/application/rating/list-restaurant-reviews";
+import type { ZoneSummary } from "@/application/restaurant/list-active-restaurants";
 import type { RatingCriterionKey } from "@/domain/rating/criteria";
 import { scoreDisplay, type RankingStatus, type ScoreDisplay } from "@/domain/rating/ranking";
 import { useCases } from "@/composition/container";
@@ -24,6 +25,54 @@ export async function getRestaurantBySlug(slug: string) {
 
 /** Etiqueta de caché de todo lo que depende de los votos. Un voto cambia C y la nota de todas las pollerías. */
 export const RATINGS_CACHE_TAG = "ratings";
+
+/** Nota de una pollería en su tarjeta del catálogo. Serializable: el catálogo es un componente de cliente. */
+export type CatalogRatingDto = {
+  status: RankingStatus;
+  voteCount: number;
+  /** Solo para `ranked`. */
+  position: number | null;
+  /** Nota lista para mostrar; null si no tiene votos. */
+  display: ScoreDisplay | null;
+};
+
+export type CatalogRestaurantDto = {
+  slug: string;
+  name: string;
+  zone: string;
+  address: string;
+  photoUrl: string | null;
+  mapsUrl: string | null;
+  rating: CatalogRatingDto;
+};
+
+/**
+ * Catálogo de la home con la nota de cada pollería. Lleva la etiqueta "ratings":
+ * un voto cambia la nota de todas, así que la home se refresca igual que el perfil.
+ */
+export async function getCatalogRestaurants(): Promise<{ restaurants: CatalogRestaurantDto[]; zones: ZoneSummary[] }> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(RATINGS_CACHE_TAG);
+  const { restaurants, zones } = await useCases.listCatalogRestaurants();
+  return {
+    restaurants: restaurants.map(({ restaurant, score }) => ({
+      slug: restaurant.slug,
+      name: restaurant.name,
+      zone: restaurant.zone,
+      address: restaurant.address,
+      photoUrl: restaurant.photoUrl,
+      mapsUrl: restaurant.mapsUrl,
+      rating: {
+        status: score.status,
+        voteCount: score.voteCount,
+        position: score.position,
+        display: score.score ? scoreDisplay(score.score) : null,
+      },
+    })),
+    zones,
+  };
+}
 
 /** Lo que recibe la página de detalle. Serializable: sin bigint ni fracciones (contracts/restaurant-detail-page.md). */
 export type RestaurantDetailDto = {

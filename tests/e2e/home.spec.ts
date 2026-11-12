@@ -1,11 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
+import { createListCatalogRestaurants } from "@/application/restaurant/list-catalog-restaurants";
+import { formatScore } from "@/domain/rating/ranking";
 import { createDb } from "@/infrastructure/db/client";
+import { createDrizzleRatingRepository } from "@/infrastructure/db/rating-repository";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
 
 // Estas pruebas solo leen: lo esperado sale de la misma base que muestra la home, sin números fijos.
+const db = createDb();
 const listActive = createListActiveRestaurants({
-  restaurants: createDrizzleRestaurantRepository(createDb()),
+  restaurants: createDrizzleRestaurantRepository(db),
+});
+const listCatalog = createListCatalogRestaurants({
+  restaurants: createDrizzleRestaurantRepository(db),
+  ratings: createDrizzleRatingRepository(db),
 });
 
 test.describe("catálogo de locales", () => {
@@ -19,6 +27,36 @@ test.describe("catálogo de locales", () => {
     for (const restaurant of restaurants) {
       await expect(page.locator("#locales article h3", { hasText: restaurant.name }).first()).toBeAttached();
     }
+  });
+
+  test("cada tarjeta muestra la nota de la pollería junto a sus votos", async ({ page }) => {
+    const { restaurants } = await listCatalog();
+    await page.goto("/");
+
+    for (const { restaurant, score } of restaurants) {
+      const card = page.locator("#locales article", { has: page.locator("h3", { hasText: restaurant.name }) }).first();
+      const row = card.getByTestId("restaurant-score");
+      if (score.score === null) {
+        await expect(row).toContainText("Sin votos");
+      } else {
+        await expect(row).toContainText(formatScore(score.score));
+        await expect(row).toContainText(`${score.voteCount} `);
+      }
+    }
+  });
+
+  test("abre ordenado por el top del ranking y permite ordenar de la A a la Z", async ({ page }) => {
+    const { restaurants } = await listCatalog();
+    const titles = page.locator("#locales article h3");
+    await page.goto("/");
+
+    await expect(page.getByRole("combobox", { name: "Ordenar pollerías" })).toHaveValue("top");
+    await expect(titles).toHaveText(restaurants.map(({ restaurant }) => restaurant.name));
+
+    await page.getByRole("combobox", { name: "Ordenar pollerías" }).selectOption("name");
+
+    const alphabetical = restaurants.map(({ restaurant }) => restaurant.name).sort((a, b) => a.localeCompare(b, "es"));
+    await expect(titles).toHaveText(alphabetical);
   });
 
   test("ofrece un chip por cada zona de la base y filtra por ella", async ({ page }) => {
