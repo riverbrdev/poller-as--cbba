@@ -212,8 +212,12 @@ test.describe("marcar reseñas como útiles (US3)", () => {
     await clickHelpful(staleTab);
     await expect(newestHelpful(staleTab)).toHaveText("Útil (1)");
 
+    // Destacadas ordena por cantidad de marcas: reseñas de otras corridas con 2 o más pueden ir antes.
+    // Lo que importa es que la reseña recién marcada aparezca, con su marca.
     await reader.page.goto(`${detail}?resenas=destacadas`);
-    await expect(reviewList(reader.page).getByRole("article").first()).toContainText(comment);
+    const featuredReview = reviewList(reader.page).getByRole("article").filter({ hasText: comment });
+    await expect(featuredReview).toBeVisible();
+    await expect(featuredReview.getByRole("button", { name: /^Útil/ })).toHaveText("Útil (1)");
 
     await reader.page.goto(detail);
     await clickHelpful(reader.page);
