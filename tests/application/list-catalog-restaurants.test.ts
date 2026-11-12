@@ -104,3 +104,70 @@ describe("listCatalogRestaurants", () => {
     expect(await list()).toEqual({ restaurants: [], zones: [] });
   });
 });
+
+/** Lo que muestra el catálogo, en orden: id, estado y puesto. */
+async function topOf(list: ReturnType<typeof createListCatalogRestaurants>) {
+  return (await list()).restaurants.map(({ restaurant, score }) => ({
+    id: restaurant.id,
+    status: score.status,
+    position: score.position,
+  }));
+}
+
+describe("listCatalogRestaurants: el top se reordena con los votos", () => {
+  const catalog = ["alfa", "bravo", "charlie", "delta", "eco"].map((id) => restaurant(id));
+  // Antes: bravo y charlie en el ranking, delta en votación, alfa y eco sin votos.
+  const before = [...votes("bravo", 10, 9), ...votes("charlie", 12, 7), ...votes("delta", 3, 8)];
+
+  it("antes de votar por eco, eco va al final entre las sin votos (A–Z)", async () => {
+    const { list } = setup(catalog, before);
+
+    expect(await topOf(list)).toEqual([
+      { id: "bravo", status: "ranked", position: 1 },
+      { id: "charlie", status: "ranked", position: 2 },
+      { id: "delta", status: "voting", position: null },
+      { id: "alfa", status: "unrated", position: null },
+      { id: "eco", status: "unrated", position: null },
+    ]);
+  });
+
+  it("con 10 votos de 10, eco entra al ranking como #1 y empuja a las demás un puesto", async () => {
+    const { list } = setup(catalog, [...before, ...votes("eco", 10, 10)]);
+
+    // C = (9 + 7 + 8 + 10) / 4 = 8.5 → eco 9.25, bravo 8.75, charlie ≈ 7.68.
+    expect(await topOf(list)).toEqual([
+      { id: "eco", status: "ranked", position: 1 },
+      { id: "bravo", status: "ranked", position: 2 },
+      { id: "charlie", status: "ranked", position: 3 },
+      { id: "delta", status: "voting", position: null },
+      { id: "alfa", status: "unrated", position: null },
+    ]);
+  });
+
+  it("con 9 votos de 10, eco sigue en votación detrás del ranking aunque tenga mejor nota", async () => {
+    const { list } = setup(catalog, [...before, ...votes("eco", 9, 10)]);
+
+    expect((await topOf(list)).slice(0, 3)).toEqual([
+      { id: "bravo", status: "ranked", position: 1 },
+      { id: "charlie", status: "ranked", position: 2 },
+      { id: "eco", status: "voting", position: null },
+    ]);
+  });
+
+  it("empate exacto en el segundo puesto: las dos son #2 y la siguiente es #4", async () => {
+    const { list } = setup(catalog, [
+      ...votes("bravo", 10, 10),
+      ...votes("charlie", 10, 8),
+      ...votes("delta", 10, 8),
+      ...votes("eco", 10, 6),
+    ]);
+
+    expect(await topOf(list)).toEqual([
+      { id: "bravo", status: "ranked", position: 1 },
+      { id: "charlie", status: "ranked", position: 2 },
+      { id: "delta", status: "ranked", position: 2 },
+      { id: "eco", status: "ranked", position: 4 },
+      { id: "alfa", status: "unrated", position: null },
+    ]);
+  });
+});
