@@ -122,6 +122,11 @@ function criteriaAveragesOf(stats: RestaurantRatingStats): Record<RatingCriterio
 
 // ---------- API pública ----------
 
+/** Una pollería sin votos no aparece en las estadísticas: no tiene nota ni posición. */
+export function unratedScore(restaurantId: string): RestaurantScore {
+  return { restaurantId, voteCount: 0, score: null, criteriaAverages: null, status: "unrated", position: null };
+}
+
 /** Compara dos scores exactos por multiplicación cruzada (sin coma flotante). */
 export function compareScores(a: ScoreFraction, b: ScoreFraction): -1 | 0 | 1 {
   const left = a.numerator * b.denominator;

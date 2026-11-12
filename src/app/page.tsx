@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { HeaderAccount } from "@/app/_components/header-account";
-import { getActiveRestaurants } from "@/app/_data/restaurants";
+import { getCatalogRestaurants } from "@/app/_data/restaurants";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { HERO_LOGO_COUNT, HomeHero, type HeroLogo } from "@/components/home/home-hero";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
@@ -8,7 +8,7 @@ import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 
 export default async function Home() {
-  const { restaurants, zones } = await getActiveRestaurants();
+  const { restaurants, zones } = await getCatalogRestaurants();
   const heroLogos = restaurants
     .filter((restaurant): restaurant is typeof restaurant & { photoUrl: string } => restaurant.photoUrl !== null)
     .slice(0, HERO_LOGO_COUNT)
