@@ -30,13 +30,46 @@ function setup(records: RestaurantRecord[], ratings: RatingRecord[]) {
 }
 
 describe("listCatalogRestaurants", () => {
-  it("mantiene el orden del repositorio y las zonas, sin reordenar por nota", async () => {
-    const { list } = setup([restaurant("low", "Norte"), restaurant("high", "Sur")], [...votes("low", 10, 3), ...votes("high", 10, 9)]);
+  const names = async (list: ReturnType<typeof createListCatalogRestaurants>) =>
+    (await list()).restaurants.map((entry) => entry.restaurant.id);
 
-    const { restaurants, zones } = await list();
+  it("sin votos ordena de la A a la Z aunque el repositorio las entregue en otro orden", async () => {
+    const { list } = setup([restaurant("Zeta"), restaurant("Ñandú"), restaurant("alfa"), restaurant("Beta")], []);
 
-    expect(restaurants.map((entry) => entry.restaurant.id)).toEqual(["low", "high"]);
-    expect(zones).toEqual([
+    expect(await names(list)).toEqual(["alfa", "Beta", "Ñandú", "Zeta"]);
+  });
+
+  it("ordena ranked por puesto, luego en votación por nota y al final sin votos A–Z", async () => {
+    const { list } = setup(
+      [
+        restaurant("Zeta"),
+        restaurant("votingLow"),
+        restaurant("rankedSecond"),
+        restaurant("Alfa"),
+        restaurant("votingHigh"),
+        restaurant("rankedFirst"),
+      ],
+      [
+        ...votes("rankedFirst", 10, 9),
+        ...votes("rankedSecond", 12, 7),
+        ...votes("votingHigh", 3, 8),
+        ...votes("votingLow", 3, 5),
+      ],
+    );
+
+    expect(await names(list)).toEqual(["rankedFirst", "rankedSecond", "votingHigh", "votingLow", "Alfa", "Zeta"]);
+  });
+
+  it("una pollería en votación con nota más alta queda detrás de una del ranking", async () => {
+    const { list } = setup([restaurant("voting"), restaurant("ranked")], [...votes("voting", 5, 10), ...votes("ranked", 10, 4)]);
+
+    expect(await names(list)).toEqual(["ranked", "voting"]);
+  });
+
+  it("devuelve las zonas de los datos", async () => {
+    const { list } = setup([restaurant("A", "Norte"), restaurant("B", "Sur")], []);
+
+    expect((await list()).zones).toEqual([
       { name: "Norte", count: 1 },
       { name: "Sur", count: 1 },
     ]);

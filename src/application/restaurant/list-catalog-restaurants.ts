@@ -6,7 +6,10 @@ import { createListActiveRestaurants, type ZoneSummary } from "./list-active-res
 export type CatalogEntry = { restaurant: RestaurantRecord; score: RestaurantScore };
 
 export type CatalogRestaurants = {
-  /** Mismo orden que listActiveRestaurants: el catálogo no reordena por nota. */
+  /**
+   * Orden "Top": primero las del ranking por puesto, luego las en votación por nota
+   * y al final las sin votos de la A a la Z. Sin ningún voto, queda alfabético.
+   */
   restaurants: CatalogEntry[];
   zones: ZoneSummary[];
 };
@@ -23,14 +26,19 @@ export function createListCatalogRestaurants(deps: { restaurants: RestaurantRepo
       listActiveRestaurants(),
       deps.ratings.statsForActiveRestaurants(),
     ]);
-    const scores = new Map(rankRestaurants(stats).map((score) => [score.restaurantId, score]));
+    // rankRestaurants ya ordena: ranked por puesto y luego voting por nota. Su índice es el orden "Top".
+    const ranking = rankRestaurants(stats).filter((score) => score.status !== "unrated");
+    const scores = new Map(ranking.map((score, index) => [score.restaurantId, { score, index }]));
 
-    return {
-      restaurants: restaurants.map((restaurant) => ({
-        restaurant,
-        score: scores.get(restaurant.id) ?? unratedScore(restaurant.id),
-      })),
-      zones,
-    };
+    const entries = restaurants.map((restaurant) => ({
+      restaurant,
+      score: scores.get(restaurant.id)?.score ?? unratedScore(restaurant.id),
+    }));
+    const topIndex = (entry: CatalogEntry) => scores.get(entry.restaurant.id)?.index ?? Number.MAX_SAFE_INTEGER;
+    entries.sort(
+      (a, b) => topIndex(a) - topIndex(b) || a.restaurant.name.localeCompare(b.restaurant.name, "es"),
+    );
+
+    return { restaurants: entries, zones };
   };
 }

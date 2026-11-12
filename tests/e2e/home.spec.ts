@@ -45,6 +45,20 @@ test.describe("catálogo de locales", () => {
     }
   });
 
+  test("abre ordenado por el top del ranking y permite ordenar de la A a la Z", async ({ page }) => {
+    const { restaurants } = await listCatalog();
+    const titles = page.locator("#locales article h3");
+    await page.goto("/");
+
+    await expect(page.getByRole("combobox", { name: "Ordenar pollerías" })).toHaveValue("top");
+    await expect(titles).toHaveText(restaurants.map(({ restaurant }) => restaurant.name));
+
+    await page.getByRole("combobox", { name: "Ordenar pollerías" }).selectOption("name");
+
+    const alphabetical = restaurants.map(({ restaurant }) => restaurant.name).sort((a, b) => a.localeCompare(b, "es"));
+    await expect(titles).toHaveText(alphabetical);
+  });
+
   test("ofrece un chip por cada zona de la base y filtra por ella", async ({ page }) => {
     const { restaurants, zones } = await listActive();
     await page.goto("/");

@@ -24,7 +24,7 @@ export const CATALOG_TEXT = {
   searchLabel: "Buscar pollería, zona o dirección",
   searchPlaceholder: "Buscar pollería, zona o dirección…",
   sortLabel: "Ordenar pollerías",
-  sortInitial: "Orden inicial",
+  sortTop: "Top del ranking",
   sortName: "Nombre A–Z",
   zonesLabel: "Filtrar por zona",
   allZones: "Todas",

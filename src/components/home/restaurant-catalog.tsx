@@ -15,7 +15,8 @@ type RestaurantCatalogProps = {
   zones: CatalogZone[];
 };
 
-type SortOrder = "initial" | "name";
+/** "top": el orden que llega del servidor (ranking); "name": A–Z. */
+type SortOrder = "top" | "name";
 
 const ALL_ZONES = "all";
 
@@ -29,7 +30,7 @@ const chipClass = (active: boolean) =>
 export function RestaurantCatalog({ restaurants, zones }: RestaurantCatalogProps) {
   const [query, setQuery] = useState("");
   const [zone, setZone] = useState(ALL_ZONES);
-  const [sort, setSort] = useState<SortOrder>("initial");
+  const [sort, setSort] = useState<SortOrder>("top");
 
   const visible = useMemo(() => {
     const text = query.trim().toLocaleLowerCase("es");
@@ -82,7 +83,7 @@ export function RestaurantCatalog({ restaurants, zones }: RestaurantCatalogProps
               onChange={(event) => setSort(event.target.value as SortOrder)}
               className="min-h-11 w-full bg-white text-base font-semibold outline-none"
             >
-              <option value="initial">{CATALOG_TEXT.sortInitial}</option>
+              <option value="top">{CATALOG_TEXT.sortTop}</option>
               <option value="name">{CATALOG_TEXT.sortName}</option>
             </select>
           </label>
