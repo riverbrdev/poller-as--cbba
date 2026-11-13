@@ -1,6 +1,10 @@
 # Versus: Lolo Chicken vs. Ricono
 
-Página pública: /versus. Se accede desde el enlace Versus junto a Pollerías.
+Página pública: /versus. Se accede desde tres lugares:
+
+- El botón Versus del header (naranja, con un punto "en vivo").
+- La casilla "El duelo" del mosaico del hero, en la home.
+- La franja del duelo de la home (#duelo), entre el hero y el catálogo: logos cara a cara, porcentajes, barra partida y quién va ganando.
 
 ## Reglas
 
@@ -10,7 +14,12 @@ Página pública: /versus. Se accede desde el enlace Versus junto a Pollerías.
 - El resultado depende de la cantidad de votos, no del promedio de calificaciones.
 - Sin votos: ambos muestran 0 %. Con la misma cantidad: empate.
 - Por ahora la votación permanece abierta; se muestra quién va ganando. No hay cierre automático ni ganador definitivo.
-- Los resultados se consultan al cargar la página y se actualizan después de votar. Otros visitantes pueden recargar para ver votos nuevos.
+- En /versus los resultados se consultan al cargar la página y se actualizan después de votar.
+- En la franja de la home el resultado se consulta cada 30 s (solo con la pestaña visible) en GET /api/versus. Si cambió, la barra se mueve, los porcentajes cuentan hasta el valor nuevo y la corona pasa al nuevo líder. La respuesta sale de una caché de 15 s con la etiqueta "versus"; un voto la invalida.
+
+## Movimiento
+
+La franja se anima una sola vez al aparecer en pantalla: los logos chocan, la "VS" golpea y la barra va de 50/50 al resultado. Con "reducir movimiento" se muestra quieta y con los valores finales; la consulta cada 30 s sigue funcionando sin animación.
 
 ## Capas
 
