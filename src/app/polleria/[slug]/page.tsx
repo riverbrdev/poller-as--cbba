@@ -53,15 +53,20 @@ export async function generateMetadata({ params }: Pick<RestaurantPageProps, "pa
   const description = display
     ? `${restaurant.zone} · nota ${display.text}/10 · ${DETAIL_TEXT.votes(voteCount)}`
     : `${restaurant.zone} · En votación en ComiDeli`;
+  const path = `/polleria/${restaurant.slug}`;
+  const image = restaurant.photoUrl ?? "/opengraph-image";
   return {
     title,
     description,
+    alternates: { canonical: path },
     openGraph: {
       title,
       description,
       type: "website",
-      ...(restaurant.photoUrl ? { images: [restaurant.photoUrl] } : {}),
+      url: path,
+      images: [{ url: image, alt: restaurant.photoUrl ? `Foto de ${restaurant.name}` : `ComiDeli: ${restaurant.name}` }],
     },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 
