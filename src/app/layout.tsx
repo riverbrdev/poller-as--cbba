@@ -13,12 +13,14 @@ const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gen
 
 // Base de las URLs de Open Graph: las fotos se guardan como rutas relativas (/pollerias/<slug>.webp)
 // y WhatsApp/Facebook necesitan la URL completa para mostrar la imagen.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const deployedHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || (deployedHost ? `https://${deployedHost}` : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "ComiDeli",
   description: DESCRIPTION,
+  alternates: { canonical: "/" },
   // Para que el enlace se vea bien al compartirlo por WhatsApp o Facebook (CLAUDE.md).
   openGraph: {
     title: "ComiDeli",
@@ -26,7 +28,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_BO",
     siteName: "ComiDeli",
+    url: "/",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "ComiDeli: el ranking del pollo de Cochabamba" }],
   },
+  twitter: { card: "summary_large_image", title: "ComiDeli", description: DESCRIPTION, images: ["/opengraph-image"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
