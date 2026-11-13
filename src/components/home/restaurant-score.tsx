@@ -63,6 +63,7 @@ export function RankingPositionBadge({ position }: { position: number }) {
   return (
     <span
       aria-hidden="true"
+      data-testid="ranking-position"
       className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-brand-dark px-2 py-0.5 text-xs font-extrabold text-white shadow-soft"
     >
       <Trophy size={12} className="shrink-0" />

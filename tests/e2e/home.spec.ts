@@ -47,6 +47,21 @@ test.describe("catálogo de locales", () => {
     }
   });
 
+  test("cada tarjeta lleva la etiqueta #N de su puesto, y solo las que están en el ranking", async ({ page }) => {
+    const { restaurants } = await listCatalog();
+    await page.goto("/");
+
+    for (const { restaurant, score } of restaurants) {
+      const card = page.locator("#locales article", { has: page.locator("h3", { hasText: restaurant.name }) }).first();
+      const badge = card.getByTestId("ranking-position");
+      if (score.status === "ranked" && score.position !== null) {
+        await expect(badge).toHaveText(`#${score.position}`);
+      } else {
+        await expect(badge).toHaveCount(0);
+      }
+    }
+  });
+
   test("abre ordenado por el top del ranking y permite ordenar de la A a la Z", async ({ page }) => {
     const { restaurants } = await listCatalog();
     const titles = page.locator("#locales article h3");
