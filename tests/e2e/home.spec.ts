@@ -2,9 +2,11 @@ import { expect, test } from "@playwright/test";
 import { createListActiveRestaurants } from "@/application/restaurant/list-active-restaurants";
 import { createListCatalogRestaurants } from "@/application/restaurant/list-catalog-restaurants";
 import { formatScore } from "@/domain/rating/ranking";
+import { duelResult } from "@/domain/versus/duel";
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleRatingRepository } from "@/infrastructure/db/rating-repository";
 import { createDrizzleRestaurantRepository } from "@/infrastructure/db/restaurant-repository";
+import { createDrizzleVersusRepository } from "@/infrastructure/db/versus-repository";
 
 // Estas pruebas solo leen: lo esperado sale de la misma base que muestra la home, sin números fijos.
 const db = createDb();
@@ -117,5 +119,75 @@ test.describe("catálogo de locales", () => {
     for (const height of heights) {
       expect(height).toBeGreaterThanOrEqual(44);
     }
+  });
+});
+
+test.describe("versus en la home", () => {
+  const versusRepo = createDrizzleVersusRepository(db);
+
+  test("la franja del duelo muestra los porcentajes de la base y lleva a /versus", async ({ page }) => {
+    const { percentages } = duelResult(await versusRepo.counts());
+    // Con movimiento reducido no hay conteo: los porcentajes se ven finales desde el inicio.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const strip = page.locator("#duelo");
+    await expect(strip.getByRole("heading", { level: 2 })).toContainText("Lolo Chicken");
+    await expect(strip.getByRole("heading", { level: 2 })).toContainText("Ricono");
+    await expect(strip).toContainText(`${percentages["lolo-chicken"]}%`);
+    await expect(strip).toContainText(`${percentages.ricono}%`);
+
+    await strip.getByRole("link", { name: /Elige tu bando|Tu voto está con/ }).click();
+    await expect(page).toHaveURL(/\/versus$/);
+  });
+
+  test("la casilla del duelo en el hero lleva a /versus", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Versus: Lolo Chicken contra Ricono" }).click();
+    await expect(page).toHaveURL(/\/versus$/);
+  });
+
+  test("/api/versus devuelve el resultado público del duelo", async ({ request }) => {
+    const { percentages, total } = duelResult(await versusRepo.counts());
+    const response = await request.get("/api/versus");
+    expect(response.ok()).toBe(true);
+    const body = await response.json();
+    expect(body.percentages).toEqual(percentages);
+    expect(body.total).toBe(total);
+  });
+
+  test("en vivo: cada 30 s consulta el resultado y actualiza barra, porcentajes y líder", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.clock.install();
+    await page.goto("/");
+    const live = await (await page.request.get("/api/versus")).json();
+    const [left, right] = live.participants as { slug: "lolo-chicken" | "ricono"; name: string }[];
+    if (!left || !right) throw new Error("El duelo no está disponible en la base");
+
+    // Resultado nuevo: el de la izquierda pasa adelante con 80 %.
+    await page.route("**/api/versus", (route) =>
+      route.fulfill({
+        json: {
+          ...live,
+          counts: { [left.slug]: 8, [right.slug]: 2 },
+          percentages: { [left.slug]: 80, [right.slug]: 20 },
+          total: 10,
+          leader: left.slug,
+        },
+      }),
+    );
+    await page.clock.runFor(30_000);
+
+    const strip = page.locator("#duelo");
+    await expect(page.getByTestId(`duel-percent-${left.slug}`)).toHaveText("80%");
+    await expect(page.getByTestId(`duel-percent-${right.slug}`)).toHaveText("20%");
+    await expect(strip).toContainText(`${left.name} va ganando`);
+    await expect(strip).toContainText("10 votos en el duelo");
+    await expect(strip.locator(".duel-bar-left")).toHaveAttribute("style", /width: 80%/);
+  });
+
+  test("el botón Versus del header se ve en celular", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("link", { name: "Versus: duelo en vivo" })).toBeVisible();
   });
 });

@@ -17,6 +17,7 @@ export const proxy = auth((request) => {
 });
 
 export const config = {
-  // Se omiten estáticos y las rutas de Auth.js, que deben responder siempre.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth).*)"],
+  // Se omiten estáticos, las rutas de Auth.js y el resultado público del duelo (se consulta cada 30 s):
+  // deben responder siempre, sin redirecciones.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth|api/versus).*)"],
 };
