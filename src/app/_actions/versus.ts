@@ -1,10 +1,11 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { auth } from "@/composition/auth";
 import { useCases, rateLimiters } from "@/composition/container";
 import { DUEL_CHOICES } from "@/domain/versus/duel";
+import { VERSUS_CACHE_TAG } from "@/app/_data/versus";
 export type VersusState = { error?: string; saved?: boolean };
 export async function voteVersusAction(_state: VersusState, form: FormData): Promise<VersusState> {
   const session = await auth();
@@ -29,6 +30,8 @@ export async function voteVersusAction(_state: VersusState, form: FormData): Pro
   } catch {
     return { error: "No pudimos confirmar tu voto. Actualiza la página antes de intentarlo de nuevo." };
   }
+  // La franja del duelo en la home está cacheada: updateTag para que quien votó la vea al día.
+  updateTag(VERSUS_CACHE_TAG);
   revalidatePath("/versus");
   return { saved: true };
 }

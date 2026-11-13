@@ -35,6 +35,25 @@ export const CATALOG_TEXT = {
 
 export const HEADER_TEXT = {
   restaurants: "Pollerías",
+  versus: "Versus",
+  versusLabel: "Versus: duelo en vivo",
+} as const;
+
+export const VERSUS_TEXT = {
+  eyebrow: "Duelo de Cochabamba",
+  title: (left: string, right: string) => `${left} vs. ${right}`,
+  lead: "Dos pollerías, una rivalidad. Un voto por persona, y quien tiene más votos va ganando.",
+  leading: "Va ganando",
+  status: (leader: string | null, total: number) =>
+    total === 0 ? "El primer voto puede ser tuyo" : leader ? `${leader} va ganando` : "El duelo está empatado",
+  votes: (count: number) => (count === 1 ? "1 voto" : `${count} votos`),
+  totalVotes: (count: number) => (count === 1 ? "1 voto en el duelo" : `${count} votos en el duelo`),
+  action: "Elige tu bando",
+  votedAction: (name: string) => `Tu voto está con ${name} · Ver el duelo`,
+  seeRestaurant: (name: string) => `Ver ${name}`,
+  tileLabel: (left: string, right: string) => `Versus: ${left} contra ${right}`,
+  tileTitle: "El duelo",
+  tileAction: "Elige bando",
 } as const;
 
 export const CARD_TEXT = {

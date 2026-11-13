@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ListChecks } from "lucide-react";
+import { ArrowDown, ArrowRight, ListChecks } from "lucide-react";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { HERO_TEXT } from "./messages";
+import { HERO_TEXT, VERSUS_TEXT } from "./messages";
 
 export type HeroLogo = { name: string; slug: string; photoUrl: string };
 
@@ -14,11 +14,13 @@ type HomeHeroProps = {
   criteriaCount: number;
   /** Hasta 5 logos reales: uno grande (2×2) y cuatro chicos alrededor. */
   logos: HeroLogo[];
+  /** Las dos pollerías del Versus: su casilla reemplaza a la de "¿Tu favorita?". */
+  duel?: { left: HeroLogo; right: HeroLogo } | null;
 };
 
 export const HERO_LOGO_COUNT = 5;
 
-/** La casilla naranja va en la fila de abajo, al centro: después del cuarto logo. */
+/** La casilla del duelo (o la naranja) va en la fila de abajo, al centro: después del cuarto logo. */
 const FAVORITE_TILE_POSITION = 4;
 
 // Entra una sola vez al cargar. Con "reducir movimiento" no se anima (motion-safe).
@@ -28,9 +30,11 @@ const tileEnter =
   "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-500 motion-safe:[animation-fill-mode:backwards]";
 const tileDelay = (index: number): CSSProperties => ({ animationDelay: `${250 + index * 90}ms` });
 
-export function HomeHero({ restaurantCount, zoneCount, criteriaCount, logos }: HomeHeroProps) {
+export function HomeHero({ restaurantCount, zoneCount, criteriaCount, logos, duel }: HomeHeroProps) {
   const tiles = logos.slice(0, HERO_LOGO_COUNT);
   const favoriteAt = Math.min(FAVORITE_TILE_POSITION, tiles.length);
+  const specialTile = (key?: string) =>
+    duel ? <VersusTile key={key} duel={duel} style={tileDelay(favoriteAt)} /> : <FavoriteTile key={key} style={tileDelay(favoriteAt)} />;
 
   return (
     <section aria-labelledby="hero-title" className="overflow-hidden border-b border-line bg-white">
@@ -77,11 +81,11 @@ export function HomeHero({ restaurantCount, zoneCount, criteriaCount, logos }: H
             {tiles.map((logo, index) => {
               const position = index < favoriteAt ? index : index + 1;
               return [
-                index === favoriteAt ? <FavoriteTile key="favorita" style={tileDelay(favoriteAt)} /> : null,
+                index === favoriteAt ? specialTile("especial") : null,
                 <LogoTile key={logo.slug} logo={logo} featured={index === 0} tabletHidden={index === HERO_LOGO_COUNT - 1} style={tileDelay(position)} />,
               ];
             })}
-            {favoriteAt === tiles.length ? <FavoriteTile style={tileDelay(favoriteAt)} /> : null}
+            {favoriteAt === tiles.length ? specialTile() : null}
           </ul>
         ) : null}
       </div>
@@ -153,6 +157,40 @@ function FavoriteTile({ style }: { style: CSSProperties }) {
         </span>
       </a>
     </li>
+  );
+}
+
+/** Casilla del Versus: los dos logos cara a cara. Al pasar el mouse se acercan y la "VS" golpea. */
+function VersusTile({ duel, style }: { duel: { left: HeroLogo; right: HeroLogo }; style: CSSProperties }) {
+  return (
+    <li className={cn("group", tileEnter)} style={style}>
+      <Link
+        href="/versus"
+        aria-label={VERSUS_TEXT.tileLabel(duel.left.name, duel.right.name)}
+        className="flex aspect-square flex-col justify-between rounded-2xl bg-ink p-3 text-white shadow-card transition-[translate,scale,box-shadow] duration-300 group-hover:-translate-y-0.5 group-hover:shadow-card-hover active:scale-[0.98] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 sm:p-4"
+      >
+        <span className="text-[10px] font-extrabold uppercase tracking-widest text-brand sm:text-xs">{VERSUS_TEXT.tileTitle}</span>
+        <span aria-hidden="true" className="flex items-center justify-center">
+          <TileLogo logo={duel.left} className="group-hover:translate-x-1" />
+          <span className="relative z-10 -mx-1.5 text-sm font-black italic text-brand transition-transform duration-300 group-hover:scale-125 motion-reduce:transition-none sm:text-lg">
+            VS
+          </span>
+          <TileLogo logo={duel.right} className="group-hover:-translate-x-1" />
+        </span>
+        <span className="inline-flex items-center gap-1 text-xs font-bold sm:text-sm">
+          {VERSUS_TEXT.tileAction}
+          <ArrowRight size={14} aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:transition-none" />
+        </span>
+      </Link>
+    </li>
+  );
+}
+
+function TileLogo({ logo, className }: { logo: HeroLogo; className: string }) {
+  return (
+    <span className={cn("relative block size-9 overflow-hidden rounded-full border-2 border-ink bg-white ring-2 ring-white/20 transition-transform duration-300 motion-reduce:transition-none sm:size-12", className)}>
+      <Image src={logo.photoUrl} alt="" fill sizes="3rem" className="object-cover" />
+    </span>
   );
 }
 
