@@ -1,6 +1,7 @@
+import { BackHomeLink } from "@/components/ui/back-home-link";
 import Link from "next/link";
 import { MessageSquareText } from "lucide-react";
-import { CATALOG_HREF } from "./rating-layout";
+
 
 /** Después de votar (o si ya votó): ver su reseña en el perfil de la pollería, o volver al catálogo. */
 export function AfterVoteLinks({ slug }: { slug: string }) {
@@ -13,12 +14,7 @@ export function AfterVoteLinks({ slug }: { slug: string }) {
         <MessageSquareText size={18} aria-hidden="true" />
         Ver tu reseña
       </Link>
-      <Link
-        href={CATALOG_HREF}
-        className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-line-strong bg-white px-5 text-base font-bold text-ink transition-colors hover:border-brand-ink hover:text-brand-ink"
-      >
-        Volver al catálogo
-      </Link>
+      <BackHomeLink href="/#locales" label="Volver al catálogo" className="w-full" />
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { BackHomeLink } from "@/components/ui/back-home-link";
+
 import { UtensilsCrossed } from "lucide-react";
 
 export default function RestaurantNotFound() {
@@ -8,12 +9,7 @@ export default function RestaurantNotFound() {
         <UtensilsCrossed size={36} className="mx-auto text-brand" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-black tracking-tight">No encontramos esta pollería</h1>
         <p className="mt-2 text-sm text-ink-muted">Puede que ya no esté disponible.</p>
-        <Link
-          href="/#locales"
-          className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-brand px-5 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
-        >
-          Volver al catálogo
-        </Link>
+        <BackHomeLink className="mt-6 w-full" />
       </div>
     </main>
   );

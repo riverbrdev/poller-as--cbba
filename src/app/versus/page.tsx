@@ -1,4 +1,8 @@
+import { BackHomeLink } from "@/components/ui/back-home-link";
 import type { Metadata } from "next";
+
+
+
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { auth } from "@/composition/auth";
@@ -17,6 +21,9 @@ export default function VersusPage() {
   return <div className="min-h-screen bg-cream text-ink">
     <SiteHeader account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-8">
+      <div className="mb-6">
+        <BackHomeLink />
+      </div>
       <Suspense fallback={<p role="status" className="py-16 text-center text-ink-muted">Cargando el duelo…</p>}><Duel /></Suspense>
     </main>
   </div>;

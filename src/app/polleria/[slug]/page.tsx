@@ -1,9 +1,10 @@
+import { BackHomeLink } from "@/components/ui/back-home-link";
 import type { Metadata } from "next";
-import Link from "next/link";
+
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { ArrowLeft } from "lucide-react";
+
 import { HeaderAccount } from "@/app/_components/header-account";
 import {
   getActiveRestaurants,
@@ -112,13 +113,7 @@ async function RestaurantDetail({ params, searchParams }: RestaurantPageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-5 sm:px-8 sm:pt-8">
-      <Link
-        href="/"
-        className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-brand-ink transition-colors hover:text-brand-dark"
-      >
-        <ArrowLeft size={16} aria-hidden="true" />
-        {DETAIL_TEXT.backToRanking}
-      </Link>
+      <BackHomeLink label={DETAIL_TEXT.backToRanking} />
 
       <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start lg:gap-10">
         <div className="flex min-w-0 flex-col gap-5 lg:sticky lg:top-24">
