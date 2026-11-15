@@ -1,4 +1,4 @@
-import { CircleCheck } from "lucide-react";
+import { BrandArt } from "@/components/brand/brand-logo";
 import { overallScore, scoreLabel, type RatingScores } from "@/domain/rating/criteria";
 import { RatedScores } from "./rated-scores";
 import { AfterVoteLinks } from "./after-vote-links";
@@ -20,7 +20,8 @@ export function AlreadyRated({ slug, restaurantName, hero, scores, comment }: Al
   return (
     <RatingLayout hero={hero}>
       <div className="flex flex-col items-center text-center">
-        <CircleCheck size={40} className="text-brand" aria-hidden="true" />
+        {/* Copa-tenedor de ComiDeli: el voto ya cuenta para el ranking. */}
+        <BrandArt art="trophy" sizes="64px" className="h-16 w-auto" />
         <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">Ya calificaste esta pollería</h2>
         <p className="mt-2 text-sm text-ink-muted">Así calificaste {restaurantName}:</p>
         <div className="mt-6 flex items-center gap-4">

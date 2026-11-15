@@ -39,6 +39,11 @@ export const HEADER_TEXT = {
   versusLabel: "Versus: duelo en vivo",
 } as const;
 
+export const FOOTER_TEXT = {
+  tagline: "El ranking del pollo broaster de Cochabamba, votado por la gente.",
+  copyright: "© 2026 ComiDeli",
+} as const;
+
 export const VERSUS_TEXT = {
   eyebrow: "Duelo de Cochabamba",
   title: (left: string, right: string) => `${left} vs. ${right}`,

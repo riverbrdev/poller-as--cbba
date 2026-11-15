@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeft, Utensils } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { BrandArt } from "@/components/brand/brand-logo";
 import { loginWithGoogleAction, loginWithPasswordAction } from "@/app/_actions/auth";
 import { AuthCard, AuthDivider } from "@/components/auth/auth-card";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
@@ -39,7 +40,8 @@ async function LoginContent({ searchParams }: LoginPageProps) {
 
   return (
     <AuthCard
-      icon={<Utensils className="size-6" aria-hidden="true" />}
+      icon={<BrandArt art="icon" sizes="56px" eager className="size-14 rounded-2xl shadow-[0_6px_18px_rgb(216,67,21,0.22)]" />}
+      iconFrame={false}
       title={TITLE}
       subtitle={DESCRIPTION}
     >

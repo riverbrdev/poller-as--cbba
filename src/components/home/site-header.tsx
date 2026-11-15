@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Swords, UtensilsCrossed } from "lucide-react";
+import { Swords } from "lucide-react";
 import { ACCOUNT_TEXT } from "@/components/account/messages";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { HEADER_TEXT } from "./messages";
@@ -17,10 +18,10 @@ export function SiteHeader({ account }: SiteHeaderProps) {
     // Fijo arriba: el avatar y su menú quedan a un toque aunque la persona haya bajado por el catálogo.
     <header className="sticky top-0 z-40 border-b border-line bg-white/90 shadow-sm backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 flex-wrap px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-lg font-extrabold tracking-tight">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-white"><UtensilsCrossed size={18} aria-hidden="true" /></span>
-          {/* Bajo 360px la etiqueta no entra en la fila: se oculta para que no haya scroll horizontal. */}
-          ComiDeli <span className="hidden rounded bg-brand-soft md:inline px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-ink">Cochabamba</span>
+        <Link href="/" aria-label="ComiDeli, ir al inicio" className="inline-flex min-h-11 items-center gap-2.5 rounded-lg">
+          <BrandLogo alt="" eager className="h-7 sm:h-9" />
+          {/* Bajo 768px la etiqueta no entra en la fila: se oculta para que no haya scroll horizontal. */}
+          <span className="hidden rounded bg-brand-soft px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-ink md:inline">Cochabamba</span>
         </Link>
         <nav aria-label="Navegación principal" className="ml-auto flex shrink-0 items-center gap-2 text-sm font-bold sm:gap-6">
           {/* En celular se oculta para que el header fijo entre en una sola fila; el logo ya lleva al inicio. */}

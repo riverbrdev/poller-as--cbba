@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ChevronDown, MessageSquareText } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { ReviewCounts, ReviewFilter } from "@/application/ports/review-repository";
 import type { Review } from "@/application/rating/list-restaurant-reviews";
+import { BrandArt } from "@/components/brand/brand-logo";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { REVIEW_TEXT } from "./messages";
@@ -40,7 +41,8 @@ export function ReviewsSection({ slug, filter, visible, pageSize, reviews, count
 
       {counts.all === 0 ? (
         <div className="rounded-2xl border border-dashed border-line-strong bg-white p-6 text-center">
-          <MessageSquareText className="mx-auto text-brand" size={28} aria-hidden="true" />
+          {/* Podio con tenedor: invita a abrir el ranking de esta pollería. */}
+          <BrandArt art="podium" sizes="48px" className="mx-auto h-14 w-auto" />
           <p className="mt-3 text-lg font-extrabold">{REVIEW_TEXT.emptyTitle}</p>
           <p className="mt-1 text-sm text-ink-muted">{REVIEW_TEXT.emptyLead}</p>
           <Link href={`/calificar/${slug}`} className={cn(buttonVariants({ variant: "brand", size: "touch" }), "mt-4")}>

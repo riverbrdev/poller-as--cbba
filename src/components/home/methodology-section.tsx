@@ -1,5 +1,6 @@
 import { ArrowUp } from "lucide-react";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
+import { BrandArt } from "@/components/brand/brand-logo";
 import { CriterionIcon } from "@/components/rating/criterion-icon";
 import { METHODOLOGY_TEXT } from "./messages";
 
@@ -46,9 +47,13 @@ export function MethodologySection() {
         </ol>
 
         <div className="mt-14 flex flex-col gap-5 rounded-2xl bg-brand-ink p-6 text-white sm:p-9 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h3 className="max-w-xl text-2xl font-extrabold leading-tight sm:text-3xl">{METHODOLOGY_TEXT.suggestTitle}</h3>
-            <p className="mt-3 max-w-xl text-base leading-7 text-white/90">{METHODOLOGY_TEXT.suggestLead}</p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-7">
+            {/* La Cholita de ComiDeli levanta la copa: le da cara al cierre de la home. */}
+            <BrandArt art="cholita" sizes="(min-width: 640px) 160px, 112px" className="h-24 w-auto shrink-0 self-start drop-shadow-[0_8px_16px_rgb(0_0_0/0.18)] sm:-my-3 sm:h-36 sm:self-center" />
+            <div>
+              <h3 className="max-w-xl text-2xl font-extrabold leading-tight sm:text-3xl">{METHODOLOGY_TEXT.suggestTitle}</h3>
+              <p className="mt-3 max-w-xl text-base leading-7 text-white/90">{METHODOLOGY_TEXT.suggestLead}</p>
+            </div>
           </div>
           <a
             href="#locales"
