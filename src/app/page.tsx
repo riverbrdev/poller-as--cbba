@@ -6,6 +6,7 @@ import { getVersusSummary } from "@/app/_data/versus";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { HERO_LOGO_COUNT, HomeHero, type HeroLogo } from "@/components/home/home-hero";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
+import { SiteFooter } from "@/components/home/site-footer";
 import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 import { VersusStrip, VersusStripAction } from "@/components/home/versus-strip";
@@ -49,6 +50,7 @@ export default async function Home() {
         <RestaurantCatalog restaurants={restaurants} zones={zones} />
         <MethodologySection />
       </main>
+      <SiteFooter />
     </div>
   );
 }

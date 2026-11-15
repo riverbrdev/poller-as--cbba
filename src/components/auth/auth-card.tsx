@@ -1,17 +1,17 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { CircleAlert, Utensils } from "lucide-react";
+import { CircleAlert } from "lucide-react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
-/** Marca de ComiDeli: isotipo naranja y nombre con "Deli" en color principal (diseño Stitch). */
+/** Marca de ComiDeli: el logotipo oficial, que lleva al inicio. */
 function Brand() {
   return (
-    <Link href="/" className="inline-flex items-center gap-2 rounded-lg focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:outline-none">
-      <span className="flex size-8 items-center justify-center rounded-xl bg-auth-brand text-white shadow-sm">
-        <Utensils className="size-4" aria-hidden="true" />
-      </span>
-      <span className="text-xl font-extrabold tracking-tight text-auth-ink">
-        Comi<span className="text-auth-brand">Deli</span>
-      </span>
+    <Link
+      href="/"
+      aria-label="ComiDeli, ir al inicio"
+      className="inline-flex min-h-11 items-center rounded-lg focus-visible:ring-2 focus-visible:ring-auth-brand focus-visible:outline-none"
+    >
+      <BrandLogo alt="" eager className="h-7 sm:h-8" />
     </Link>
   );
 }
@@ -46,11 +46,13 @@ type AuthCardProps = {
   subtitle: string;
   /** Contenido opcional encima del icono, por ejemplo la cuenta de Google conectada. */
   topSlot?: ReactNode;
+  /** false: el icono ya trae su propia forma (p. ej. el isotipo de ComiDeli) y no lleva el recuadro suave. */
+  iconFrame?: boolean;
   children: ReactNode;
 };
 
 /** Marco común de las pantallas de acceso (diseño Stitch): encabezado, tarjeta centrada y pie. */
-export function AuthCard({ icon, title, subtitle, topSlot, children }: AuthCardProps) {
+export function AuthCard({ icon, title, subtitle, topSlot, iconFrame = true, children }: AuthCardProps) {
   return (
     <div className="flex min-h-dvh flex-col bg-auth-cream text-auth-ink">
       <SiteHeader />
@@ -59,9 +61,13 @@ export function AuthCard({ icon, title, subtitle, topSlot, children }: AuthCardP
           <div className="flex flex-col rounded-3xl border border-auth-line bg-white p-6 shadow-[0_8px_30px_rgb(216,67,21,0.06)] sm:p-8">
             {topSlot}
             <div className="mb-6 text-center">
-              <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl border border-orange-100 bg-auth-brand-soft text-auth-brand">
-                {icon}
-              </div>
+              {iconFrame ? (
+                <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl border border-orange-100 bg-auth-brand-soft text-auth-brand">
+                  {icon}
+                </div>
+              ) : (
+                <div className="mx-auto mb-3 flex justify-center">{icon}</div>
+              )}
               <h1 className="text-2xl font-extrabold tracking-tight text-auth-ink sm:text-[26px]">{title}</h1>
               <p className="mt-2 text-sm leading-relaxed text-auth-ink-muted">{subtitle}</p>
             </div>

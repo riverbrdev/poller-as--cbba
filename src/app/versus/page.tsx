@@ -10,6 +10,7 @@ import { useCases } from "@/composition/container";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { voteVersusAction } from "@/app/_actions/versus";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
+import { SiteFooter } from "@/components/home/site-footer";
 import { VersusBoard } from "@/components/versus/versus-board";
 
 export const metadata: Metadata = {
@@ -18,14 +19,15 @@ export const metadata: Metadata = {
   openGraph: { title: "Lolo Chicken vs. Ricono", description: "¿Quién se lleva tu voto? Participa en el Versus de ComiDeli.", url: "/versus" },
 };
 export default function VersusPage() {
-  return <div className="min-h-screen bg-cream text-ink">
+  return <div className="flex min-h-screen flex-col bg-cream text-ink">
     <SiteHeader account={<Suspense fallback={<ParticipateLink />}><HeaderAccount /></Suspense>} />
-    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-8">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-8">
       <div className="mb-6">
         <BackHomeLink />
       </div>
       <Suspense fallback={<p role="status" className="py-16 text-center text-ink-muted">Cargando el duelo…</p>}><Duel /></Suspense>
     </main>
+    <SiteFooter />
   </div>;
 }
 async function Duel() {

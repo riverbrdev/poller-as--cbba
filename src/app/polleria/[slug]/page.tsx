@@ -20,6 +20,7 @@ import { useCases } from "@/composition/container";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { MIN_VOTES_FOR_RANKING } from "@/domain/rating/ranking";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
+import { SiteFooter } from "@/components/home/site-footer";
 import { DetailActions } from "@/components/restaurant/detail-actions";
 import { DetailSkeleton } from "@/components/restaurant/detail-skeleton";
 import { HelpfulButton } from "@/components/restaurant/helpful-button";
@@ -78,6 +79,7 @@ export default function RestaurantPage({ params, searchParams }: RestaurantPageP
       <Suspense fallback={<DetailSkeleton />}>
         <RestaurantDetail params={params} searchParams={searchParams} />
       </Suspense>
+      <SiteFooter />
     </div>
   );
 }
