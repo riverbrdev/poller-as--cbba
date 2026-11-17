@@ -15,6 +15,7 @@ const DESCRIPTION = "Inicia sesión con Google para calificar pollerías y suger
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  robots: { index: false, follow: false },
   openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
 };
 

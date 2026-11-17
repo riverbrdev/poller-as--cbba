@@ -15,6 +15,7 @@ import { VersusBoard } from "@/components/versus/versus-board";
 
 export const metadata: Metadata = {
   title: "Lolo Chicken vs. Ricono · ComiDeli",
+  alternates: { canonical: "/versus" },
   description: "Elige tu favorito en el Versus de ComiDeli. Un duelo, dos pollerías y un voto por persona.",
   openGraph: { title: "Lolo Chicken vs. Ricono", description: "¿Quién se lleva tu voto? Participa en el Versus de ComiDeli.", url: "/versus" },
 };

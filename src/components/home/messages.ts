@@ -5,7 +5,7 @@ export const HERO_TEXT = {
   titleStart: "¿Dónde se come el mejor pollo broaster en la",
   titleHighlight: "llajta",
   titleEnd: "?",
-  lead: "Califica sabor, porción, atención y local. Cada voto suma para armar un ranking hecho por quienes comen ahí.",
+  lead: "Descubre las mejores pollerías de Cochabamba con ComiDeli. Compara opiniones y califica sabor, porción, atención y local en un ranking hecho por la comunidad.",
   primaryAction: "Elegir una pollería",
   secondaryAction: "Cómo se califica",
   restaurants: (count: number) => (count === 1 ? "pollería" : "pollerías"),
@@ -18,7 +18,7 @@ export const HERO_TEXT = {
 
 export const CATALOG_TEXT = {
   eyebrow: "Catálogo",
-  title: "Elige una pollería y califícala",
+  title: "Ranking de pollos en Cochabamba",
   lead: "Busca por nombre, zona o dirección. Cada pollería entra al ranking cuando junta 10 votos.",
   count: (count: number) => `${count} ${count === 1 ? "local" : "locales"}`,
   searchLabel: "Buscar pollería, zona o dirección",

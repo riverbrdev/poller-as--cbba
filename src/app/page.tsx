@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { HOME_METADATA } from "@/app/_lib/seo";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { ViewerVersusStripAction } from "@/app/_components/versus-strip-action";
 import { getCatalogRestaurants } from "@/app/_data/restaurants";
@@ -10,6 +11,8 @@ import { SiteFooter } from "@/components/home/site-footer";
 import { MethodologySection } from "@/components/home/methodology-section";
 import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 import { VersusStrip, VersusStripAction } from "@/components/home/versus-strip";
+
+export const metadata = HOME_METADATA;
 
 export default async function Home() {
   const [{ restaurants, zones }, versus] = await Promise.all([getCatalogRestaurants(), getVersusSummary()]);

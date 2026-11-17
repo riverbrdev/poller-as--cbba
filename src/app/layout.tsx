@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { SITE_ORIGIN } from "@/app/_lib/seo";
 
 // Tipografía única de ComiDeli (diseño Stitch): Plus Jakarta Sans.
 const jakarta = Plus_Jakarta_Sans({
@@ -11,16 +12,10 @@ const jakarta = Plus_Jakarta_Sans({
 
 const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gente.";
 
-// Base de las URLs de Open Graph: las fotos se guardan como rutas relativas (/pollerias/<slug>.webp)
-// y WhatsApp/Facebook necesitan la URL completa para mostrar la imagen.
-const deployedHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || (deployedHost ? `https://${deployedHost}` : "http://localhost:3000");
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(SITE_ORIGIN),
   title: "ComiDeli",
   description: DESCRIPTION,
-  alternates: { canonical: "/" },
   // Para que el enlace se vea bien al compartirlo por WhatsApp o Facebook (CLAUDE.md).
   openGraph: {
     title: "ComiDeli",
@@ -28,7 +23,6 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_BO",
     siteName: "ComiDeli",
-    url: "/",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "ComiDeli: el ranking del pollo de Cochabamba" }],
   },
   twitter: { card: "summary_large_image", title: "ComiDeli", description: DESCRIPTION, images: ["/opengraph-image"] },
