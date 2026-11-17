@@ -51,10 +51,10 @@ export async function generateMetadata({ params }: Pick<RestaurantPageProps, "pa
   }
 
   const { restaurant, display, voteCount } = detail;
-  const title = `${restaurant.name} · ComiDeli`;
+  const title = `${restaurant.name} en Cochabamba | ComiDeli`;
   const description = display
-    ? `${restaurant.zone} · nota ${display.text}/10 · ${DETAIL_TEXT.votes(voteCount)}`
-    : `${restaurant.zone} · En votación en ComiDeli`;
+    ? `${restaurant.name} en ${restaurant.zone}, Cochabamba: nota ${display.text}/10 y ${DETAIL_TEXT.votes(voteCount)}. Consulta opiniones, ubicación y calificaciones en ComiDeli.`
+    : `Conoce ${restaurant.name} en ${restaurant.zone}, Cochabamba. Consulta su ubicación y participa en el ranking comunitario de pollerías de ComiDeli.`;
   const path = `/polleria/${restaurant.slug}`;
   const image = restaurant.photoUrl ?? "/opengraph-image";
   return {

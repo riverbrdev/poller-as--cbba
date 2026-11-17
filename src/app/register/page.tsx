@@ -14,6 +14,7 @@ const DESCRIPTION = "Elige tu nombre y empieza a calificar pollerías.";
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
+  robots: { index: false, follow: false },
   openGraph: { title: TITLE, description: DESCRIPTION, type: "website" },
 };
 
