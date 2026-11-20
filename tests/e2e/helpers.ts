@@ -67,6 +67,58 @@ export async function createGoogleUserWithoutUsername(suffix = randomSuffix()) {
   return result.user;
 }
 
+/** Cuenta de Google con username, como la de alguien que ya completó el onboarding. */
+export async function createGoogleUser(suffix = randomSuffix()) {
+  const result = await repo.create({
+    username: e2eUsername(suffix),
+    googleId: `e2e-google-${suffix}`,
+    passwordHash: null,
+    name: `Google ${suffix}`,
+    email: e2eEmail(suffix),
+    avatarUrl: null,
+  });
+  if (!result.ok) {
+    throw new Error(`No se pudo crear la cuenta de Google de prueba: ${result.conflict}`);
+  }
+  return result.user;
+}
+
+/**
+ * Admin de prueba (spec 003). Correo fijo porque tiene que coincidir con ADMIN_EMAILS de .env.local.
+ * Nunca se agrega a ADMIN_EMAILS de Vercel: example.com no da cuentas de Google.
+ */
+export const E2E_ADMIN_EMAIL = `${E2E_PREFIX}admin${E2E_EMAIL_DOMAIN}`;
+
+/** Reutiliza el admin de prueba si ya existe (el correo es único) y le asegura el rol admin. */
+export async function getOrCreateGoogleAdmin() {
+  const existing = await repo.findByEmail(E2E_ADMIN_EMAIL);
+  if (existing) {
+    return repo.setRole(existing.id, "admin");
+  }
+  const result = await repo.create({
+    username: "e2e_admin",
+    googleId: "e2e-google-admin",
+    passwordHash: null,
+    name: "Admin e2e",
+    email: E2E_ADMIN_EMAIL,
+    avatarUrl: null,
+  });
+  if (!result.ok) {
+    throw new Error(`No se pudo crear el admin de prueba: ${result.conflict}`);
+  }
+  return repo.setRole(result.user.id, "admin");
+}
+
+/** Cambia el rol directo en la base, como lo haría alguien a mano (corte urgente). */
+export async function setUserRole(userId: string, role: "user" | "admin") {
+  return repo.setRole(userId, role);
+}
+
+/** Relee la cuenta desde la base, para comprobar su rol después de una petición. */
+export async function findUserById(userId: string) {
+  return repo.findById(userId);
+}
+
 /**
  * Simula la sesión que deja Auth.js después de un login con Google.
  * No pasa por Google: firma el mismo JWT que firmaría Auth.js con AUTH_SECRET.

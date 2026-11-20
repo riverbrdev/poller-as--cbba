@@ -8,6 +8,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { UsernameForm } from "@/components/auth/username-form";
 import { initialsFrom } from "@/components/account/initials";
 import { auth } from "@/composition/auth";
+import { useCases } from "@/composition/container";
 import { safeCallbackPath } from "@/domain/user/access";
 
 const TITLE = "Elige tu nombre";
@@ -44,7 +45,8 @@ async function UsernameOnboardingContent({ searchParams }: UsernameOnboardingPag
   const { callbackUrl: rawCallbackUrl } = await searchParams;
   const callbackUrl = rawCallbackUrl ? safeCallbackPath(rawCallbackUrl) : undefined;
   if (session.user.username) {
-    redirect(callbackUrl ?? "/");
+    // Un admin va directo al área de administración; el resto, a donde iba (spec 003, FR-009).
+    redirect(await useCases.postSignInDestination(session.user.id, callbackUrl ?? "/"));
   }
 
   return (

@@ -31,6 +31,16 @@ describe("redirectFor", () => {
     expect(redirectFor({ pathname: "/onboarding/username", hasSession: false, hasUsername: false })).toBe("/login");
     expect(redirectFor({ pathname: "/onboarding/username", hasSession: true, hasUsername: false })).toBeNull();
   });
+
+  it("el área de administración pide sesión y username antes de llegar a la página (spec 003)", () => {
+    expect(redirectFor({ pathname: "/admin", hasSession: false, hasUsername: false })).toBe(
+      "/login?callbackUrl=%2Fadmin",
+    );
+    expect(redirectFor({ pathname: "/admin", hasSession: true, hasUsername: false })).toBe(
+      "/onboarding/username?callbackUrl=%2Fadmin",
+    );
+    expect(redirectFor({ pathname: "/admin", hasSession: true, hasUsername: true })).toBeNull();
+  });
 });
 
 describe("safeCallbackPath", () => {

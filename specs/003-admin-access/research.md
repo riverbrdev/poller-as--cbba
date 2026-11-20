@@ -80,6 +80,15 @@ Fecha: 2026-11-20. Se revisó el código actual (`src/composition/auth.ts`, `src
   - con acceso → saludo con `@usuario` y aviso de "próximamente" (FR-008).
 - **Descartado**: `forbidden()` de Next.js (devuelve 403, que confirma que la página existe; además es
   experimental y requiere `authInterrupts`).
+- **Hallazgo al implementar (404 real)**: con streaming, un `notFound()` dentro de `<Suspense>` deja
+  la respuesta en `200` (ver `01-app/02-guides/streaming.md`). Por eso la página usa
+  `export const instant = false` (ruta bloqueante) y verifica **antes** de renderizar: `notFound()` da
+  un `404` real y `redirect()` un `307` real.
+- **Hallazgo al implementar (título)**: con `notFound()` en la página, Next.js conservaba el título
+  de la página ("Administración") o el del layout ("ComiDeli"), distinto al de una ruta inexistente.
+  Se agregó `src/app/not-found.tsx` (404 general en español) y `generateMetadata` de `/admin` pasa por
+  la misma verificación (compartida con `cache()` de React): quien no es admin ve exactamente el mismo
+  título y contenido que en cualquier ruta inexistente.
 - **Nota**: para visitantes sin sesión `/admin` redirige al login, a diferencia de una ruta
   inexistente. Es lo que pide la spec; no expone datos y no confirma quién es admin.
 
