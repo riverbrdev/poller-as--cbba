@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SITE_ORIGIN } from "@/app/_lib/seo";
 import { GoogleAnalytics } from "@/app/_components/google-analytics";
@@ -36,6 +37,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-cream text-ink">
         {children}
         <GoogleAnalytics />
+        {/* Vercel Web Analytics: visitas y páginas vistas (solo registra en el deploy de Vercel). */}
+        <Analytics />
       </body>
     </html>
   );
