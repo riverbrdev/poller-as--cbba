@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SITE_ORIGIN } from "@/app/_lib/seo";
+import { GoogleAnalytics } from "@/app/_components/google-analytics";
 
 // Tipografía única de ComiDeli (diseño Stitch): Plus Jakarta Sans.
 const jakarta = Plus_Jakarta_Sans({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="es" data-scroll-behavior="smooth" className={`${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-cream text-ink">
         {children}
+        <GoogleAnalytics />
         {/* Vercel Web Analytics: visitas y páginas vistas (solo registra en el deploy de Vercel). */}
         <Analytics />
       </body>
