@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SITE_ORIGIN } from "@/app/_lib/seo";
 
@@ -32,7 +33,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // data-scroll-behavior: Next desactiva el scroll suave al cambiar de página (Next 16), así solo se deslizan los anclas.
     <html lang="es" data-scroll-behavior="smooth" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
+      <body className="min-h-full flex flex-col bg-cream text-ink">
+        {children}
+        {/* Vercel Web Analytics: visitas y páginas vistas (solo registra en el deploy de Vercel). */}
+        <Analytics />
+      </body>
     </html>
   );
 }
