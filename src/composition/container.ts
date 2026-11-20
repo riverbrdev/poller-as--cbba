@@ -18,6 +18,7 @@ import { createGetMyProfile } from "@/application/user/get-my-profile";
 import { createGetUserById } from "@/application/user/get-user-by-id";
 import { createRegisterWithPassword } from "@/application/user/register-with-password";
 import { createSignInWithGoogle } from "@/application/user/sign-in-with-google";
+import { parseAdminAllowlist } from "@/domain/user/admin";
 import { bcryptPasswordHasher } from "@/infrastructure/auth/bcrypt-password-hasher";
 import { createDb } from "@/infrastructure/db/client";
 import { createDrizzleHelpfulVoteRepository } from "@/infrastructure/db/helpful-vote-repository";
@@ -35,13 +36,15 @@ const reviews = createDrizzleReviewRepository(db);
 const helpfulVotes = createDrizzleHelpfulVoteRepository(db);
 const hasher = bcryptPasswordHasher;
 const versusVotes = createDrizzleVersusRepository(db);
+// Lista de admins (spec 003, FR-002): configuración del servidor, nunca del código.
+const adminEmails = parseAdminAllowlist(process.env.ADMIN_EMAILS);
 
 export const useCases = {
   getVersus: createGetVersus({ votes: versusVotes, restaurants, users }),
   voteVersus: createVoteVersus({ votes: versusVotes, restaurants, users }),
   registerWithPassword: createRegisterWithPassword({ users, hasher }),
   authenticateWithPassword: createAuthenticateWithPassword({ users, hasher }),
-  signInWithGoogle: createSignInWithGoogle({ users }),
+  signInWithGoogle: createSignInWithGoogle({ users, adminEmails }),
   chooseUsername: createChooseUsername({ users }),
   checkUsernameAvailability: createCheckUsernameAvailability({ users }),
   getUserById: createGetUserById({ users }),

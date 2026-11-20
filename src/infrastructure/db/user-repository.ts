@@ -5,6 +5,7 @@ import type {
   SetUsernameResult,
   UserRecord,
   UserRepository,
+  UserRole,
 } from "@/application/ports/user-repository";
 import type { Db } from "./client";
 import { users } from "./schema";
@@ -12,7 +13,7 @@ import { userConflictFromError } from "./unique-violation";
 
 type UserRow = typeof users.$inferSelect;
 
-// Devuelve solo los campos del puerto: no filtra createdAt ni role a los casos de uso.
+// Devuelve solo los campos del puerto: no filtra createdAt a los casos de uso.
 function toUserRecord(row: UserRow): UserRecord {
   return {
     id: row.id,
@@ -22,6 +23,7 @@ function toUserRecord(row: UserRow): UserRecord {
     name: row.name,
     email: row.email,
     avatarUrl: row.avatarUrl,
+    role: row.role,
   };
 }
 
@@ -72,6 +74,14 @@ export function createDrizzleUserRepository(db: Db): UserRepository {
         }
         throw error;
       }
+    },
+
+    async setRole(id: string, role: UserRole): Promise<UserRecord> {
+      const [row] = await db.update(users).set({ role }).where(eq(users.id, id)).returning();
+      if (!row) {
+        throw new Error(`Postgres no encontró el usuario ${id} para actualizar role`);
+      }
+      return toUserRecord(row);
     },
   };
 }

@@ -11,6 +11,7 @@ const googleUser: UserRecord = {
   name: "Bernardo Ríos",
   email: "berni@example.com",
   avatarUrl: "https://lh3.googleusercontent.com/a/foto",
+  role: "user",
 };
 
 const passwordUser: UserRecord = {
@@ -21,6 +22,7 @@ const passwordUser: UserRecord = {
   name: "pollero",
   email: "pollero@example.com",
   avatarUrl: null,
+  role: "user",
 };
 
 describe("getMyProfile", () => {

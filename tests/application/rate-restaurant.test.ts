@@ -26,6 +26,7 @@ const user = (overrides: Partial<UserRecord> = {}): UserRecord => ({
   name: "Juan",
   email: "juan@example.com",
   avatarUrl: null,
+  role: "user",
   ...overrides,
 });
 
