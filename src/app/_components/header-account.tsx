@@ -3,6 +3,7 @@ import { signOutAction } from "@/app/_actions/auth";
 import { UserMenu } from "@/components/account/user-menu";
 import { ParticipateLink } from "@/components/home/site-header";
 import { auth } from "@/composition/auth";
+import { useCases } from "@/composition/container";
 
 /**
  * Zona de la cuenta en el header: depende de la sesión (cookies), así que va dentro de un Suspense
@@ -20,5 +21,7 @@ export async function HeaderAccount() {
     username: session.user.username,
     avatarUrl: session.user.image ?? null,
   };
-  return <UserMenu user={user} signOut={signOutAction} />;
+  // Misma comprobación que /admin (rol + correo en la lista ahora mismo): el botón al panel solo lo ve un admin.
+  const access = await useCases.getAdminAccess(session.user.id);
+  return <UserMenu user={user} isAdmin={access.ok} signOut={signOutAction} />;
 }

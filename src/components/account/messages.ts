@@ -2,6 +2,7 @@
 export const ACCOUNT_TEXT = {
   menuLabel: "Menú de tu cuenta",
   myProfile: "Mi perfil",
+  adminPanel: "Panel de administración",
   signOut: "Cerrar sesión",
   signingOut: "Cerrando sesión…",
   participate: "Participar",

@@ -23,7 +23,7 @@ Se adopta **"registrarse como cualquiera y recibir el rol por lista autorizada"*
 
 ### Session 2026-11-20
 
-- Q: ¿Cómo llega un admin al área de administración? → A: **Sin botón.** No hay un acceso en el menú ni en ninguna otra parte de la interfaz. Al iniciar sesión, el servidor comprueba si la cuenta es admin; si lo es, la app abre directamente la pantalla de administración. Un usuario normal sigue el flujo de siempre.
+- Q: ¿Cómo llega un admin al área de administración? → A: **Sin botón** (revisado: ahora hay una entrada "Panel de administración" en el menú de la cuenta, visible solo para admins; ver FR-009). No hay un acceso en el menú ni en ninguna otra parte de la interfaz. Al iniciar sesión, el servidor comprueba si la cuenta es admin; si lo es, la app abre directamente la pantalla de administración. Un usuario normal sigue el flujo de siempre.
 - Q: ¿Qué debe incluir la pantalla de administración en esta funcionalidad? → A: Solo el acceso: un saludo y un aviso de "próximamente". Las analíticas de votos van en una spec aparte (004). La moderación de comentarios va en otra (005) y combina una lista de palabras prohibidas con detección por IA.
 - Q: ¿Las cuentas admin pueden votar y comentar en las pollerías como cualquier usuario? → A: Sí. El admin vota y comenta como cualquiera. La redirección a la pantalla de administración pasa solo al iniciar sesión; después puede navegar el sitio público con normalidad.
 - Q: Cuando se quita un correo de la lista de admins, ¿pierde el acceso de inmediato o en su próximo inicio de sesión? → A: De inmediato. En cada pedido al área de administración, el servidor vuelve a comprobar el correo contra la lista. Si ya no está, rechaza el pedido y deja la cuenta como usuario normal.
@@ -49,7 +49,7 @@ Uno de los tres desarrolladores ingresa con su cuenta de Google. Su correo está
 
 ### User Story 2 - Al iniciar sesión, un admin entra directo a la pantalla de administración (Priority: P1)
 
-No existe ningún botón ni enlace visible al área de administración. Cuando alguien inicia sesión, el servidor comprueba su rol: si es admin, la app lo lleva directo a la pantalla de administración. Si no lo es, sigue el flujo normal. Además, cualquier persona que no sea admin es rechazada en el servidor aunque conozca la dirección.
+El único acceso visible es la entrada "Panel de administración" del menú de la cuenta, y solo la ven los admins. Cuando alguien inicia sesión, el servidor comprueba su rol: si es admin, la app lo lleva directo a la pantalla de administración. Si no lo es, sigue el flujo normal. Además, cualquier persona que no sea admin es rechazada en el servidor aunque conozca la dirección.
 
 **Why this priority**: Dar el rol no sirve si no hay un lugar protegido donde usarlo, y la constitución exige que la autorización se compruebe en el servidor, no solo ocultando botones.
 
@@ -60,7 +60,7 @@ No existe ningún botón ni enlace visible al área de administración. Cuando a
 1. **Given** un admin que ya eligió su `@usuario`, **When** inicia sesión con Google, **Then** la app lo lleva directo a la pantalla de administración sin que tenga que tocar ningún botón.
 2. **Given** un admin que ingresa por primera vez, **When** termina de elegir su `@usuario`, **Then** la app lo lleva directo a la pantalla de administración.
 3. **Given** un usuario normal, **When** inicia sesión, **Then** sigue el flujo normal y nunca pasa por la pantalla de administración.
-4. **Given** cualquier persona, admin o no, **When** navega la app o abre el menú de su cuenta, **Then** no ve ningún botón ni enlace hacia el área de administración.
+4. **Given** una persona que no es admin, **When** navega la app o abre el menú de su cuenta, **Then** no ve ningún botón ni enlace hacia el área de administración; un admin, en cambio, ve "Panel de administración" en el menú de su cuenta y con eso vuelve al panel.
 5. **Given** un visitante sin sesión, **When** abre a mano la dirección de administración, **Then** se le pide iniciar sesión y no ve contenido de administración.
 6. **Given** un usuario con sesión pero sin rol admin, **When** abre a mano la dirección de administración, **Then** ve "página no encontrada" y ningún dato de administración.
 7. **Given** un admin en la pantalla de administración, **When** la ve, **Then** aparece un saludo con su `@usuario` y un aviso de que las herramientas (sugerencias, reportes, moderación) llegarán en próximas entregas.
@@ -92,7 +92,7 @@ Si un desarrollador deja el proyecto, se saca su correo de la lista y pierde el 
 - **Admin navegando el sitio público**: puede abrir el ranking, calificar y comentar sin que la app lo devuelva a la pantalla de administración (FR-012).
 - **Más de tres correos en la lista**: se permite; el número tres es del equipo actual, no un límite del sistema.
 - **Admin que todavía no eligió `@usuario`**: debe elegirlo como cualquier cuenta nueva; al terminar, la app lo lleva a la pantalla de administración.
-- **Admin que quiere volver a la pantalla de administración sin cerrar sesión**: no hay botón. Puede escribir la dirección a mano o volver a iniciar sesión.
+- **Admin que quiere volver a la pantalla de administración sin cerrar sesión**: abre el menú de su cuenta y toca "Panel de administración".
 - **Admin que ingresó desde un enlace a otra página** (por ejemplo, una pollería): igual lo lleva a la pantalla de administración, porque ser admin tiene prioridad sobre la página de origen.
 
 ## Requirements *(mandatory)*
@@ -107,7 +107,7 @@ Si un desarrollador deja el proyecto, se saca su correo de la lista y pierde el 
 - **FR-006**: Cambiar el rol NO DEBE alterar el `@usuario`, los votos, los comentarios ni las marcas "Útil" de la cuenta.
 - **FR-007**: El área de administración DEBE comprobar en el servidor, en cada pedido, que la sesión pertenece a una cuenta con rol admin **y** que su correo sigue en la lista autorizada en ese momento. Si el correo ya no está, DEBE rechazar el pedido y dejar la cuenta como usuario normal. Si no hay sesión, DEBE pedir iniciar sesión, y si la cuenta no es admin DEBE rechazar sin mostrar datos de administración.
 - **FR-008**: El área de administración DEBE mostrar, en esta entrega, un saludo con el `@usuario` del admin y un aviso de que las herramientas llegan después. No incluye analíticas de votos, aprobar sugerencias, reportes ni moderación de comentarios.
-- **FR-009**: La app NO DEBE mostrar ningún botón, enlace ni entrada de menú hacia el área de administración, a nadie. Al terminar el inicio de sesión (y, en una cuenta nueva, después de elegir el `@usuario`), el servidor DEBE comprobar el rol: si la cuenta es admin, DEBE llevarla a la pantalla de administración; si no, DEBE seguir el flujo normal. Esta redirección es comodidad; la protección es la de FR-007.
+- **FR-009**: La app DEBE mostrar una entrada "Panel de administración" en el menú de la cuenta **solo** cuando el servidor comprueba, en ese pedido, que la cuenta es admin (misma comprobación que FR-007). A nadie más le DEBE mostrar ningún botón, enlace ni entrada de menú hacia el área de administración. Al terminar el inicio de sesión (y, en una cuenta nueva, después de elegir el `@usuario`), el servidor DEBE comprobar el rol: si la cuenta es admin, DEBE llevarla a la pantalla de administración; si no, DEBE seguir el flujo normal. Esta redirección es comodidad; la protección es la de FR-007.
 - **FR-010**: El área de administración NO DEBE indexarse en buscadores ni generar vista previa al compartirse.
 - **FR-011**: El correo de un admin NO DEBE mostrarse públicamente en ningún lugar; públicamente solo se ve su `@usuario`, igual que cualquier persona.
 - **FR-012**: Una cuenta admin DEBE poder votar, comentar y marcar "Útil" igual que un usuario normal, con las mismas reglas y límites. Sus votos cuentan en la nota pública como cualquier otro. La redirección de FR-009 ocurre solo al terminar el inicio de sesión, no al navegar el sitio público.
@@ -127,7 +127,7 @@ Si un desarrollador deja el proyecto, se saca su correo de la lista y pierde el 
 - **SC-003**: Agregar un administrador se resuelve cambiando la lista y con un nuevo inicio de sesión de esa persona, en menos de 5 minutos. Quitarlo tiene efecto en su siguiente pedido al área de administración, sin cerrar su sesión, una vez que el servidor usa la lista nueva (en Vercel, después del redeploy, normalmente menos de 5 minutos).
 - **SC-004**: Ninguna cuenta de correo y contraseña puede convertirse en admin, aunque use un correo de la lista.
 - **SC-005**: Un usuario que pierde el rol conserva el 100 % de sus votos y comentarios.
-- **SC-006**: El 100 % de los inicios de sesión de un admin terminan en la pantalla de administración sin ningún clic extra, y ninguna pantalla de la app muestra un botón o enlace hacia ella.
+- **SC-006**: El 100 % de los inicios de sesión de un admin terminan en la pantalla de administración sin ningún clic extra, y solo los admins ven un acceso a ella (en el menú de su cuenta).
 
 ## Assumptions
 

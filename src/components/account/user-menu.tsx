@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTransition } from "react";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, ShieldCheck, UserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ACCOUNT_TEXT } from "./messages";
-import { PROFILE_HREF } from "./routes";
+import { ADMIN_HREF, PROFILE_HREF } from "./routes";
 import { UserAvatar } from "./user-avatar";
 
 export type MenuUser = {
@@ -22,6 +22,8 @@ export type MenuUser = {
 
 type UserMenuProps = {
   user: MenuUser;
+  /** Lo decide el servidor en cada pedido (getAdminAccess). Solo entonces aparece "Panel de administración". */
+  isAdmin: boolean;
   /** Server action que cierra la sesión. Llega por props: components/ no importa de app/. */
   signOut: () => Promise<void>;
 };
@@ -30,7 +32,7 @@ const ITEM_CLASS = "min-h-11 gap-3 rounded-xl px-3 text-sm font-semibold";
 const ICON_BOX_CLASS = "flex size-8 items-center justify-center rounded-lg";
 
 /** Avatar del header. Al tocarlo abre "Mi perfil" y "Cerrar sesión" (diseño Stitch "Mi perfil - ComiDeli"). */
-export function UserMenu({ user, signOut }: UserMenuProps) {
+export function UserMenu({ user, isAdmin, signOut }: UserMenuProps) {
   const [isSigningOut, startSignOut] = useTransition();
 
   return (
@@ -54,6 +56,14 @@ export function UserMenu({ user, signOut }: UserMenuProps) {
           </span>
           {ACCOUNT_TEXT.myProfile}
         </DropdownMenuItem>
+        {isAdmin ? (
+          <DropdownMenuItem render={<Link href={ADMIN_HREF} />} className={`${ITEM_CLASS} focus:bg-brand-soft`}>
+            <span className={`${ICON_BOX_CLASS} border border-line bg-white text-brand-ink`}>
+              <ShieldCheck aria-hidden="true" />
+            </span>
+            {ACCOUNT_TEXT.adminPanel}
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem
           disabled={isSigningOut}
           onClick={() => startSignOut(() => signOut())}
