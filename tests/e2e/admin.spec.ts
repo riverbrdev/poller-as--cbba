@@ -70,7 +70,7 @@ test("admin: ve su saludo en /admin y llega solo desde el login (US2-1)", async 
   await expect(page).toHaveURL(/\/admin$/);
 });
 
-test("admin: navega el sitio público sin que lo devuelvan a /admin y sin enlaces hacia ahí (FR-009, FR-012)", async ({
+test("admin: navega el sitio público sin que lo devuelvan a /admin y vuelve al panel desde su menú (FR-009, FR-012)", async ({
   page,
 }) => {
   const admin = await getOrCreateGoogleAdmin();
@@ -81,7 +81,8 @@ test("admin: navega el sitio público sin que lo devuelvan a /admin y sin enlace
   await page.goto("/");
   await expect(page).toHaveURL(/\/$/);
   await page.getByRole("button", { name: "Menú de tu cuenta" }).click();
-  await expect(page.locator('a[href*="/admin"]')).toHaveCount(0);
+  await expect(page.getByRole("menuitem", { name: "Panel de administración" })).toBeVisible();
+  await page.keyboard.press("Escape");
 
   await page.goto(`/calificar/${restaurant.slug}`);
   await expect(page).toHaveURL(`/calificar/${restaurant.slug}`);

@@ -40,7 +40,7 @@ docs/
 5. La autorización se verifica siempre en el servidor. Las rutas de admin comprueban el rol en el servidor, no solo ocultan botones.
    - El rol admin solo lo recibe una cuenta de Google con correo verificado que esté en la lista de correos autorizados de la configuración del servidor. No hay registro de admin en la app y las cuentas de correo y contraseña nunca lo reciben.
    - Toda ruta o acción de admin comprueba en cada pedido el rol **y** que el correo siga en la lista; si ya no está, rechaza el pedido y baja la cuenta a usuario.
-   - Para quien no es admin, el área de administración responde como página inexistente, no se indexa y no tiene botones ni enlaces visibles hacia ella.
+   - Para quien no es admin, el área de administración responde como página inexistente, no se indexa y no tiene botones ni enlaces visibles hacia ella. El único acceso es "Panel de administración" en el menú de la cuenta, que se muestra solo si el servidor confirma que es admin.
 6. Las restricciones críticas (ej. un voto por usuario por pollería) se respaldan con constraints en la base de datos, no solo con código.
 
 ## Comandos
