@@ -5,7 +5,7 @@ import { createGetViewerReviewState } from "@/application/rating/get-viewer-revi
 import { createFakeHelpfulVoteRepository, createFakeRatingRepository, createFakeUserRepository } from "./fakes";
 
 function user(id: string, username: string | null): UserRecord {
-  return { id, username, googleId: `g-${id}`, passwordHash: null, name: `Nombre ${id}`, email: `${id}@example.com`, avatarUrl: null };
+  return { id, username, googleId: `g-${id}`, passwordHash: null, name: `Nombre ${id}`, email: `${id}@example.com`, avatarUrl: null, role: "user" };
 }
 
 const vote: RatingRecord = {

@@ -33,7 +33,7 @@ describe("authenticateWithPassword", () => {
 
     const result = await authenticateWithPassword("JUAN@a.com", "secreto123");
 
-    expect(result).toEqual({ ok: true, user: passwordUser });
+    expect(result).toEqual({ ok: true, user: { ...passwordUser, role: "user" } });
   });
 
   it("rechaza una contraseña incorrecta con un error genérico", async () => {

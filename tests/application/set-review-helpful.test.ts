@@ -4,7 +4,7 @@ import { createSetReviewHelpful } from "@/application/rating/set-review-helpful"
 import { createFakeHelpfulVoteRepository, createFakeReviewRepository, createFakeUserRepository, type FakeReview } from "./fakes";
 
 function user(id: string, username: string | null): UserRecord {
-  return { id, username, googleId: `g-${id}`, passwordHash: null, name: `Nombre ${id}`, email: `${id}@example.com`, avatarUrl: null };
+  return { id, username, googleId: `g-${id}`, passwordHash: null, name: `Nombre ${id}`, email: `${id}@example.com`, avatarUrl: null, role: "user" };
 }
 
 function review(id: string, overrides: Partial<FakeReview> = {}): FakeReview {

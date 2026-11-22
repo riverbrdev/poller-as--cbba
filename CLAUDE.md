@@ -38,6 +38,9 @@ docs/
 3. Las reglas de negocio viven en `domain/` o `application/`, nunca en componentes ni route handlers.
 4. Toda entrada externa se valida con Zod en el borde (route handler / server action) antes de llegar a un caso de uso.
 5. La autorización se verifica siempre en el servidor. Las rutas de admin comprueban el rol en el servidor, no solo ocultan botones.
+   - El rol admin solo lo recibe una cuenta de Google con correo verificado que esté en la lista de correos autorizados de la configuración del servidor. No hay registro de admin en la app y las cuentas de correo y contraseña nunca lo reciben.
+   - Toda ruta o acción de admin comprueba en cada pedido el rol **y** que el correo siga en la lista; si ya no está, rechaza el pedido y baja la cuenta a usuario.
+   - Para quien no es admin, el área de administración responde como página inexistente, no se indexa y no tiene botones ni enlaces visibles hacia ella.
 6. Las restricciones críticas (ej. un voto por usuario por pollería) se respaldan con constraints en la base de datos, no solo con código.
 
 ## Comandos

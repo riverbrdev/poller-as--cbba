@@ -107,7 +107,8 @@ export async function chooseUsernameAction(_state: FormState, formData: FormData
 
   // Refresca el token para que el proxy deje pasar sin volver a pedir username.
   await unstable_update({});
-  redirect(destinationFrom(formData));
+  // Un admin recién creado va directo al área de administración (spec 003, US2-2).
+  redirect(await useCases.postSignInDestination(session.user.id, destinationFrom(formData)));
 }
 
 /** Para el aviso "disponible" mientras la persona escribe. `available` es null si el formato es inválido. */

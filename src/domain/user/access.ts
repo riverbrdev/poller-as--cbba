@@ -1,8 +1,9 @@
 /**
  * Rutas que requieren sesión. El ranking y los perfiles son públicos (SPEC §2).
  * Esto solo decide redirecciones: la autorización real se verifica en el servidor, en cada caso de uso.
+ * "/admin" además se autoriza en la página con getAdminAccess (spec 003).
  */
-const LOGIN_REQUIRED_PREFIXES = ["/calificar", "/sugerir", "/mi-perfil"];
+const LOGIN_REQUIRED_PREFIXES = ["/calificar", "/sugerir", "/mi-perfil", "/admin"];
 const LOGIN_PATH = "/login";
 const ONBOARDING_PATH = "/onboarding/username";
 const HOME_PATH = "/";

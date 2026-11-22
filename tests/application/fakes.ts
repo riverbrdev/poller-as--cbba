@@ -14,16 +14,22 @@ import type {
   SetUsernameResult,
   UserRecord,
   UserRepository,
+  UserRole,
 } from "@/application/ports/user-repository";
 
 /**
  * Repositorio en memoria que respeta los mismos índices únicos que la base:
  * username sin distinguir mayúsculas, email y google_id.
+ * `role` es opcional en los datos iniciales: si falta, la cuenta es `user` (como el default de la base).
  */
-export function createFakeUserRepository(initial: UserRecord[] = []): UserRepository & {
+export function createFakeUserRepository(
+  initial: Array<Omit<UserRecord, "role"> & { role?: UserRole }> = [],
+): UserRepository & {
   all(): UserRecord[];
 } {
-  const users = new Map<string, UserRecord>(initial.map((user) => [user.id, { ...user }]));
+  const users = new Map<string, UserRecord>(
+    initial.map((user) => [user.id, { ...user, role: user.role ?? "user" }]),
+  );
   let nextId = 1;
 
   const findWhere = (predicate: (user: UserRecord) => boolean) =>
@@ -46,9 +52,18 @@ export function createFakeUserRepository(initial: UserRecord[] = []): UserReposi
       if (newUser.googleId && findWhere((u) => u.googleId === newUser.googleId)) {
         return { ok: false, conflict: "google_id_taken" };
       }
-      const user: UserRecord = { ...newUser, id: `user-${nextId++}` };
+      const user: UserRecord = { ...newUser, id: `user-${nextId++}`, role: "user" };
       users.set(user.id, user);
       return { ok: true, user };
+    },
+    async setRole(id, role) {
+      const current = users.get(id);
+      if (!current) {
+        throw new Error(`usuario ${id} no existe en el fake`);
+      }
+      const updated = { ...current, role };
+      users.set(id, updated);
+      return { ...updated };
     },
     async setUsername(id, username): Promise<SetUsernameResult> {
       const current = users.get(id);
