@@ -5,7 +5,7 @@ export const ACCOUNT_TEXT = {
   adminPanel: "Panel de administración",
   signOut: "Cerrar sesión",
   signingOut: "Cerrando sesión…",
-  participate: "Participar",
+  participate: "Ingresar",
   backToRanking: "Volver al ranking",
   emailLabel: "Correo",
   signInMethodLabel: "Forma de ingreso",

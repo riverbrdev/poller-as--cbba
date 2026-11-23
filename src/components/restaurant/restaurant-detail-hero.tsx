@@ -10,7 +10,7 @@ type RestaurantDetailHeroProps = {
   address: string;
   photoUrl: string | null;
   mapsUrl: string | null;
-  /** Posición en el ranking, "En votación…" o "Sin votos todavía". */
+  /** Posición en el ranking, "Por entrar al ranking…" o "Sin calificaciones todavía". */
   badge: string;
   /** Resalta el chip cuando la pollería ya está en el ranking. */
   ranked: boolean;

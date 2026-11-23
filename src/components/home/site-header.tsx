@@ -8,7 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { HEADER_TEXT } from "./messages";
 
 type SiteHeaderProps = {
-  /** Zona de la cuenta a la derecha: "Participar" o el menú del usuario. */
+  /** Zona de la cuenta a la derecha: "Ingresar" o el menú del usuario. */
   account: ReactNode;
 };
 
@@ -33,7 +33,7 @@ export function SiteHeader({ account }: SiteHeaderProps) {
             className="group inline-flex min-h-11 items-center gap-1.5 rounded-full bg-brand px-3 text-white shadow-soft transition-[background-color,scale] hover:bg-brand-dark active:scale-[0.97] sm:px-4"
           >
             <Swords size={16} aria-hidden="true" className="transition-transform duration-300 group-hover:-rotate-12 motion-reduce:transition-none" />
-            {/* Bajo 390px la palabra no entra junto a "Participar": quedan las espadas y el puntito; el nombre va en aria-label. */}
+            {/* Bajo 390px la palabra no entra junto a "Ingresar": quedan las espadas y el puntito; el nombre va en aria-label. */}
             <span className="max-[389px]:hidden">{HEADER_TEXT.versus}</span>
             <span aria-hidden="true" className="relative flex size-2">
               <span className="absolute inline-flex size-full rounded-full bg-white opacity-75 motion-safe:animate-ping" />

@@ -38,7 +38,7 @@ export function AlreadyRated({ slug, restaurantName, hero, scores, comment }: Al
         <blockquote className="mt-4 rounded-xl bg-surface-soft px-4 py-3 text-sm italic text-ink">“{comment}”</blockquote>
       ) : null}
 
-      <p className="mt-6 text-center text-xs text-ink-muted">Los votos son definitivos y no se pueden cambiar.</p>
+      <p className="mt-6 text-center text-xs text-ink-muted">Las calificaciones son definitivas y no se pueden cambiar.</p>
       <AfterVoteLinks slug={slug} />
     </RatingLayout>
   );

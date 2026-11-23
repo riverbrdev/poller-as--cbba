@@ -48,7 +48,7 @@ async function LoginContent({ searchParams }: LoginPageProps) {
     >
       {wantsToRate ? (
         <p role="status" className="mb-4 rounded-xl border border-auth-line bg-auth-brand-soft px-3.5 py-3 text-center text-sm font-semibold text-auth-brand-dark">
-          Necesitas una cuenta para votar.
+          Necesitas una cuenta para calificar.
         </p>
       ) : null}
       <GoogleSignInButton action={loginWithGoogleAction} label="Continuar con Google" callbackUrl={callbackUrl} />

@@ -56,7 +56,7 @@ function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boole
       disabled={disabled}
       className="inline-flex min-h-13 w-full items-center justify-center rounded-xl bg-brand px-5 text-base font-bold text-white shadow-md shadow-brand/25 transition-colors hover:bg-brand-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-brand/40 disabled:shadow-none disabled:active:scale-100"
     >
-      {pending ? "Enviando…" : "Enviar mi voto"}
+      {pending ? "Enviando…" : "Enviar mi calificación"}
     </button>
   );
 }
@@ -78,7 +78,7 @@ export function RatingForm({ restaurant, hero, action, alreadyRated }: RatingFor
       <RatingLayout hero={hero}>
         <div className="flex flex-col items-center text-center" role="status">
           <CircleCheck size={40} className="text-brand" aria-hidden="true" />
-          <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">¡Gracias! Tu voto quedó guardado</h2>
+          <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">¡Gracias! Tu calificación quedó guardada</h2>
           <p className="mt-2 text-sm text-ink-muted">Así calificaste {restaurant.name}:</p>
           <div className="mt-6 flex items-center gap-4">
             <ScoreRing value={state.overall} />
@@ -126,7 +126,7 @@ export function RatingForm({ restaurant, hero, action, alreadyRated }: RatingFor
             <ProgressBar done={done} total={TOTAL} />
             {errorCode ? <ErrorAlert code={errorCode} /> : null}
             <SubmitButton disabled={!complete || pending} pending={pending} />
-            <p className="text-center text-xs text-ink-muted">Tu voto es definitivo: no se puede cambiar después.</p>
+            <p className="text-center text-xs text-ink-muted">Tu calificación es definitiva: no se puede cambiar después.</p>
           </div>
         }
       >

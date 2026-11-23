@@ -41,11 +41,11 @@ test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
     await expect(page.getByText(restaurant.address).filter({ visible: true })).toBeVisible();
   });
 
-  test("Votar sigue llevando a calificar", async ({ page }) => {
+  test("Calificar sigue llevando al formulario", async ({ page }) => {
     const restaurant = await firstRestaurant();
     await page.goto("/");
 
-    await expect(page.getByRole("link", { name: `Votar por ${restaurant.name}` }).first()).toHaveAttribute(
+    await expect(page.getByRole("link", { name: `Calificar ${restaurant.name}` }).first()).toHaveAttribute(
       "href",
       `/calificar/${restaurant.slug}`,
     );
@@ -58,7 +58,7 @@ test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
     for (const title of ["Sabor y crocancia", "Cantidad y porción", "Atención y rapidez", "Local"]) {
       await expect(page.getByRole("meter", { name: title })).toBeAttached();
     }
-    await expect(page.getByText(/en Cochabamba|En votación|Sin votos todavía/).first()).toBeVisible();
+    await expect(page.getByText(/en Cochabamba|Por entrar al ranking|Sin calificaciones todavía/).first()).toBeVisible();
   });
 
   test("una pollería inexistente muestra no encontrada", async ({ page }) => {
@@ -115,9 +115,9 @@ async function vote(page: Page, slug: string, comment: string) {
     await page.locator("label", { has: page.getByRole("radio", { name: `${criterion}, 9`, exact: true }) }).click();
   }
   await page.getByLabel("Comentario").fill(comment);
-  await page.getByRole("button", { name: "Enviar mi voto" }).click();
+  await page.getByRole("button", { name: "Enviar mi calificación" }).click();
   // En desarrollo, la primera acción compila la ruta: se da más margen que el de 5 s por defecto.
-  await expect(page.getByText("¡Gracias! Tu voto quedó guardado")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("¡Gracias! Tu calificación quedó guardada")).toBeVisible({ timeout: 15_000 });
 }
 
 /** La lista de reseñas visible (la home anterior puede seguir oculta en el DOM). */
