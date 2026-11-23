@@ -39,7 +39,7 @@ test.describe("catálogo de locales", () => {
       const card = page.locator("#locales article", { has: page.locator("h3", { hasText: restaurant.name }) }).first();
       const row = card.getByTestId("restaurant-score");
       if (score.score === null) {
-        await expect(row).toContainText("Sin votos");
+        await expect(row).toContainText("Sin calificaciones");
       } else {
         await expect(row).toContainText(formatScore(score.score));
         await expect(row).toContainText(`${score.voteCount} `);
@@ -152,7 +152,7 @@ test.describe("versus en la home", () => {
     await expect(strip).toContainText(`${percentages["lolo-chicken"]}%`);
     await expect(strip).toContainText(`${percentages.ricono}%`);
 
-    await strip.getByRole("link", { name: /Elige tu bando|Tu voto está con/ }).click();
+    await strip.getByRole("link", { name: /Votar en el duelo|Tu voto está con/ }).click();
     await expect(page).toHaveURL(/\/versus$/);
   });
 

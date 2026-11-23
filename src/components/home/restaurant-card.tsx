@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, UtensilsCrossed, Vote } from "lucide-react";
+import { MapPin, SquarePen, UtensilsCrossed } from "lucide-react";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { CARD_TEXT } from "./messages";
@@ -23,7 +23,7 @@ type RestaurantCardProps = {
 
 /**
  * Tarjeta horizontal: el logo (cuadrado, la marca que la gente reconoce) va grande a la izquierda
- * y a su lado zona, nombre, dirección, la nota con sus votos y las acciones. Mapa es solo ícono para que Votar quepa ancho.
+ * y a su lado zona, nombre, dirección, la nota con sus calificaciones y las acciones. Mapa es solo ícono para que Calificar quepa ancho.
  */
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const detailHref = `/polleria/${restaurant.slug}`;
@@ -73,11 +73,11 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         <div className="mt-auto flex gap-2 pt-3">
           <Link
             href={`/calificar/${restaurant.slug}`}
-            aria-label={CARD_TEXT.voteLabel(restaurant.name)}
+            aria-label={CARD_TEXT.rateLabel(restaurant.name)}
             className={cn(buttonVariants({ variant: "brand-soft", size: "touch" }), "flex-1 px-3")}
           >
-            <Vote aria-hidden="true" className="hidden min-[360px]:block" />
-            {CARD_TEXT.vote}
+            <SquarePen aria-hidden="true" className="hidden min-[360px]:block" />
+            {CARD_TEXT.rate}
           </Link>
           {restaurant.mapsUrl ? (
             <a

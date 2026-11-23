@@ -49,12 +49,12 @@ test.beforeEach(async ({ context }) => {
 });
 
 test.describe("botones de la tarjeta", () => {
-  test("cada tarjeta tiene Votar y, si hay ubicación, Mapa con el enlace de la base", async ({ page }) => {
+  test("cada tarjeta tiene Calificar y, si hay ubicación, Mapa con el enlace de la base", async ({ page }) => {
     const { restaurants } = await listActive();
     await page.goto("/");
 
     for (const restaurant of restaurants) {
-      const vote = page.getByRole("link", { name: `Votar por ${restaurant.name}` }).first();
+      const vote = page.getByRole("link", { name: `Calificar ${restaurant.name}` }).first();
       await expect(vote).toHaveAttribute("href", `/calificar/${restaurant.slug}`);
 
       const map = page.getByRole("link", { name: `Ver ubicación de ${restaurant.name} en el mapa` });
@@ -75,7 +75,7 @@ test.describe("calificar una pollería", () => {
     await signedInUser(page);
 
     await page.goto("/");
-    await page.getByRole("link", { name: `Votar por ${restaurant.name}` }).first().click();
+    await page.getByRole("link", { name: `Calificar ${restaurant.name}` }).first().click();
 
     await expect(page).toHaveURL(`/calificar/${restaurant.slug}`);
     await expect(page.getByRole("heading", { name: restaurant.name }).first()).toBeVisible();
@@ -86,7 +86,7 @@ test.describe("calificar una pollería", () => {
     const user = await signedInUser(page);
     await page.goto(`/calificar/${restaurant.slug}`);
 
-    const submit = page.getByRole("button", { name: "Enviar mi voto" });
+    const submit = page.getByRole("button", { name: "Enviar mi calificación" });
     await pickScore(page, "Sabor y crocancia", SCORES["Sabor y crocancia"]);
     await pickScore(page, "Cantidad y porción", SCORES["Cantidad y porción"]);
     await pickScore(page, "Atención y rapidez", SCORES["Atención y rapidez"]);
@@ -99,7 +99,7 @@ test.describe("calificar una pollería", () => {
     await expect(submit).toBeEnabled();
     await submit.click();
 
-    await expect(page.getByRole("heading", { name: "¡Gracias! Tu voto quedó guardado" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "¡Gracias! Tu calificación quedó guardada" })).toBeVisible();
     const saved = await ratingsOf(user.id);
     expect(saved).toHaveLength(1);
     expect(saved[0]).toMatchObject({
@@ -132,10 +132,10 @@ test.describe("votar sin sesión", () => {
     await createPasswordUser({ username: e2eUsername(suffix), email: e2eEmail(suffix) });
 
     await page.goto("/");
-    await page.getByRole("link", { name: `Votar por ${restaurant.name}` }).first().click();
+    await page.getByRole("link", { name: `Calificar ${restaurant.name}` }).first().click();
 
     await expect(page).toHaveURL(`/login?callbackUrl=${encodeURIComponent(`/calificar/${restaurant.slug}`)}`);
-    await expect(page.getByText("Necesitas una cuenta para votar.")).toBeVisible();
+    await expect(page.getByText("Necesitas una cuenta para calificar.")).toBeVisible();
     await logIn(page, e2eEmail(suffix));
 
     await expect(page).toHaveURL(`/calificar/${restaurant.slug}`);
@@ -193,14 +193,14 @@ test.describe("ya voté esta pollería", () => {
     await signedInUser(page);
     await page.goto(`/calificar/${restaurant.slug}`);
     await fillAll(page, 8);
-    await page.getByRole("button", { name: "Enviar mi voto" }).click();
-    await expect(page.getByRole("heading", { name: "¡Gracias! Tu voto quedó guardado" })).toBeVisible();
+    await page.getByRole("button", { name: "Enviar mi calificación" }).click();
+    await expect(page.getByRole("heading", { name: "¡Gracias! Tu calificación quedó guardada" })).toBeVisible();
 
     await page.reload();
 
     await expect(page.getByRole("heading", { name: "Ya calificaste esta pollería" })).toBeVisible();
-    await expect(page.getByText("Los votos son definitivos y no se pueden cambiar.")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Enviar mi voto" })).toHaveCount(0);
+    await expect(page.getByText("Las calificaciones son definitivas y no se pueden cambiar.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Enviar mi calificación" })).toHaveCount(0);
     await expect(page.getByRole("radio")).toHaveCount(0);
   });
 
@@ -214,11 +214,11 @@ test.describe("ya voté esta pollería", () => {
     await secondTab.goto(`/calificar/${restaurant.slug}`);
 
     await fillAll(page, 9);
-    await page.getByRole("button", { name: "Enviar mi voto" }).click();
-    await expect(page.getByRole("heading", { name: "¡Gracias! Tu voto quedó guardado" })).toBeVisible();
+    await page.getByRole("button", { name: "Enviar mi calificación" }).click();
+    await expect(page.getByRole("heading", { name: "¡Gracias! Tu calificación quedó guardada" })).toBeVisible();
 
     await fillAll(secondTab, 2);
-    await secondTab.getByRole("button", { name: "Enviar mi voto" }).click();
+    await secondTab.getByRole("button", { name: "Enviar mi calificación" }).click();
     await expect(secondTab.getByText("Ya calificaste esta pollería.", { exact: true }).filter({ visible: true })).toBeVisible();
 
     const saved = await ratingsOf(user.id);

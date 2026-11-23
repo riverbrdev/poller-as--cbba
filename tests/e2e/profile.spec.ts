@@ -13,12 +13,12 @@ test.beforeEach(async ({ context }) => {
   await useOwnClientIp(context);
 });
 
-test("sin sesión, el header muestra Participar y /mi-perfil pide ingresar", async ({ page }) => {
+test("sin sesión, el header muestra Ingresar y /mi-perfil pide ingresar", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "Participar" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ingresar", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Menú de tu cuenta" })).toHaveCount(0);
 
-  // Logo y "Participar" entran en una sola fila a 360px: el header fijo no se come la pantalla.
+  // Logo e "Ingresar" entran en una sola fila a 360px: el header fijo no se come la pantalla.
   expect((await page.getByRole("banner").boundingBox())?.height).toBeLessThan(90);
 
   await page.goto("/mi-perfil");
@@ -31,7 +31,7 @@ test("con sesión: menú del avatar → Mi perfil → Cerrar sesión", async ({ 
   await signInAsGoogleUser(page.context(), user);
 
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "Participar" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Ingresar", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Menú de tu cuenta" }).click();
   await expect(page.getByText(`@${user.username}`)).toBeVisible();
   await page.getByRole("menuitem", { name: "Mi perfil" }).click();
@@ -45,7 +45,7 @@ test("con sesión: menú del avatar → Mi perfil → Cerrar sesión", async ({ 
 
   await card.getByRole("button", { name: "Cerrar sesión" }).click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole("link", { name: "Participar" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ingresar", exact: true })).toBeVisible();
   expect(await currentSession(page)).toBeNull();
 });
 
@@ -58,7 +58,7 @@ test("Cerrar sesión desde el menú del avatar", async ({ page }) => {
   await page.getByRole("button", { name: "Menú de tu cuenta" }).click();
   await page.getByRole("menuitem", { name: "Cerrar sesión" }).click();
 
-  await expect(page.getByRole("link", { name: "Participar" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Ingresar", exact: true })).toBeVisible();
   expect(await currentSession(page)).toBeNull();
 });
 

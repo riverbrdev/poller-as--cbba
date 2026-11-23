@@ -12,7 +12,7 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, votado por la gente.";
+const DESCRIPTION = "El ranking del mejor pollo de Cochabamba, calificado por la gente.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
