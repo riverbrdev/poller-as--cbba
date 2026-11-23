@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense } from "react";
+import { AppTabBar } from "@/app/_components/app-tab-bar";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { AdminWelcome } from "@/components/admin/admin-welcome";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
@@ -56,6 +57,7 @@ export default async function AdminPage() {
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6 md:py-10">
         <AdminWelcome username={admin.username} />
       </main>
+      <AppTabBar />
     </div>
   );
 }

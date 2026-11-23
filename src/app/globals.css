@@ -241,7 +241,17 @@
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
-  /* Los enlaces internos (#locales, #metodologia) se deslizan en vez de saltar.
+  /* Alto del header fijo (SiteHeader): 44px de zona táctil + su padding + el borde.
+     Lo usa el buscador del ranking para pegarse justo debajo al bajar. */
+  :root {
+    --header-h: 69px;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --header-h: 77px;
+    }
+  }
+  /* Los enlaces internos (#metodologia) se deslizan en vez de saltar.
      Con "reducir movimiento" activado en el dispositivo, se mantiene el salto directo. */
   @media (prefers-reduced-motion: no-preference) {
     html {

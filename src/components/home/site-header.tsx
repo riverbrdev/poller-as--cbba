@@ -4,6 +4,8 @@ import { Swords } from "lucide-react";
 import { ACCOUNT_TEXT } from "@/components/account/messages";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { cn } from "@/components/lib/utils";
+import { LiveDot } from "@/components/navigation/live-dot";
+import { RANKING_HREF, VERSUS_HREF } from "@/components/navigation/routes";
 import { buttonVariants } from "@/components/ui/button";
 import { HEADER_TEXT } from "./messages";
 
@@ -12,33 +14,29 @@ type SiteHeaderProps = {
   account: ReactNode;
 };
 
-/** Header común de la home y de "Mi perfil". */
+/** Header común de las páginas públicas. En celular solo muestra el logo; la navegación va en la barra de abajo. */
 export function SiteHeader({ account }: SiteHeaderProps) {
   return (
-    // Fijo arriba: el avatar y su menú quedan a un toque aunque la persona haya bajado por el catálogo.
-    <header className="sticky top-0 z-40 border-b border-line bg-white/90 shadow-sm backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 flex-wrap px-4 py-3 sm:gap-4 sm:px-8 sm:py-4">
+    // Fijo arriba. Su alto (--header-h, globals.css) lo usa el buscador del ranking para pegarse justo debajo.
+    <header className="sticky top-0 z-40 h-(--header-h) border-b border-line bg-white/90 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8 sm:py-4">
         <Link href="/" aria-label="ComiDeli, ir al inicio" className="inline-flex min-h-11 items-center gap-2.5 rounded-lg">
           <BrandLogo alt="" eager className="h-7 sm:h-9" />
           {/* Bajo 768px la etiqueta no entra en la fila: se oculta para que no haya scroll horizontal. */}
           <span className="hidden rounded bg-brand-soft px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-brand-ink md:inline">Cochabamba</span>
         </Link>
-        <nav aria-label="Navegación principal" className="ml-auto flex shrink-0 items-center gap-2 text-sm font-bold sm:gap-6">
-          {/* En celular se oculta para que el header fijo entre en una sola fila; el logo ya lleva al inicio. */}
-          <Link href="/#locales" className="hidden min-h-11 items-center sm:inline-flex transition-colors hover:text-brand-ink">{HEADER_TEXT.restaurants}</Link>
+        {/* Bajo 768px la navegación vive en la barra de pestañas de abajo (BottomTabBar): aquí solo queda el logo. */}
+        <nav aria-label="Navegación principal" className="ml-auto hidden shrink-0 items-center gap-6 text-sm font-bold md:flex">
+          <Link href={RANKING_HREF} className="inline-flex min-h-11 items-center transition-colors hover:text-brand-ink">{HEADER_TEXT.restaurants}</Link>
           {/* El duelo es lo destacado del sitio: botón naranja con un puntito "en vivo" que late. */}
           <Link
-            href="/versus"
+            href={VERSUS_HREF}
             aria-label={HEADER_TEXT.versusLabel}
-            className="group inline-flex min-h-11 items-center gap-1.5 rounded-full bg-brand px-3 text-white shadow-soft transition-[background-color,scale] hover:bg-brand-dark active:scale-[0.97] sm:px-4"
+            className="group inline-flex min-h-11 items-center gap-1.5 rounded-full bg-brand px-4 text-white shadow-soft transition-[background-color,scale] hover:bg-brand-dark active:scale-[0.97]"
           >
             <Swords size={16} aria-hidden="true" className="transition-transform duration-300 group-hover:-rotate-12 motion-reduce:transition-none" />
-            {/* Bajo 390px la palabra no entra junto a "Ingresar": quedan las espadas y el puntito; el nombre va en aria-label. */}
-            <span className="max-[389px]:hidden">{HEADER_TEXT.versus}</span>
-            <span aria-hidden="true" className="relative flex size-2">
-              <span className="absolute inline-flex size-full rounded-full bg-white opacity-75 motion-safe:animate-ping" />
-              <span className="relative inline-flex size-2 rounded-full bg-white" />
-            </span>
+            <span>{HEADER_TEXT.versus}</span>
+            <LiveDot />
           </Link>
           {account}
         </nav>

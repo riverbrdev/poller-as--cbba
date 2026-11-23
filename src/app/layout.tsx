@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -29,6 +29,10 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: "ComiDeli", description: DESCRIPTION, images: ["/opengraph-image"] },
 };
+
+// viewport-fit=cover: en iPhone, env(safe-area-inset-bottom) da el alto de la rayita de inicio
+// y la barra de pestañas de abajo deja ese espacio libre.
+export const viewport: Viewport = { viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

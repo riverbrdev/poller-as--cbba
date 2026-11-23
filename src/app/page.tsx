@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { HOME_METADATA } from "@/app/_lib/seo";
+import { AppTabBar } from "@/app/_components/app-tab-bar";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { ViewerVersusStripAction } from "@/app/_components/versus-strip-action";
 import { getCatalogRestaurants } from "@/app/_data/restaurants";
@@ -9,7 +10,6 @@ import { HERO_LOGO_COUNT, HomeHero, type HeroLogo } from "@/components/home/home
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
 import { SiteFooter } from "@/components/home/site-footer";
 import { MethodologySection } from "@/components/home/methodology-section";
-import { RestaurantCatalog } from "@/components/home/restaurant-catalog";
 import { VersusStrip, VersusStripAction } from "@/components/home/versus-strip";
 
 export const metadata = HOME_METADATA;
@@ -49,11 +49,11 @@ export default async function Home() {
             action={<Suspense fallback={<VersusStripAction />}><ViewerVersusStripAction /></Suspense>}
           />
         ) : null}
-        {/* El podio Top 3 vuelve cuando haya calificaciones suficientes para el ranking bayesiano (SPEC §4). */}
-        <RestaurantCatalog restaurants={restaurants} zones={zones} />
+        {/* El catálogo con buscador vive en /ranking: la home queda como portada. */}
         <MethodologySection />
       </main>
       <SiteFooter />
+      <AppTabBar />
     </div>
   );
 }

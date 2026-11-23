@@ -5,6 +5,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { ChevronLeft } from "lucide-react";
 import { signOutAction } from "@/app/_actions/auth";
+import { AppTabBar } from "@/app/_components/app-tab-bar";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { ACCOUNT_TEXT } from "@/components/account/messages";
 import { ProfileCard } from "@/components/account/profile-card";
@@ -42,6 +43,7 @@ export default function MyProfilePage() {
           <MyProfile />
         </Suspense>
       </main>
+      <AppTabBar />
     </div>
   );
 }
