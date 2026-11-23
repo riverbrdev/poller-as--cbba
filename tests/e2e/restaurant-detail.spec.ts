@@ -29,21 +29,21 @@ test.beforeEach(async ({ context }) => {
 });
 
 test.describe("perfil de pollería: llegar y ver sus datos (US1)", () => {
-  test("desde la home, el nombre lleva al detalle de esa pollería", async ({ page }) => {
+  test("desde el ranking, el nombre lleva al detalle de esa pollería", async ({ page }) => {
     const restaurant = await firstRestaurant();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await page.locator("#locales").getByRole("link", { name: restaurant.name, exact: true }).first().click();
 
     await expect(page).toHaveURL(`/polleria/${restaurant.slug}`);
     await expect(page.getByRole("heading", { level: 1, name: restaurant.name })).toBeVisible();
-    // La home queda oculta en el DOM tras navegar (vuelve al instante con Atrás): solo cuenta lo visible.
+    // El ranking queda oculta en el DOM tras navegar (vuelve al instante con Atrás): solo cuenta lo visible.
     await expect(page.getByText(restaurant.address).filter({ visible: true })).toBeVisible();
   });
 
   test("Calificar sigue llevando al formulario", async ({ page }) => {
     const restaurant = await firstRestaurant();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await expect(page.getByRole("link", { name: `Calificar ${restaurant.name}` }).first()).toHaveAttribute(
       "href",

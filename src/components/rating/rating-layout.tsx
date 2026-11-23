@@ -12,7 +12,7 @@ type RatingLayoutProps = {
   children: ReactNode;
 };
 
-export const CATALOG_HREF = "/#locales";
+export const CATALOG_HREF = "/ranking";
 
 /**
  * Esqueleto visual de la pantalla de calificar (diseño Stitch):
@@ -22,7 +22,7 @@ export const CATALOG_HREF = "/#locales";
 export function RatingLayout({ hero, aside, children }: RatingLayoutProps) {
   return (
     <div className="relative min-h-screen bg-cream text-ink lg:py-10">
-      <div className="absolute left-4 top-4 z-20 lg:static lg:mx-auto lg:mb-6 lg:max-w-6xl lg:px-8"><BackHomeLink href="/#locales" label="Volver al catálogo" /></div>
+      <div className="absolute left-4 top-4 z-20 lg:static lg:mx-auto lg:mb-6 lg:max-w-6xl lg:px-8"><BackHomeLink href="/ranking" label="Volver al catálogo" /></div>
 
       <div className="lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start lg:gap-10 lg:px-8">
         <div className="lg:hidden">{hero.banner}</div>

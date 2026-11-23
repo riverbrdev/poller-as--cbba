@@ -15,3 +15,17 @@ export const HOME_METADATA: Metadata = {
   },
   twitter: { card: "summary_large_image", title: HOME_TITLE, description: HOME_DESCRIPTION, images: ["/opengraph-image"] },
 };
+
+export const RANKING_TITLE = "Ranking de pollerías de Cochabamba | ComiDeli";
+export const RANKING_DESCRIPTION = "Busca tu pollería por nombre, zona o dirección y mira su puesto en el ranking de ComiDeli, calificado por la gente de Cochabamba.";
+export const RANKING_METADATA: Metadata = {
+  title: RANKING_TITLE,
+  description: RANKING_DESCRIPTION,
+  alternates: { canonical: "/ranking" },
+  openGraph: {
+    title: RANKING_TITLE, description: RANKING_DESCRIPTION, url: "/ranking",
+    type: "website", locale: "es_BO", siteName: "ComiDeli",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "ComiDeli: ranking de pollos de Cochabamba" }],
+  },
+  twitter: { card: "summary_large_image", title: RANKING_TITLE, description: RANKING_DESCRIPTION, images: ["/opengraph-image"] },
+};

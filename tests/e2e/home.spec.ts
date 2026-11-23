@@ -23,7 +23,7 @@ test.describe("catálogo de locales", () => {
     const { restaurants } = await listActive();
     expect(restaurants.length).toBeGreaterThan(0);
 
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await expect(page.locator("#locales article")).toHaveCount(restaurants.length);
     for (const restaurant of restaurants) {
@@ -33,7 +33,7 @@ test.describe("catálogo de locales", () => {
 
   test("cada tarjeta muestra la nota de la pollería junto a sus votos", async ({ page }) => {
     const { restaurants } = await listCatalog();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     for (const { restaurant, score } of restaurants) {
       const card = page.locator("#locales article", { has: page.locator("h3", { hasText: restaurant.name }) }).first();
@@ -49,7 +49,7 @@ test.describe("catálogo de locales", () => {
 
   test("cada tarjeta lleva la etiqueta #N de su puesto, y solo las que están en el ranking", async ({ page }) => {
     const { restaurants } = await listCatalog();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     for (const { restaurant, score } of restaurants) {
       const card = page.locator("#locales article", { has: page.locator("h3", { hasText: restaurant.name }) }).first();
@@ -65,7 +65,7 @@ test.describe("catálogo de locales", () => {
   test("abre ordenado por el top del ranking y permite ordenar de la A a la Z", async ({ page }) => {
     const { restaurants } = await listCatalog();
     const titles = page.locator("#locales article h3");
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await expect(page.getByRole("combobox", { name: "Ordenar pollerías" })).toHaveValue("top");
     await expect(titles).toHaveText(restaurants.map(({ restaurant }) => restaurant.name));
@@ -78,7 +78,7 @@ test.describe("catálogo de locales", () => {
 
   test("ofrece un chip por cada zona de la base y filtra por ella", async ({ page }) => {
     const { restaurants, zones } = await listActive();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await expect(page.getByRole("button", { name: `Todas (${restaurants.length})` })).toBeVisible();
     for (const zone of zones) {
@@ -96,7 +96,7 @@ test.describe("catálogo de locales", () => {
     const { restaurants } = await listActive();
     const target = restaurants[0];
     if (!target) throw new Error("La base no tiene pollerías");
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await page.getByRole("searchbox").fill(target.name);
 
@@ -105,7 +105,7 @@ test.describe("catálogo de locales", () => {
 
   test("sin resultados ofrece limpiar los filtros", async ({ page }) => {
     const { restaurants } = await listActive();
-    await page.goto("/");
+    await page.goto("/ranking");
 
     await page.getByRole("searchbox").fill("zzzz-no-existe");
     await expect(page.getByText("No encontramos pollerías con esos filtros")).toBeVisible();
@@ -117,14 +117,14 @@ test.describe("catálogo de locales", () => {
   });
 
   test("a 360px no hay scroll horizontal en la página", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/ranking");
 
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
   test("las zonas táctiles principales miden al menos 44px", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/ranking");
 
     const heights = await page
       .locator("#locales button, #locales a[href^='http']")
