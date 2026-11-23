@@ -10,6 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { TAB_BAR_TEXT } from "@/components/navigation/messages";
+import { TAB_ITEM_CLASS } from "@/components/navigation/tab-style";
 import { ACCOUNT_TEXT } from "./messages";
 import { ADMIN_HREF, PROFILE_HREF } from "./routes";
 import { UserAvatar } from "./user-avatar";
@@ -26,25 +28,36 @@ type UserMenuProps = {
   isAdmin: boolean;
   /** Server action que cierra la sesión. Llega por props: components/ no importa de app/. */
   signOut: () => Promise<void>;
+  /** "header": el avatar arriba a la derecha (computadora). "tab": la pestaña "Perfil" de la barra de abajo (celular). */
+  placement?: "header" | "tab";
 };
 
 const ITEM_CLASS = "min-h-11 gap-3 rounded-xl px-3 text-sm font-semibold";
 const ICON_BOX_CLASS = "flex size-8 items-center justify-center rounded-lg";
 
-/** Avatar del header. Al tocarlo abre "Mi perfil" y "Cerrar sesión" (diseño Stitch "Mi perfil - ComiDeli"). */
-export function UserMenu({ user, isAdmin, signOut }: UserMenuProps) {
+/** Menú de la cuenta: avatar del header o pestaña "Perfil". Abre "Mi perfil" y "Cerrar sesión" (diseño Stitch "Mi perfil - ComiDeli"). */
+export function UserMenu({ user, isAdmin, signOut, placement = "header" }: UserMenuProps) {
   const [isSigningOut, startSignOut] = useTransition();
+  const inTabBar = placement === "tab";
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={ACCOUNT_TEXT.menuLabel}
-        className="flex size-11 items-center justify-center rounded-full ring-2 ring-brand ring-offset-2 ring-offset-white transition-transform outline-none focus-visible:ring-brand-dark active:scale-95"
-      >
-        <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
-      </DropdownMenuTrigger>
+      {inTabBar ? (
+        <DropdownMenuTrigger aria-label={ACCOUNT_TEXT.menuLabel} className={TAB_ITEM_CLASS}>
+          <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size="xs" className="ring-2 ring-transparent in-data-[active=true]:ring-brand" />
+          {TAB_BAR_TEXT.profile}
+        </DropdownMenuTrigger>
+      ) : (
+        <DropdownMenuTrigger
+          aria-label={ACCOUNT_TEXT.menuLabel}
+          className="flex size-11 items-center justify-center rounded-full ring-2 ring-brand ring-offset-2 ring-offset-white transition-transform outline-none focus-visible:ring-brand-dark active:scale-95"
+        >
+          <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
+        </DropdownMenuTrigger>
+      )}
 
-      <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-2xl border border-line bg-white p-1 text-ink shadow-xl">
+      {/* Desde la barra de abajo el menú se abre hacia arriba. */}
+      <DropdownMenuContent side={inTabBar ? "top" : "bottom"} align="end" sideOffset={8} className="w-60 rounded-2xl border border-line bg-white p-1 text-ink shadow-xl">
         <div className="px-3 py-2.5">
           <p className="truncate text-sm font-bold">{user.name}</p>
           {user.username ? <p className="truncate text-xs text-ink-muted">@{user.username}</p> : null}

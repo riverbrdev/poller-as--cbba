@@ -5,17 +5,18 @@ import { initialsFrom } from "./initials";
 type UserAvatarProps = {
   name: string;
   avatarUrl: string | null;
-  size: "sm" | "lg";
+  size: "xs" | "sm" | "lg";
   className?: string;
 };
 
 const SIZE_CLASS = {
+  xs: "size-6 text-[10px]",
   sm: "size-10 text-sm",
   lg: "size-24 text-3xl md:size-28",
 } as const;
 
 // Píxeles reales que pide next/image: el doble del tamaño visible, para pantallas de alta densidad.
-const IMAGE_PX = { sm: 80, lg: 224 } as const;
+const IMAGE_PX = { xs: 48, sm: 80, lg: 224 } as const;
 
 /** Foto del usuario si la tiene (Google) o sus iniciales sobre el color de marca suave. */
 export function UserAvatar({ name, avatarUrl, size, className }: UserAvatarProps) {

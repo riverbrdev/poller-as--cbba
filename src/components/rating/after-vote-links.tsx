@@ -14,7 +14,7 @@ export function AfterVoteLinks({ slug }: { slug: string }) {
         <MessageSquareText size={18} aria-hidden="true" />
         Ver tu reseña
       </Link>
-      <BackHomeLink href="/#locales" label="Volver al catálogo" className="w-full" />
+      <BackHomeLink href="/ranking" label="Volver al catálogo" className="w-full" />
     </div>
   );
 }

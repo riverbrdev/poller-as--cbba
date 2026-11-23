@@ -48,52 +48,53 @@ export function RestaurantCatalog({ restaurants, zones }: RestaurantCatalogProps
   };
 
   return (
-    <section id="locales" aria-labelledby="locales-title" className="mx-auto max-w-7xl scroll-mt-20 px-5 pb-16 pt-12 sm:scroll-mt-24 sm:px-8 sm:pt-16">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <section id="locales" aria-labelledby="locales-title" className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-8 sm:pt-12">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-widest text-brand-ink">{CATALOG_TEXT.eyebrow}</p>
-          <h2 id="locales-title" className="mt-2 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
+          <h1 id="locales-title" className="mt-2 text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">
             {CATALOG_TEXT.title}
-          </h2>
+          </h1>
           <p className="mt-2 text-base text-ink-muted">{CATALOG_TEXT.lead}</p>
         </div>
-        <p aria-live="polite" className="rounded-full border border-line bg-white px-3 py-2 text-sm font-bold text-ink-muted">
-          {CATALOG_TEXT.count(visible.length)}
-        </p>
-      </div>
-
-      <div className="mb-6 flex flex-col gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <label className="flex min-h-12 flex-1 items-center gap-3 rounded-xl border border-line bg-white px-4 text-brand shadow-soft focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/30">
-            <Search size={18} aria-hidden="true" />
-            <span className="sr-only">{CATALOG_TEXT.searchLabel}</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={CATALOG_TEXT.searchPlaceholder}
-              className="w-full bg-transparent text-base text-ink outline-none placeholder:text-ink-muted/70"
-            />
-          </label>
-          <label className="flex min-h-12 items-center gap-2 rounded-xl border border-line bg-white px-3 shadow-soft focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/30 sm:w-52">
+        <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
+          <p aria-live="polite" className="rounded-full border border-line bg-white px-3 py-2 text-sm font-bold text-ink-muted">
+            {CATALOG_TEXT.count(visible.length)}
+          </p>
+          <label className="flex min-h-11 items-center gap-2 rounded-xl border border-line bg-white px-3 shadow-soft focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/30">
             <SlidersHorizontal size={16} className="shrink-0 text-brand" aria-hidden="true" />
             <span className="sr-only">{CATALOG_TEXT.sortLabel}</span>
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortOrder)}
-              className="min-h-11 w-full bg-white text-base font-semibold outline-none"
+              className="min-h-11 bg-white text-base font-semibold outline-none"
             >
               <option value="top">{CATALOG_TEXT.sortTop}</option>
               <option value="name">{CATALOG_TEXT.sortName}</option>
             </select>
           </label>
         </div>
+      </div>
+
+      {/* Buscador y zonas pegados bajo el header mientras se baja por las tarjetas: se cambia de zona sin volver a subir. */}
+      <div className="sticky top-(--header-h) z-30 -mx-5 mb-6 flex flex-col gap-3 border-b border-line/70 bg-cream/95 px-5 py-3 backdrop-blur-md sm:-mx-8 sm:px-8">
+        <label className="flex min-h-12 items-center gap-3 rounded-xl border border-line bg-white px-4 text-brand shadow-soft focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/30">
+          <Search size={18} aria-hidden="true" />
+          <span className="sr-only">{CATALOG_TEXT.searchLabel}</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={CATALOG_TEXT.searchPlaceholder}
+            className="w-full bg-transparent text-base text-ink outline-none placeholder:text-ink-muted/70"
+          />
+        </label>
 
         {/* Chips de zona: una sola fila con scroll horizontal, sin barra visible. Las zonas salen de los datos. */}
         <div
           role="group"
           aria-label={CATALOG_TEXT.zonesLabel}
-          className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-5 flex gap-2 overflow-x-auto px-5 sm:-mx-8 sm:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <button type="button" aria-pressed={zone === ALL_ZONES} onClick={() => setZone(ALL_ZONES)} className={chipClass(zone === ALL_ZONES)}>
             {CATALOG_TEXT.allZones} ({restaurants.length})

@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Solo páginas públicas. No inventamos lastModified sin una fecha real de actualización.
   return [
     { url: `${SITE_ORIGIN}/` },
+    { url: `${SITE_ORIGIN}/ranking` },
     { url: `${SITE_ORIGIN}/versus` },
     ...restaurants.map(({ slug }) => ({ url: `${SITE_ORIGIN}/polleria/${encodeURIComponent(slug)}` })),
   ];

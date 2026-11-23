@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ListChecks } from "lucide-react";
+import { ArrowRight, ListChecks } from "lucide-react";
 import { cn } from "@/components/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { HERO_TEXT, VERSUS_TEXT } from "./messages";
@@ -64,10 +64,10 @@ export function HomeHero({ restaurantCount, zoneCount, criteriaCount, logos, due
           </ul>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href="#locales" className={cn(buttonVariants({ variant: "brand", size: "touch-lg" }))}>
+            <Link href="/ranking" className={cn(buttonVariants({ variant: "brand", size: "touch-lg" }))}>
               {HERO_TEXT.primaryAction}
-              <ArrowDown aria-hidden="true" />
-            </a>
+              <ArrowRight aria-hidden="true" />
+            </Link>
             <a href="#metodologia" className={cn(buttonVariants({ variant: "brand-outline", size: "touch-lg" }))}>
               <ListChecks aria-hidden="true" />
               {HERO_TEXT.secondaryAction}
@@ -146,16 +146,16 @@ function LogoTile({ logo, featured, tabletHidden, style }: LogoTileProps) {
 function FavoriteTile({ style }: { style: CSSProperties }) {
   return (
     <li className={cn("group", tileEnter)} style={style}>
-      <a
-        href="#locales"
+      <Link
+        href="/ranking"
         className="flex aspect-square flex-col justify-between rounded-2xl bg-brand-dark p-3 text-white shadow-card transition-[translate,scale,background-color,box-shadow] duration-300 group-hover:-translate-y-0.5 group-hover:bg-brand-ink group-hover:shadow-card-hover active:scale-[0.98] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 sm:p-4"
       >
         <span className="text-sm font-extrabold leading-tight sm:text-lg">{HERO_TEXT.favoriteTitle}</span>
         <span className="inline-flex items-center gap-1 text-xs font-bold sm:text-sm">
           {HERO_TEXT.favoriteAction}
-          <ArrowDown size={14} aria-hidden="true" />
+          <ArrowRight size={14} aria-hidden="true" />
         </span>
-      </a>
+      </Link>
     </li>
   );
 }

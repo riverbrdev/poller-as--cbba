@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { auth } from "@/composition/auth";
 import { useCases } from "@/composition/container";
+import { AppTabBar } from "@/app/_components/app-tab-bar";
 import { HeaderAccount } from "@/app/_components/header-account";
 import { voteVersusAction } from "@/app/_actions/versus";
 import { ParticipateLink, SiteHeader } from "@/components/home/site-header";
@@ -29,6 +30,7 @@ export default function VersusPage() {
       <Suspense fallback={<p role="status" className="py-16 text-center text-ink-muted">Cargando el duelo…</p>}><Duel /></Suspense>
     </main>
     <SiteFooter />
+    <AppTabBar />
   </div>;
 }
 async function Duel() {

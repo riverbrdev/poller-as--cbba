@@ -1,4 +1,5 @@
-import { ArrowUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { RATING_CRITERIA } from "@/domain/rating/criteria";
 import { BrandArt } from "@/components/brand/brand-logo";
 import { CriterionIcon } from "@/components/rating/criterion-icon";
@@ -55,13 +56,13 @@ export function MethodologySection() {
               <p className="mt-3 max-w-xl text-base leading-7 text-white/90">{METHODOLOGY_TEXT.suggestLead}</p>
             </div>
           </div>
-          <a
-            href="#locales"
+          <Link
+            href="/ranking"
             className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 text-base font-bold text-brand-ink transition-[background-color,translate,scale] hover:-translate-y-px hover:bg-brand-soft active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           >
             {METHODOLOGY_TEXT.suggestAction}
-            <ArrowUp size={18} aria-hidden="true" />
-          </a>
+            <ArrowRight size={18} aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

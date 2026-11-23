@@ -34,7 +34,7 @@ export const CATALOG_TEXT = {
 } as const;
 
 export const HEADER_TEXT = {
-  restaurants: "Pollerías",
+  restaurants: "Ranking",
   versus: "Versus",
   versusLabel: "Versus: duelo en vivo",
 } as const;

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 
+import { AppTabBar } from "@/app/_components/app-tab-bar";
 import { HeaderAccount } from "@/app/_components/header-account";
 import {
   getActiveRestaurants,
@@ -80,6 +81,7 @@ export default function RestaurantPage({ params, searchParams }: RestaurantPageP
         <RestaurantDetail params={params} searchParams={searchParams} />
       </Suspense>
       <SiteFooter />
+      <AppTabBar />
     </div>
   );
 }

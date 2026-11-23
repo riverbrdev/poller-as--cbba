@@ -5,7 +5,7 @@ import { buttonVariants } from "./button";
 
 /** Regreso común al inicio o al catálogo, con el mismo aspecto en todas las pantallas. */
 export function BackHomeLink({ href = "/", label = "Volver al inicio", className }: {
-  href?: "/" | "/#locales";
+  href?: "/" | "/ranking";
   label?: string;
   className?: string;
 }) {
